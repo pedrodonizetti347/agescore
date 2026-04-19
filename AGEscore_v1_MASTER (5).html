@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionário AGE — Escore Dietético</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--cream:#F7F4EF;--ink:#1A1A18;--ink2:#3D3D39;--ink3:#7A7A74;--ink4:#B8B8B0;--border:#DDD9D0;--green:#2D6A4F;--green-bg:#EAF4EE;--amber:#9B6000;--amber-bg:#FDF3E3;--red:#8B2020;--red-bg:#FDEAEA;--blue:#1A4A7A;--blue-bg:#E8F0FA;--accent:#C8502A;--white:#FFFFFF;--shadow:0 1px 3px rgba(26,26,24,.08),0 4px 12px rgba(26,26,24,.04);--shadow-lg:0 4px 24px rgba(26,26,24,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── LOCK SCREEN ── */
+#lock-screen{position:fixed;inset:0;background:var(--ink);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+#lock-screen.hidden{display:none}
+.lock-logo{font-family:'DM Serif Display',serif;font-size:52px;color:#C8502A;margin-bottom:8px}
+.lock-logo span{color:#C8A882}
+.lock-dev{font-size:13px;color:#7A7A74;margin-bottom:40px;letter-spacing:.04em}
+.lock-card{background:#23231F;border:1px solid #3D3D39;border-radius:16px;padding:36px 40px;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.lock-title{font-size:15px;font-weight:600;color:#F7F4EF;text-align:center}
+.lock-sub{font-size:12px;color:#7A7A74;text-align:center;margin-top:-12px;line-height:1.6}
+.lock-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #3D3D39;background:#1A1A18;color:#F7F4EF;font-size:15px;font-family:'DM Sans',sans-serif;text-align:center;letter-spacing:.1em;transition:border-color .2s}
+.lock-input:focus{outline:none;border-color:#C8502A}
+.lock-btn{width:100%;padding:13px;border-radius:8px;background:#C8502A;color:white;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;border:none;cursor:pointer;transition:background .15s}
+.lock-btn:hover{background:#A8401A}
+.lock-error{font-size:12px;color:#E8966A;text-align:center;min-height:18px}
+.lock-days{font-size:11px;color:#5F5E5A;text-align:center;margin-top:-8px}
+.lock-recover{font-size:11px;color:#5F5E5A;margin-top:4px;text-align:center}
+.lock-recover a{color:#7A9ABF;text-decoration:none}
+.lock-recover a:hover{color:#C8A882}
+.lock-badge{display:inline-flex;align-items:center;gap:6px;background:#2D2D28;border:1px solid #3D3D39;border-radius:20px;padding:5px 14px;font-size:11px;color:#7A7A74;margin-top:4px}
+.lock-badge span{width:7px;height:7px;border-radius:50%;background:#C8502A;display:inline-block}
+
+/* ── APP (hidden while locked) ── */
+#app-content{display:none}
+#app-content.visible{display:block}
+
+.app-header{background:var(--ink);color:var(--cream);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
+.header-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:20px}
+.header-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--cream);white-space:nowrap}
+.header-logo span{color:#C8A882}
+.header-meta{flex:1}
+.header-patient{font-size:13px;font-weight:500;color:var(--cream)}
+.header-sub{font-size:11px;color:var(--ink4)}
+.header-totals{display:flex;gap:20px}
+.htot{text-align:right}
+.htot-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4)}
+.htot-val{font-family:'DM Serif Display',serif;font-size:20px;color:var(--cream);line-height:1}
+.htot-val.alert{color:#E8966A}
+.patient-bar{background:var(--white);border-bottom:1px solid var(--border)}
+.patient-inner{max-width:1100px;margin:0 auto;padding:12px 24px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.pf{display:flex;flex-direction:column;gap:3px}
+.pf label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:500}
+.pf input,.pf select{border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);height:32px;transition:border-color .15s}
+.pf input:focus,.pf select:focus{outline:none;border-color:var(--accent);background:var(--white)}
+.pf.wide input{width:200px}.pf.med input,.pf.med select{width:110px}.pf.sm input{width:70px}
+.tabs-bar{background:var(--white);border-bottom:2px solid var(--border);position:sticky;top:53px;z-index:90}
+.tabs-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;background:none;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.main{max-width:1100px;margin:0 auto;padding:24px 24px 60px}
+.section{margin-bottom:28px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:9px;border-bottom:2px solid var(--ink)}
+.section-icon{width:30px;height:30px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.section-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);flex:1}
+.section-age-badge{font-size:13px;padding:3px 11px;border-radius:20px;background:var(--ink);color:var(--cream);white-space:nowrap}
+.section-age-badge.has-val{background:var(--accent)}
+.food-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);font-size:12.5px}
+.food-table thead tr{background:var(--ink2);color:var(--cream)}
+.food-table thead th{padding:8px 7px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap}
+.food-table thead th:first-child{text-align:left;padding-left:12px}
+.score-row td{background:var(--ink);color:var(--cream);font-size:10px;font-weight:600;text-align:center;padding:3px 5px;letter-spacing:.03em}
+.score-row td:first-child{text-align:left;padding-left:12px;color:var(--ink4)}
+.food-row td{padding:7px 5px;border-bottom:1px solid var(--cream);vertical-align:middle;text-align:center}
+.food-row:last-child td{border-bottom:none}
+.food-row:hover td{background:#FAFAF8}
+.food-row td.food-name{text-align:left;padding-left:12px;font-weight:500;color:var(--ink);min-width:170px;max-width:210px}
+.food-desc{font-size:10.5px;color:var(--ink3);font-weight:400;display:block;margin-top:1px}
+.day-cell{padding:5px 3px}
+.day-toggle{width:27px;height:25px;border:1.5px solid var(--border);border-radius:5px;background:var(--cream);cursor:pointer;font-size:10px;font-weight:700;font-family:'DM Sans',sans-serif;color:var(--ink3);transition:all .12s;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.day-toggle.on{background:var(--green);border-color:var(--green);color:white}
+.num-input{width:48px;border:1px solid var(--border);border-radius:5px;padding:4px 5px;text-align:center;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);transition:border-color .12s}
+.num-input:focus{outline:none;border-color:var(--accent);background:var(--white)}
+.num-input.prep{width:42px;font-size:11.5px}
+.age-cell{font-family:'DM Serif Display',serif;font-size:13px;padding:5px 8px;border-radius:5px;min-width:46px;display:inline-block;text-align:center}
+.age-zero{color:var(--ink4)}
+.age-low{background:var(--green-bg);color:var(--green)}
+.age-mid{background:var(--amber-bg);color:var(--amber)}
+.age-high{background:var(--red-bg);color:var(--red)}
+.embutido-name-row td{background:#F2EFE9;font-weight:600;color:var(--ink2);font-size:11.5px;padding:5px 12px;border-bottom:1px solid var(--border)}
+.q2-score-col{font-size:11px;color:var(--ink3);font-weight:600;text-align:center;padding:5px 7px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.scard{background:var(--white);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border-left:4px solid var(--border)}
+.scard.green{border-left-color:var(--green)}.scard.amber{border-left-color:#C88A00}.scard.red{border-left-color:var(--red)}.scard.accent{border-left-color:var(--accent);background:var(--ink)}
+.scard-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin-bottom:5px}
+.scard.accent .scard-label{color:var(--ink4)}
+.scard-val{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;color:var(--ink)}
+.scard.accent .scard-val{color:var(--cream)}
+.scard-sub{font-size:11px;color:var(--ink3);margin-top:3px}
+.scard.accent .scard-sub{color:var(--ink4)}
+.export-section{background:var(--white);border-radius:10px;padding:18px 22px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.export-text{flex:1}
+.export-text h3{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:2px}
+.export-text p{font-size:12px;color:var(--ink3)}
+.btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:#A8401A;transform:translateY(-1px)}
+.btn-secondary{background:var(--ink);color:var(--cream)}
+.btn-secondary:hover{background:var(--ink2)}
+.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--ink);background:var(--cream)}
+.instruction{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--blue);margin-bottom:14px;line-height:1.5}
+.dev-footer{text-align:center;padding:12px;font-size:11px;color:var(--ink4);border-top:1px solid var(--border);margin-top:20px}
+@media(max-width:800px){.summary-grid{grid-template-columns:repeat(2,1fr)}.header-totals{display:none}.food-table{font-size:11.5px}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ -->
+<!-- TELA DE BLOQUEIO                       -->
+<!-- ══════════════════════════════════════ -->
+<div id="lock-screen">
+  <div class="lock-logo">AGE<span>score</span></div>
+  <div class="lock-dev">Desenvolvido por Pedro Donizetti</div>
+  <div class="lock-card">
+    <div id="lock-normal">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%">
+        <div class="lock-title">Licença de uso</div>
+        <div class="lock-sub" id="lock-msg">Para continuar usando o AGEscore, insira a senha de ativação.</div>
+        <input class="lock-input" type="password" id="lock-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')tryUnlock()">
+        <div class="lock-error" id="lock-err"></div>
+        <button class="lock-btn" onclick="tryUnlock()">Ativar</button>
+        <div class="lock-days" id="lock-days-info"></div>
+        <div class="lock-recover">Esqueceu a senha? Contato: <a href="mailto:pedrodonizettipalestrante@gmail.com">pedrodonizettipalestrante@gmail.com</a></div>
+        <div class="lock-badge"><span></span>Sistema protegido · Pedro Donizetti</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- CONTEÚDO DO APLICATIVO                 -->
+<!-- ══════════════════════════════════════ -->
+<div id="app-content">
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-logo">AGE<span>score</span></div>
+    <div class="header-meta">
+      <div class="header-patient" id="hdr-patient">Novo paciente</div>
+      <div class="header-sub">Questionário de Consumo de Produtos Finais de Glicação Avançada</div>
+    </div>
+    <div class="header-totals">
+      <div class="htot"><div class="htot-label">AGE Semanal</div><div class="htot-val" id="hdr-weekly">0,0</div></div>
+      <div class="htot"><div class="htot-label">AGE Diário</div><div class="htot-val alert" id="hdr-daily">0,0</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="patient-bar">
+  <div class="patient-inner">
+    <div class="pf wide"><label>Nome completo</label><input type="text" id="p-name" placeholder="Nome do paciente" oninput="updateHeader()"></div>
+    <div class="pf sm"><label>Idade</label><input type="number" id="p-age" placeholder="58" min="0" max="120"></div>
+    <div class="pf med"><label>Sexo</label><select id="p-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+    <div class="pf med"><label>Data</label><input type="date" id="p-date"></div>
+    <div class="pf wide"><label>Entrevistador</label><input type="text" id="p-interviewer" placeholder="Nome"></div>
+    <div class="pf sm"><label>Quest. nº</label><input type="text" id="p-qnum" placeholder="1"></div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('q1',this)">Questionário 1 — Carnes e Proteínas</button>
+    <button class="tab-btn" onclick="showTab('q2',this)">Questionário 2 — Laticínios, Óleos e Outros</button>
+    <button class="tab-btn" onclick="showTab('resumo',this)">Resumo e Exportação</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="tab-q1">
+    <div class="instruction"><strong>Orientação:</strong> Marque os dias de consumo (SEG–DOM), informe a quantidade de porções (D), o número de vezes ao dia (N) e distribua as porções pelos métodos de preparo. O escore AGE é calculado automaticamente.</div>
+    <div id="q1-sections"></div>
+  </div>
+  <div id="tab-q2" style="display:none">
+    <div class="instruction"><strong>Orientação:</strong> Marque os dias, informe a quantidade de porções e o número de vezes ao dia. O escore AGE de cada alimento já está definido — não é necessário informar o método de preparo.</div>
+    <div id="q2-sections"></div>
+  </div>
+  <div id="tab-resumo" style="display:none">
+    <div class="summary-grid">
+      <div class="scard green"><div class="scard-label">AGE Parcial Q1</div><div class="scard-val" id="sum-q1">0,0</div><div class="scard-sub">Carnes e proteínas</div></div>
+      <div class="scard amber"><div class="scard-label">AGE Parcial Q2</div><div class="scard-val" id="sum-q2">0,0</div><div class="scard-sub">Laticínios, óleos e outros</div></div>
+      <div class="scard"><div class="scard-label">AGE Semanal Total</div><div class="scard-val" id="sum-weekly">0,0</div><div class="scard-sub">Q1 + Q2</div></div>
+      <div class="scard accent"><div class="scard-label">AGE Diário Médio</div><div class="scard-val" id="sum-daily">0,0</div><div class="scard-sub">Total ÷ 7</div></div>
+    </div>
+    <div class="export-section">
+      <div class="export-text"><h3>Exportar dados</h3><p>Gera um arquivo Excel (.xlsx) no formato da planilha original para salvar no Drive.</p></div>
+      <button class="btn btn-outline" onclick="resetAll()">Limpar tudo</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn btn-primary" onclick="exportXLSX()">⬇ Exportar Excel</button>
+    </div>
+  </div>
+  <div class="dev-footer">AGEscore · Desenvolvido por Pedro Donizetti · pedrodonizettipalestrante@gmail.com</div>
+</div>
+
+</div><!-- /app-content -->
+
+<script>
+// ══════════════════════════════════════════════
+// SISTEMA DE LICENÇA — ATIVO A PARTIR DE 18/Jun/2026
+// ══════════════════════════════════════════════
+const SENHA = '698600Pp';
+
+function checkLicense(){
+  // Abre direto sem pedir senha até 18 de Junho de 2026
+  const hoje = new Date();
+  const expira = new Date(2026, 5, 18, 23, 59, 59); // 18 Jun 2026
+  if(hoje < expira){
+    unlock();
+  } else {
+    document.getElementById('lock-msg').textContent = 'Sua licença expirou. Insira a senha para continuar.';
+  }
+}
+function tryUnlock(){
+  const pw = document.getElementById('lock-pw').value;
+  if(pw === SENHA){
+    document.getElementById('lock-err').textContent = '';
+    unlock();
+  } else {
+    document.getElementById('lock-err').textContent = 'Senha incorreta. Contate o desenvolvedor.';
+    document.getElementById('lock-pw').value = '';
+    document.getElementById('lock-pw').focus();
+  }
+}
+function unlock(){
+  document.getElementById('lock-screen').classList.add('hidden');
+  document.getElementById('app-content').classList.add('visible');
+  const footer = document.querySelector('.dev-footer');
+  if(footer) footer.textContent = 'AGEscore · Desenvolvido por Pedro Donizetti';
+}
+
+
+const DAYS=['S','T','Q','Q','S','S','D'];
+const state={};
+
+const Q1_CATS=[
+  {id:'carnes',icon:'🥩',name:'Carnes Vermelhas',methods:['Coz./Micro','Grelhado','Assado/AF','Churrasco','Frito'],scores:[3,6,8.6,12,10],
+   foods:[
+    {id:'cv-0',name:'Bife (bisteca bovina, chuleta)',desc:'110g · 1 unidade médio'},
+    {id:'cv-1',name:'Moída',desc:'110g · 1 escumadeira'},
+    {id:'cv-2',name:'Almôndega',desc:'110g · 3 unidades médias'},
+    {id:'cv-3',name:'Hambúrguer de carne',desc:'110g · 1 unidade médio'},
+    {id:'cv-4',name:'Cubos ou picados',desc:'110g · 1 escumadeira'},
+  ]},
+  {id:'aves',icon:'🍗',name:'Aves',methods:['Coz./Micro','Grelhado','Assado/AF','Churrasco','Frito'],scores:[1.3,5.3,6.5,9.7,7.8],
+   foods:[
+    {id:'av-0',name:'Filé de frango (peito, sassami)',desc:'110g · 1 bife grande'},
+    {id:'av-1',name:'Frango partes (coxa, sobrecoxa)',desc:'110g · 1 unidade grande'},
+    {id:'av-2',name:'Frango nuggets congelado',desc:'110g · 5 unidades'},
+    {id:'av-3',name:'Hambúrguer de frango',desc:'110g · 1 unidade médio'},
+    {id:'av-4',name:'Linguiça de frango',desc:'110g · 2 unidades'},
+    {id:'av-5',name:'Frango filé-peito empanado (crocante)',desc:'110g · 1 unidade'},
+  ]},
+  {id:'suinos',icon:'🥓',name:'Suínos',methods:['Grelhado','Assado/AF','Churrasco','Frito'],scores:[4.9,4.3,12,5.2],
+   foods:[
+    {id:'su-0',name:'Bife (bisteca suína)',desc:'110g · 1 unidade médio'},
+    {id:'su-1',name:'Costela',desc:'110g · 3 pedaços médios'},
+    {id:'su-2',name:'Torresmo',desc:'110g · 1 escumadeira'},
+    {id:'su-3',name:'Linguiça de porco (toscana)',desc:'110g · 2 unidades'},
+  ]},
+  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Frito'],scores:[0.6,1.4],
+   foods:[
+    {id:'ov-0',name:'Ovo de galinha (inteiro, mexido, omelete)',desc:'50g · 1 unidade médio'},
+    {id:'ov-1',name:'Ovo de codorna',desc:'10g · 5 unidades'},
+  ]},
+  {id:'embutidos',icon:'🌭',name:'Embutidos',methods:['Coz./Micro','Frito'],scores:null,
+   foods:[
+    {id:'em-0',name:'Salsicha',desc:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},
+    {id:'em-1',name:'Bacon',desc:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},
+    {id:'em-2',name:'Linguiça seca (calabresa, paio, defumada)',desc:'110g · 2 unidades',cs:[null,null,null,null,6.6]},
+    {id:'em-3',name:'Mortadela, presunto, salame, copa',desc:'60g · 3 fatias',cs:[1.2,null,null,null,null]},
+  ]},
+  {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',methods:['Coz./Micro','Grelhado','Assado/AF','Churrasco','Frito'],scores:[1,5,3.4,2.4,9.7],
+   foods:[
+    {id:'px-0',name:'Filé de peixe (pescada, badejo, sardinha)',desc:'110g · 1 unidade médio'},
+    {id:'px-1',name:'Atum / sardinha (lata em óleo)',desc:'110g · 1 unidade'},
+    {id:'px-2',name:'Atum / salmão / frutos do mar (cru/ceviche)',desc:'110g · 1 unidade'},
+    {id:'px-3',name:'Camarão / frutos do mar (empanado)',desc:'110g · 1 porção média'},
+    {id:'px-4',name:'Camarão / frutos do mar (cozido/grelhado)',desc:'110g · 1 porção média'},
+    {id:'px-5',name:'Casquinha de siri / frutos do mar (gratinado)',desc:'110g · 1 porção média'},
+  ]},
+];
+
+const Q2_CATS=[
+  {id:'laticinios',icon:'🧀',name:'Leite e derivados',items:[
+    {id:'q2-0',name:'Queijo minas, muçarela',desc:'50g · 1 fatia grossa ou 3 finas',score:1.4},
+    {id:'q2-1',name:'Queijo parmesão, provolone',desc:'30g · 1 col. sopa ou 2 fatias',score:5.1},
+    {id:'q2-2',name:'Queijo gorgonzola',desc:'30g · 1 col. sopa ou 2 fatias',score:2.5},
+    {id:'q2-3',name:'Queijo brie, cheddar',desc:'50g · 1 fatia grossa ou 3 finas',score:2.8},
+    {id:'q2-4',name:'Queijo cremoso, ricota, cottage, minas light',desc:'30g · 1 col. sopa',score:0.4},
+    {id:'q2-5',name:'Requeijão tradicional',desc:'30g · 1 col. sopa',score:2.6},
+    {id:'q2-6',name:'Requeijão light',desc:'30g · 1 col. sopa',score:1.2},
+    {id:'q2-7',name:'Manteiga',desc:'8g · 1 col. de chá',score:1.9},
+  ]},
+  {id:'oleos',icon:'🫒',name:'Óleos, gorduras e oleaginosas',items:[
+    {id:'q2-8',name:'Oleaginosas (amêndoas, nozes, castanhas, pistache)',desc:'30g · 1 col. sopa',score:2.0},
+    {id:'q2-9',name:'Sementes (girassol, chia, linhaça, gergelim)',desc:'30g · 1 col. sopa',score:0.5},
+    {id:'q2-10',name:'Pasta de amendoim ou creme de avelã',desc:'20g · 1 col. sopa',score:2.0},
+    {id:'q2-11',name:'Azeite de oliva, óleo de canola/composto',desc:'13ml · 1 col. sopa',score:1.0},
+    {id:'q2-12',name:'Óleo de girassol e óleo de milho',desc:'13ml · 1 col. sopa',score:0.5},
+    {id:'q2-13',name:'Óleo de gergelim',desc:'13ml · 1 col. sopa',score:2.8},
+    {id:'q2-14',name:'Óleo de coco e banha de porco',desc:'13ml · 1 col. sopa',score:3.0},
+    {id:'q2-15',name:'Margarina',desc:'8g · 1 col. de chá',score:0.8},
+    {id:'q2-16',name:'Margarina light',desc:'8g · 1 col. de chá',score:0.3},
+    {id:'q2-17',name:'Maionese',desc:'30g · 1 col. sopa',score:2.8},
+    {id:'q2-18',name:'Maionese light',desc:'30g · 1 col. sopa',score:0.7},
+  ]},
+  {id:'fastfood',icon:'🍔',name:'Fast food',items:[
+    {id:'q2-19',name:'Salgados (pastel, coxinha, risole, empada)',desc:'50g · 1 unidade médio',score:2.5},
+    {id:'q2-20',name:'Batata chips em saquinho',desc:'45g · 1 pacote pequeno',score:1.0},
+    {id:'q2-21',name:'Tapioca / crepioca recheada / suflê',desc:'80g · 1 unidade',score:1.5},
+    {id:'q2-22',name:'Croassant, folhados',desc:'40g · 1 unidade',score:0.5},
+    {id:'q2-23',name:'Pizza, misto quente ou bauru',desc:'90g · 1 fatia ou 1 unidade',score:5.0},
+    {id:'q2-24',name:'Cachorro quente',desc:'190g · 1 unidade',score:10.0},
+    {id:'q2-25',name:'Mini Cheesebúrguer',desc:'100g · 1 unidade',score:3.9},
+    {id:'q2-26',name:'Cheesebúrguer salada completo (fast food)',desc:'240g · 1 unidade',score:18.2},
+    {id:'q2-27',name:'Cheesebúrguer ou Cheeseburguerbacon',desc:'200g · 1 unidade',score:12.6},
+    {id:'q2-28',name:'Cheese filé de frango',desc:'170g · 1 unidade',score:8.8},
+  ]},
+  {id:'preparacoes',icon:'🍲',name:'Preparações',items:[
+    {id:'q2-29',name:'Lasanha, fricassê, escondidinho de carne/frango',desc:'110g · 1 escumadeira',score:6.0},
+    {id:'q2-30',name:'Feijoada, feijão tropeiro, estrogonofe',desc:'110g · 1 concha',score:2.0},
+    {id:'q2-31',name:'Yakissoba, massa c/ molho bolonhesa, nhoque',desc:'90g · 1 escumadeira',score:1.0},
+    {id:'q2-32',name:'Tapioca/crepioca recheada (frango, queijo, presunto)',desc:'80g · 1 unidade',score:1.5},
+  ]},
+  {id:'diversos',icon:'🍪',name:'Diversos',items:[
+    {id:'q2-33',name:'Chocolate barra (ao leite, branco, amargo)',desc:'30g · 1 unidade',score:1.0},
+    {id:'q2-34',name:'Biscoito recheado, cookies (doces)',desc:'60g · 2 unidades',score:1.5},
+    {id:'q2-35',name:'Bolos, tortas, muffin (doces)',desc:'60g · 1 unidade/fatia',score:2.0},
+    {id:'q2-36',name:'Pão de queijo',desc:'50g · 1 unidade',score:1.3},
+    {id:'q2-37',name:'Pão com queijo derretido',desc:'50g · 1 unidade',score:2.8},
+    {id:'q2-38',name:'Pão com manteiga na chapa',desc:'50g · 1 unidade',score:1.3},
+    {id:'q2-39',name:'Batata congelada frita em óleo',desc:'100g · 1 porção média',score:1.5},
+    {id:'q2-40',name:'Batata/mandioca/polenta (frita em óleo)',desc:'100g · 1 porção média',score:0.6},
+    {id:'q2-41',name:'Batata/mandioca/polenta (assado/air fryer)',desc:'100g · 1 porção média',score:0.3},
+  ]},
+];
+
+function initSt(id,nPrep){
+  if(!state[id]) state[id]={days:[0,0,0,0,0,0,0],qty:0,nday:1,prep:Array(nPrep).fill(0)};
+}
+
+// ── BUILD Q1 ──
+function buildQ1(){
+  const cont=document.getElementById('q1-sections');
+  Q1_CATS.forEach(cat=>{
+    const nP=cat.methods.length;
+    const section=document.createElement('div');section.className='section';
+    const scores=cat.scores;
+    let thPrep=cat.methods.map(m=>`<th title="${m}">${m}</th>`).join('');
+    section.innerHTML=`
+      <div class="section-header">
+        <div class="section-icon">${cat.icon}</div>
+        <div class="section-title">${cat.name}</div>
+        <div class="section-age-badge" id="badge-${cat.id}">AGE 0,0</div>
+      </div>
+      <table class="food-table">
+        <thead><tr><th>Alimento</th><th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SAB</th><th>DOM</th><th>Qtd (D)</th><th>N/dia</th>${thPrep}<th>AGE</th></tr></thead>
+        <tbody id="tbody-${cat.id}">
+          ${scores?`<tr class="score-row"><td>Escores por método →</td><td colspan="7"></td><td colspan="2"></td>${cat.methods.map((_,i)=>`<td>${scores[i]!=null?scores[i].toFixed(1).replace('.',','):''}</td>`).join('')}<td></td></tr>`:''}
+        </tbody>
+      </table>`;
+    cont.appendChild(section);
+    const tbody=document.getElementById(`tbody-${cat.id}`);
+    cat.foods.forEach(food=>{
+      initSt(food.id,nP);
+      const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=food.id;tr.dataset.cat=cat.id;
+      const dayBtns=DAYS.map((d,i)=>`<td class="day-cell"><button class="day-toggle" onclick="tDay1('${food.id}',${i},this)">${d}</button></td>`).join('');
+      const prepInps=cat.methods.map((m,i)=>{
+        const s=cat.scores?cat.scores[i]:(food.cs?food.cs[i]:null);
+        const dis=(s==null)?'disabled style="opacity:.3"':'';
+        return `<td><input class="num-input prep" type="number" min="0" step="0.5" placeholder="0" ${dis} oninput="recalc1('${food.id}','${cat.id}',${i},this)"></td>`;
+      }).join('');
+      tr.innerHTML=`<td class="food-name">${food.name}<span class="food-desc">${food.desc}</span></td>${dayBtns}<td><input class="num-input" type="number" min="0" step="0.5" placeholder="0" oninput="recalcQty1('${food.id}','${cat.id}',this)"></td><td><input class="num-input" type="number" min="1" step="1" placeholder="1" oninput="recalcNday1('${food.id}','${cat.id}',this)"></td>${prepInps}<td><span class="age-cell age-zero" id="age-${food.id}">—</span></td>`;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// ── BUILD Q2 ──
+function buildQ2(){
+  const cont=document.getElementById('q2-sections');
+  Q2_CATS.forEach(cat=>{
+    const section=document.createElement('div');section.className='section';
+    section.innerHTML=`
+      <div class="section-header">
+        <div class="section-icon">${cat.icon}</div>
+        <div class="section-title">${cat.name}</div>
+        <div class="section-age-badge" id="badge-${cat.id}">AGE 0,0</div>
+      </div>
+      <table class="food-table">
+        <thead><tr><th>Alimento</th><th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SAB</th><th>DOM</th><th>Qtd</th><th>N/dia</th><th>Escore</th><th>AGE</th></tr></thead>
+        <tbody id="tbody-${cat.id}"></tbody>
+      </table>`;
+    cont.appendChild(section);
+    const tbody=document.getElementById(`tbody-${cat.id}`);
+    cat.items.forEach(item=>{
+      initSt(item.id,0);
+      const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=item.id;tr.dataset.cat=cat.id;
+      const dayBtns=DAYS.map((d,i)=>`<td class="day-cell"><button class="day-toggle" onclick="tDay2('${item.id}','${cat.id}',${i},this)">${d}</button></td>`).join('');
+      tr.innerHTML=`<td class="food-name">${item.name}<span class="food-desc">${item.desc}</span></td>${dayBtns}<td><input class="num-input" type="number" min="0" step="0.5" placeholder="0" oninput="recalc2('${item.id}','${cat.id}',this,'qty')"></td><td><input class="num-input" type="number" min="1" step="1" placeholder="1" oninput="recalc2('${item.id}','${cat.id}',this,'nday')"></td><td class="q2-score-col">${item.score.toFixed(1).replace('.',',')}</td><td><span class="age-cell age-zero" id="age-${item.id}">—</span></td>`;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// ── EVENTS ──
+function tDay1(id,di,btn){
+  state[id].days[di]=state[id].days[di]?0:1;
+  btn.classList.toggle('on',!!state[id].days[di]);
+}
+function tDay2(id,catId,di,btn){
+  state[id].days[di]=state[id].days[di]?0:1;
+  btn.classList.toggle('on',!!state[id].days[di]);
+  recalc2full(id,catId);
+}
+function recalcQty1(id,catId,inp){ state[id].qty=parseFloat(inp.value)||0; recalc1full(id,catId); }
+function recalcNday1(id,catId,inp){ state[id].nday=parseFloat(inp.value)||1; recalc1full(id,catId); }
+function recalc1(id,catId,pi,inp){ state[id].prep[pi]=parseFloat(inp.value)||0; recalc1full(id,catId); }
+function recalc2(id,catId,inp,field){ state[id][field]=parseFloat(inp.value)||(field==='nday'?1:0); recalc2full(id,catId); }
+
+function recalc1full(id,catId){
+  const cat=Q1_CATS.find(c=>c.id===catId);
+  const food=cat.foods.find(f=>f.id===id);
+  const scores=cat.scores||null;
+  const qty=state[id].qty||0;
+  let age=0;
+  state[id].prep.forEach((p,i)=>{
+    const sc=scores?scores[i]:(food.cs?food.cs[i]:null);
+    if(sc!=null) age+=(p||0)*sc*qty;
+  });
+  setAge(id,age);
+  updateCatBadge1(catId);
+  updateTotals();
+}
+function recalc2full(id,catId){
+  const cat=Q2_CATS.find(c=>c.id===catId);
+  const item=cat.items.find(x=>x.id===id);
+  const days=state[id].days.reduce((a,v)=>a+(v?1:0),0);
+  const age=days*(state[id].qty||0)*(state[id].nday||1)*item.score;
+  setAge(id,age);
+  updateCatBadge2(catId);
+  updateTotals();
+}
+function setAge(id,age){
+  const el=document.getElementById(`age-${id}`);if(!el)return;
+  el.dataset.raw=age;
+  el.textContent=age>0?age.toFixed(1).replace('.',','):'—';
+  el.className='age-cell '+(age<=0?'age-zero':age<5?'age-low':age<15?'age-mid':'age-high');
+}
+function getAge(id){const el=document.getElementById(`age-${id}`);return el?parseFloat(el.dataset.raw||0):0;}
+function updateCatBadge1(catId){
+  const cat=Q1_CATS.find(c=>c.id===catId);if(!cat)return;
+  const total=cat.foods.reduce((s,f)=>s+getAge(f.id),0);
+  const b=document.getElementById(`badge-${catId}`);
+  if(b){b.textContent=`AGE ${total.toFixed(1).replace('.',',')}`;b.className=total>0?'section-age-badge has-val':'section-age-badge';}
+}
+function updateCatBadge2(catId){
+  const cat=Q2_CATS.find(c=>c.id===catId);if(!cat)return;
+  const total=cat.items.reduce((s,f)=>s+getAge(f.id),0);
+  const b=document.getElementById(`badge-${catId}`);
+  if(b){b.textContent=`AGE ${total.toFixed(1).replace('.',',')}`;b.className=total>0?'section-age-badge has-val':'section-age-badge';}
+}
+function calcQ1(){return Q1_CATS.reduce((s,c)=>s+c.foods.reduce((ss,f)=>ss+getAge(f.id),0),0);}
+function calcQ2(){return Q2_CATS.reduce((s,c)=>s+c.items.reduce((ss,f)=>ss+getAge(f.id),0),0);}
+function fmt(v){return v.toFixed(1).replace('.',',');}
+function updateTotals(){
+  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
+  document.getElementById('sum-q1').textContent=fmt(q1);
+  document.getElementById('sum-q2').textContent=fmt(q2);
+  document.getElementById('sum-weekly').textContent=fmt(wk);
+  document.getElementById('sum-daily').textContent=fmt(dy);
+  document.getElementById('hdr-weekly').textContent=fmt(wk);
+  document.getElementById('hdr-daily').textContent=fmt(dy);
+}
+function updateHeader(){
+  const n=document.getElementById('p-name').value.trim();
+  document.getElementById('hdr-patient').textContent=n||'Novo paciente';
+}
+function showTab(id,btn){
+  ['q1','q2','resumo'].forEach(t=>{document.getElementById(`tab-${t}`).style.display=t===id?'block':'none';});
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(id==='resumo')updateTotals();
+}
+function resetAll(){
+  if(!confirm('Limpar todos os dados?'))return;
+  document.querySelectorAll('.day-toggle.on').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.num-input').forEach(i=>i.value='');
+  document.querySelectorAll('.age-cell').forEach(el=>{el.textContent='—';el.dataset.raw=0;el.className='age-cell age-zero';});
+  document.querySelectorAll('.section-age-badge').forEach(b=>{b.textContent='AGE 0,0';b.className='section-age-badge';});
+  Object.keys(state).forEach(k=>{const p=state[k].prep?Array(state[k].prep.length).fill(0):[];state[k]={days:[0,0,0,0,0,0,0],qty:0,nday:1,prep:p};});
+  updateTotals();
+}
+function exportCSV(){
+  const name=document.getElementById('p-name').value||'Paciente';
+  const date=document.getElementById('p-date').value||'';
+  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
+  let csv=`Questionário AGE - ${name} - ${date}\nAGE Q1,${q1.toFixed(2)}\nAGE Q2,${q2.toFixed(2)}\nAGE Semanal,${wk.toFixed(2)}\nAGE Diário,${dy.toFixed(2)}\n\nAlimento,AGE Semanal\n`;
+  Q1_CATS.forEach(c=>c.foods.forEach(f=>{const a=getAge(f.id);if(a>0)csv+=`${f.name},${a.toFixed(2)}\n`;}));
+  Q2_CATS.forEach(c=>c.items.forEach(f=>{const a=getAge(f.id);if(a>0)csv+=`${f.name},${a.toFixed(2)}\n`;}));
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AGE_${name.replace(/\s+/g,'_')}.csv`;a.click();
+}
+function exportXLSX(){
+  const name=document.getElementById('p-name').value||'';
+  const age=document.getElementById('p-age').value||'';
+  const sex=document.getElementById('p-sex').value||'';
+  const dt=document.getElementById('p-date').value||'';
+  const intvw=document.getElementById('p-interviewer').value||'';
+  const qnum=document.getElementById('p-qnum').value||'';
+  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
+  const wb=XLSX.utils.book_new();
+  const s1=[
+    ['NOME COMPLETO DO PARTICIPANTE:',name,'','','','','','','','','','DATA DE NASCIMENTO:','','IDADE:',age,'SEXO:',sex,'',`Questionário nº ${qnum}`],
+    ['ENTREVISTADOR:',intvw,'','','DATA:',dt],
+    ['ORIENTAÇÃO: PREENCHER COM NÚMEROS'],
+    ['','Porção/g','Descrição','Qtd (D)','SEG','TER','QUA','QUI','SEX','SAB','DOM','N/dia','Total','Coz./Micro','Grelhado','Assado/AF','Churrasco','Frito','AGE Total'],
+  ];
+  Q1_CATS.forEach(cat=>{
+    s1.push([cat.name,'','','','','','','','','','','','',
+      cat.scores?cat.scores[0]||'':'',cat.scores?cat.scores[1]||'':'',cat.scores?cat.scores[2]||'':'',cat.scores?cat.scores[3]||'':'',cat.scores?cat.scores[4]||'':'','']);
+    cat.foods.forEach(food=>{
+      const st=state[food.id];
+      const days=st.days;
+      const total=days.reduce((a,v)=>a+(v?1:0),0)*(st.nday||1);
+      const prepVals=st.prep.map(p=>p||0);
+      while(prepVals.length<5)prepVals.push('');
+      s1.push([food.name,food.desc.split('·')[0].trim(),food.desc.split('·')[1]?.trim()||'',st.qty||0,...days,st.nday||1,total,...prepVals,getAge(food.id)]);
+    });
+  });
+  s1.push(['','','','','','','','','','','','','','','','','','TOTAL Q1',q1.toFixed(2)]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s1),'questionário 1.2');
+  const s2=[
+    ['NOME DO PACIENTE:',name,'','','IDADE:',age,'SEXO:',sex],
+    ['ENTREVISTADOR:',intvw,'','','DATA:',dt],
+    ['ORIENTAÇÃO: PREENCHER COM NÚMEROS'],
+    [],
+    ['Categoria','Porção/g','Descrição','Escore/AGE','Qtd','SEG','TER','QUA','QUI','SEX','SAB','DOM','N/dia','AGE Total'],
+  ];
+  Q2_CATS.forEach(cat=>{
+    s2.push([cat.name]);
+    cat.items.forEach(item=>{
+      const st=state[item.id];
+      s2.push([item.name,item.desc.split('·')[0].trim(),item.desc.split('·')[1]?.trim()||'',item.score,st.qty||0,...(st.days||[0,0,0,0,0,0,0]),st.nday||1,getAge(item.id)]);
+    });
+  });
+  s2.push([]);
+  s2.push(['','','','','','','','','','','','','TOTAL Q2',q2.toFixed(2)]);
+  s2.push(['','','','','','','','','','','','','TOTAL SEMANAL',wk.toFixed(2)]);
+  s2.push(['','','','','','','','','','','','','TOTAL DIÁRIO',dy.toFixed(2)]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s2),'questionário 2.2');
+  XLSX.writeFile(wb,`AGE_${(name||'paciente').replace(/\s+/g,'_')}_${dt||'sem_data'}.xlsx`);
+}
+
+// ── INIT ──
+buildQ1();
+buildQ2();
+document.getElementById('p-date').valueAsDate=new Date();
+updateTotals();
+checkLicense();
+</script>
+</body>
+</html>
