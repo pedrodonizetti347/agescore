@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AGEscore — pedrodonizetti347</title>
+<title>Questionário AGE — Escore Dietético</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -131,7 +131,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);f
 <header class="app-header">
   <div class="header-inner">
     <div class="header-logo">AGE<span>score</span></div>
-    <div style="font-size:11px;font-weight:600;color:#1A1A18;background:#C8A882;border-radius:20px;padding:3px 12px;white-space:nowrap;flex-shrink:0;">pedrodonizetti347</div>
     <div class="header-meta">
       <div class="header-patient" id="hdr-patient">Novo paciente</div>
       <div class="header-sub">Questionário de Consumo de Produtos Finais de Glicação Avançada</div>
@@ -711,6 +710,40 @@ function exportXLSX(){
 buildQ1();buildQ2();
 document.getElementById('p-date').valueAsDate=new Date();
 updateTotals();
+</script>
+
+<div id="lock-overlay" style="display:none;position:fixed;inset:0;background:#1A1A18;z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
+  <div style="font-family:'DM Serif Display',serif;font-size:32px;color:#F7F4EF;">AGE<span style="color:#C8A882;">score</span></div>
+  <div style="background:#2A2A28;border-radius:14px;padding:32px 36px;max-width:340px;width:90%;text-align:center;">
+    <div style="font-size:18px;font-weight:600;color:#F7F4EF;margin-bottom:8px;">Acesso expirado</div>
+    <div style="font-size:13px;color:#7A7A74;margin-bottom:24px;">O período de 60 dias encerrou. Digite a senha para continuar.</div>
+    <input id="lock-input" type="password" placeholder="Digite a senha" style="width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid #3D3D39;background:#1A1A18;color:#F7F4EF;font-size:15px;text-align:center;outline:none;margin-bottom:12px;font-family:'DM Sans',sans-serif;">
+    <button onclick="checkPassword()" style="width:100%;padding:11px;border-radius:8px;background:#C8502A;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Entrar</button>
+    <div id="lock-error" style="color:#C8502A;font-size:12px;margin-top:10px;display:none;">Senha incorreta. Tente novamente.</div>
+  </div>
+  <div style="font-size:11px;color:#3D3D39;">pedrodonizetti347</div>
+</div>
+
+<script>
+(function(){
+  var EXPIRY=new Date('2026-06-19');
+  var PASSWORD='698600Pp';
+  var KEY='age_unlocked';
+  function unlock(){document.getElementById('lock-overlay').style.display='none';}
+  function check(){
+    if(new Date()<EXPIRY)return;
+    if(localStorage.getItem(KEY)==='true')return;
+    var o=document.getElementById('lock-overlay');
+    o.style.display='flex';
+  }
+  window.checkPassword=function(){
+    var v=document.getElementById('lock-input').value;
+    if(v===PASSWORD){localStorage.setItem(KEY,'true');unlock();}
+    else{document.getElementById('lock-error').style.display='block';document.getElementById('lock-input').value='';}
+  };
+  document.getElementById('lock-input').addEventListener('keydown',function(e){if(e.key==='Enter')window.checkPassword();});
+  check();
+})();
 </script>
 </body>
 </html>
