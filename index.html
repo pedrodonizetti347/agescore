@@ -616,7 +616,8 @@ async function doLogin(){
   // Check Firestore users
   let userOk=false;
   try{
-    const snap=await db.collection('users').where('email','==',email).where('role','==',loginRole).get();
+    const roleQuery=loginRole==='aplicador'?'ap':loginRole;
+    const snap=await db.collection('users').where('email','==',email).where('role','==',roleQuery).get();
     if(!snap.empty){
       const uDoc=snap.docs[0];
       const uData={...uDoc.data(),_id:uDoc.id};
