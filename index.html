@@ -1132,9 +1132,16 @@ async function createUser(){
   const pass=document.getElementById('nu-pass').value;
   const errEl=document.getElementById('nu-err');
   if(!name||!email||!pass){errEl.textContent='Preencha todos os campos.';errEl.style.display='block';return;}
-  const users=await getUsers();
-  if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())){errEl.textContent='E-mail já cadastrado.';errEl.style.display='block';return;}
-  const newU={id:'USR-'+Date.now(),name,email,pass,role:newUserRole};await saveUser_DB(newU);closeM('modal-new-user');renderUsersPanel();toast(`✅ ${name} criado(a)!`);
+  // Check Firestore directly
+  try{
+    const snap=await db.collection('users').where('email','==',email.toLowerCase()).get();
+    if(!snap.empty){
+      // Update existing user
+      await db.collection('users').doc(snap.docs[0].id).update({name,pass,role:newUserRole});
+      _uCache=null;closeM('modal-new-user');renderUsersPanel();toast('✅ Usuário atualizado!');return;
+    }
+  }catch(e){}
+  const newU={id:'USR-'+Date.now(),name,email:email.toLowerCase(),pass,role:newUserRole};await saveUser_DB(newU);closeM('modal-new-user');renderUsersPanel();toast(`✅ ${name} criado(a)!`);
 }
 
 async function deleteUser(id){
