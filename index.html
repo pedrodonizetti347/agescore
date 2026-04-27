@@ -10,41 +10,42 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
 :root{
-  --cream:#F7F4EF;--ink:#1A1A18;--ink2:#3D3D39;--ink3:#7A7A74;--ink4:#B8B8B0;
-  --border:#DDD9D0;--green:#2D6A4F;--green-bg:#EAF4EE;
+  --cream:#F0F7F2;--ink:#1A2E1A;--ink2:#2A4A2A;--ink3:#5A7A5A;--ink4:#9AB89A;
+  --border:#C8DFC8;--green:#2A5C1B;--green-bg:#E6F4E0;
   --amber:#9B6000;--amber-bg:#FDF3E3;
   --red:#8B2020;--red-bg:#FDEAEA;
   --blue:#1A4A7A;--blue-bg:#E8F0FA;
-  --accent:#C8502A;--white:#FFFFFF;
-  --shadow:0 1px 3px rgba(26,26,24,.08),0 4px 12px rgba(26,26,24,.04);
-  --shadow-lg:0 4px 24px rgba(26,26,24,.12);--r:10px;
+  --accent:#2A5C1B;--white:#FFFFFF;
+  --shadow:0 1px 3px rgba(26,46,26,.08),0 4px 12px rgba(26,46,26,.06);
+  --shadow-lg:0 4px 24px rgba(26,46,26,.14);--r:10px;
 }
+body{background:linear-gradient(135deg,#E8F5E0 0%,#F0F7F2 50%,#E0F0E8 100%);min-height:100vh;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
 .screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
 
 /* LOGIN */
-#sc-login{align-items:center;justify-content:center;background:var(--ink);padding:20px;position:relative;overflow:hidden}
+#sc-login{align-items:center;justify-content:center;background:linear-gradient(145deg,#0d2206,#1a3a0d 40%,#2A5C1B 70%,#1a3a0d);padding:20px;position:relative;overflow:hidden}
 #sc-login::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(200,80,42,.12),transparent 60%)}
-.login-box{background:var(--white);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);position:relative;z-index:1;animation:up .5s ease}
+.login-box{background:rgba(255,255,255,.97);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);position:relative;z-index:1;animation:up .5s ease}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .login-logo{text-align:center;margin-bottom:26px}
-.login-logo h1{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--ink);line-height:1}
+.login-logo h1{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--green);line-height:1}
 .login-logo h1 span{color:var(--accent)}
 .login-logo p{color:var(--ink3);font-size:.8rem;margin-top:6px}
 .role-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:20px}
 .role-tab{padding:8px 4px;border:2px solid var(--border);border-radius:8px;background:transparent;font-family:inherit;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--ink3);transition:all .2s;text-align:center}
-.role-tab.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.role-tab.on{background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border-color:var(--green)}
 .fg{margin-bottom:13px}
 .fg label{display:block;font-size:.72rem;font-weight:600;color:var(--ink3);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
 .fg input,.fg select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.92rem;font-family:inherit;background:var(--cream);color:var(--ink);transition:border .2s}
 .fg input:focus,.fg select:focus{outline:none;border-color:var(--accent);background:var(--white)}
-.btn-main{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px}
+.btn-main{width:100%;padding:12px;background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px}
 .btn-main:hover{background:#a84018}.btn-main:active{transform:scale(.98)}
 .l-err{color:var(--red);font-size:.8rem;text-align:center;margin-top:10px;display:none}
 
 /* TOPBAR */
-.topbar{background:var(--ink);color:var(--cream);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg);position:sticky;top:0;z-index:300;flex-shrink:0;gap:10px}
+.topbar{background:linear-gradient(135deg,#1a3a0d,#2A5C1B);color:var(--cream);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg);position:sticky;top:0;z-index:300;flex-shrink:0;gap:10px}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .topbar-logo{font-family:'DM Serif Display',serif;font-size:1.25rem}
 .topbar-logo span{color:#C8A882}
@@ -63,13 +64,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);f
 .body-wrap{display:flex;flex:1;min-height:0;position:relative;overflow:hidden}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200}
 .sidebar-overlay.open{display:block}
-.sidebar{width:220px;background:var(--white);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:3px;flex-shrink:0;overflow-y:auto;position:fixed;top:52px;left:0;bottom:0;z-index:201;transform:translateX(-100%);transition:transform .28s ease}
+.sidebar{width:220px;background:linear-gradient(180deg,#f0f9f0,#e8f5e0);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:3px;flex-shrink:0;overflow-y:auto;position:fixed;top:52px;left:0;bottom:0;z-index:201;transform:translateX(-100%);transition:transform .28s ease}
 .sidebar.open{transform:translateX(0)}
 @media(min-width:800px){.sidebar{position:static;transform:none;top:auto;left:auto;bottom:auto;z-index:auto}.hamburger{display:none}.sidebar-overlay{display:none!important}}
 .main{flex:1;padding:18px;overflow-y:auto}
 @media(min-width:600px){.main{padding:24px}}
 .nav{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:.84rem;font-weight:600;color:var(--ink3);transition:all .15s;border:none;background:transparent;font-family:inherit;width:100%;text-align:left}
-.nav:hover{background:var(--cream);color:var(--ink)}.nav.on{background:var(--ink);color:var(--cream)}
+.nav:hover{background:var(--cream);color:var(--ink)}.nav.on{background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;box-shadow:0 2px 8px rgba(42,92,27,.3)}
 .nav-ico{width:18px;text-align:center;font-size:.92rem}
 .nav-sep{height:1px;background:var(--border);margin:8px 4px}
 .nav-group-label{font-size:.65rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em;padding:6px 11px 2px}
@@ -83,16 +84,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);f
 .kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
 @media(min-width:600px){.kpi-row{grid-template-columns:repeat(4,1fr)}}
 .kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 14px;box-shadow:var(--shadow)}
-.kpi .v{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent)}
+.kpi .v{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--green);text-shadow:0 1px 2px rgba(42,92,27,.1)}
 .kpi .l{font-size:.72rem;color:var(--ink3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 
 /* CARD */
-.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.card{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;backdrop-filter:blur(4px)}
 .card-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .card-title{font-weight:700;font-size:.9rem}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:420px}
-th{background:var(--cream);font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;padding:9px 12px;text-align:left;white-space:nowrap}
+th{background:linear-gradient(135deg,#d4ebc4,#e6f4e0);font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;padding:9px 12px;text-align:left;white-space:nowrap}
 td{padding:10px 12px;font-size:.83rem;border-top:1px solid var(--border);vertical-align:middle}
 tr:hover td{background:#FAF9F6}
 .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.69rem;font-weight:700}
@@ -103,7 +104,7 @@ tr:hover td{background:#FAF9F6}
 /* BUTTONS */
 .btn{padding:7px 14px;border-radius:7px;font-size:.8rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:opacity .18s,transform .1s}
 .btn:active{transform:scale(.97)}.btn:hover{opacity:.85}
-.btn-g{background:var(--green);color:#fff}.btn-r{background:var(--red);color:#fff}
+.btn-g{background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;box-shadow:0 2px 8px rgba(42,92,27,.25)}.btn-r{background:var(--red);color:#fff}
 .btn-a{background:var(--accent);color:#fff}.btn-b{background:var(--blue);color:#fff}
 .btn-o{background:transparent;border:1.5px solid var(--border);color:var(--ink)}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
@@ -157,13 +158,13 @@ canvas{max-width:100%;display:block;margin:0 auto}
 .qpanel{display:none;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);box-shadow:var(--shadow)}.qpanel.on{display:block}
 .instruction{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--blue);margin:14px 14px 0;line-height:1.6}
 .q-section{margin:14px}
-.q-section-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
-.q-sec-icon{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.q-section-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--green)}
+.q-sec-icon{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#2A5C1B,#3D7A28);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .q-sec-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);flex:1}
-.q-sec-badge{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--ink);color:var(--cream);white-space:nowrap}
+.q-sec-badge{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--green);color:#fff;white-space:nowrap}
 .q-sec-badge.has{background:var(--accent)}
 .food-table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:var(--shadow);font-size:12px}
-.food-table thead tr{background:var(--ink2);color:var(--cream)}
+.food-table thead tr{background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff}
 .food-table thead th{padding:7px 5px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap;line-height:1.3}
 .food-table thead th:first-child{text-align:left;padding-left:10px}
 .score-row td{background:#2A2A28;color:var(--cream);font-size:9.5px;font-weight:800;text-align:center;padding:3px 4px}
@@ -205,7 +206,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
 .prep-msg{font-size:10.5px;color:var(--ink3);white-space:nowrap}
 .prep-msg.ok{color:var(--green);font-weight:700}.prep-msg.over{color:var(--red);font-weight:700}.prep-msg.pending{color:var(--amber)}
 .q2-score-col{font-size:11px;color:var(--ink3);font-weight:800;text-align:center;padding:4px 6px}
-.sumbar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:var(--cream);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.2);z-index:150;gap:8px;flex-wrap:wrap}
+.sumbar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1a3a0d,#2A5C1B);color:var(--cream);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.2);z-index:150;gap:8px;flex-wrap:wrap}
 .sumvals{display:flex;gap:14px;flex-wrap:wrap}
 .si .sl{font-size:.62rem;opacity:.7;text-transform:uppercase;letter-spacing:.04em}
 .si .sn{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#C8A882}
@@ -426,6 +427,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
     <div class="sidebar" id="coord-sb">
       <button class="nav on" onclick="showCoord('coord-list',this)"><span class="nav-ico">👥</span>Participantes</button>
       <button class="nav" onclick="showCoord('coord-new',this)"><span class="nav-ico">➕</span>Novo Participante</button>
+      <div class="nav-sep"></div>
+      <button class="nav" onclick="showCoord('coord-conta',this)"><span class="nav-ico">🔑</span>Minha Conta</button>
     </div>
     <div class="main">
       <div id="coord-list" class="panel on">
@@ -433,6 +436,19 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Gerencie os participantes da pesquisa</div>
         <div class="frow"><input type="text" id="coord-search" placeholder="Buscar..." oninput="renderCoordList()" style="flex:1"/></div>
         <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="coord-p-tb"></tbody></table></div></div>
+      </div>
+      <div id="coord-conta" class="panel">
+        <div class="ptitle">Minha Conta</div>
+        <div class="psub">Atualize sua senha de acesso</div>
+        <div class="card" style="max-width:440px">
+          <div style="padding:20px">
+            <div class="fg"><label>Senha atual</label><input type="password" id="coord-pass-old" placeholder="Sua senha atual"/></div>
+            <div class="fg"><label>Nova senha</label><input type="password" id="coord-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/></div>
+            <div class="fg"><label>Confirmar nova senha</label><input type="password" id="coord-pass-confirm" placeholder="Repita a nova senha"/></div>
+            <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeCoordPass()">🔑 Atualizar Senha</button>
+            <div class="l-err" id="coord-pass-err"></div>
+          </div>
+        </div>
       </div>
       <div id="coord-new" class="panel">
         <div class="ptitle">Novo Participante</div>
@@ -472,6 +488,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="nav on" onclick="showAP('ap-list',this)"><span class="nav-ico">👥</span>Participantes</button>
       <button class="nav" onclick="showAP('ap-new',this)"><span class="nav-ico">➕</span>Novo Cadastro</button>
       <button class="nav" onclick="showAP('ap-quest',this)"><span class="nav-ico">📝</span>Aplicar Questionário</button>
+      <div class="nav-sep"></div>
+      <button class="nav" onclick="showAP('ap-conta',this)"><span class="nav-ico">🔑</span>Minha Conta</button>
     </div>
     <div class="main">
       <div id="ap-list" class="panel on">
@@ -494,6 +512,19 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipant()">✅ Cadastrar</button>
           <div class="l-err" id="np-err"></div>
         </div></div>
+      </div>
+      <div id="ap-conta" class="panel">
+        <div class="ptitle">Minha Conta</div>
+        <div class="psub">Atualize sua senha de acesso</div>
+        <div class="card" style="max-width:440px">
+          <div style="padding:20px">
+            <div class="fg"><label>Senha atual</label><input type="password" id="ap-pass-old" placeholder="Sua senha atual"/></div>
+            <div class="fg"><label>Nova senha</label><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/></div>
+            <div class="fg"><label>Confirmar nova senha</label><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"/></div>
+            <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeApPass()">🔑 Atualizar Senha</button>
+            <div class="l-err" id="ap-pass-err"></div>
+          </div>
+        </div>
       </div>
       <div id="ap-quest" class="panel">
         <div class="ptitle">Aplicar Questionário AGE</div>
@@ -1235,6 +1266,7 @@ async function loadQuestParticipant(){
     <div class="q-tabs">
       <button class="q-tab on" onclick="swQTab(0)">Q1 — Carnes e Proteínas</button>
       <button class="q-tab" onclick="swQTab(1)">Q2 — Laticínios, Óleos e Outros</button>
+      <button class="q-tab" onclick="swQTab(2)">Resumo e Exportação</button>
     </div>
     <div class="qpanel on" id="qp0">
       <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong> (SEG–DOM). ② <strong>Qtd</strong> de porções por refeição <em>(0,5=meia · 1=padrão 110g · 2=dupla)</em>. ③ <strong>N/dia</strong> (vezes ao dia). ④ <strong>Total Porções</strong> = Qtd × Dias × N/dia. ⑤ Distribua pelos <strong>métodos de preparo</strong>. ⑥ Peixes: escore já fixo por item.</div>
@@ -1243,11 +1275,60 @@ async function loadQuestParticipant(){
     <div class="qpanel" id="qp1">
       <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong>. ② <strong>Qtd</strong> (porções). ③ <strong>N/dia</strong>. Escore AGE fixo por alimento. Cálculo: <strong>Qtd × Dias × N/dia × Escore</strong>.</div>
       <div id="q2-content"></div>
+    </div>
+    <div class="qpanel" id="qp2">
+      <div style="padding:20px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px">
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--green)">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Parcial Q1</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--ink)" id="res-q1">0,0</div>
+            <div style="font-size:.76rem;color:var(--ink3);margin-top:3px">Carnes e proteínas</div>
+          </div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--amber)">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Parcial Q2</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--ink)" id="res-q2">0,0</div>
+            <div style="font-size:.76rem;color:var(--ink3);margin-top:3px">Laticínios, óleos e outros</div>
+          </div>
+          <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--border)">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Semanal Total</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--ink)" id="res-tot">0,0</div>
+            <div style="font-size:.76rem;color:var(--ink3);margin-top:3px">Q1 + Q2</div>
+          </div>
+          <div style="background:var(--ink);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--accent)">
+            <div style="font-size:.72rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Diário Médio</div>
+            <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--cream)" id="res-day">0,0</div>
+            <div style="font-size:.76rem;color:var(--ink4);margin-top:3px">Total ÷ 7</div>
+          </div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)">
+          <div style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:4px">Exportar dados</div>
+          <div style="font-size:.78rem;color:var(--ink3);margin-bottom:16px">Gera um arquivo Excel (.xlsx) ou CSV para salvar no Drive.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-o" onclick="if(confirm('Limpar todos os dados do questionário?'))resetQuest()">Limpar tudo</button>
+            <button class="btn btn-b" onclick="exportQuestCSV()">Exportar CSV</button>
+            <button class="btn btn-g" onclick="exportQuestXLSX()">⬇ Exportar Excel</button>
+            <button class="btn btn-a" onclick="exportQuestPDF()">📄 Exportar PDF</button>
+            <button class="btn btn-g" style="flex:1;min-width:120px" onclick="saveQuestionnaire()">💾 Salvar no sistema</button>
+          </div>
+        </div>
+      </div>
     </div>`;
   buildQ1full();buildQ2full();updateSumBar();
 }
 
-function swQTab(i){document.querySelectorAll('.q-tab').forEach((t,j)=>t.classList.toggle('on',j===i));document.querySelectorAll('.qpanel').forEach((p,j)=>p.classList.toggle('on',j===i));}
+function swQTab(i){
+  document.querySelectorAll('.q-tab').forEach((t,j)=>t.classList.toggle('on',j===i));
+  document.querySelectorAll('.qpanel').forEach((p,j)=>p.classList.toggle('on',j===i));
+  if(i===2) updateResumoTab();
+}
+function updateResumoTab(){
+  const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
+  setEl('res-q1',fmt(q1));
+  setEl('res-q2',fmt(q2));
+  setEl('res-total',fmt(tot));
+  setEl('res-daily',fmt(tot/7));
+  if(curApPart) setEl('res-pname',curApPart.id+' — '+curApPart.name+' ('+curApPart.group+')');
+}
 
 function buildQ1full(){
   const cont=document.getElementById('q1-content');cont.innerHTML='';
@@ -1371,6 +1452,140 @@ async function saveQuestionnaire(){
   const data=await getData(),idx=data.findIndex(x=>x.id===curApPart.id);
   if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});await saveP(data[idx]);_pCache=null;curApPart=data[idx];}
   toast('✅ Questionário salvo com sucesso!');populateQuestSel();renderAPList();
+}
+
+// ══ QUEST EXPORT ══
+function resetQuest(){
+  document.querySelectorAll('.day-toggle.on').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.num-input').forEach(i=>i.value='1');
+  document.querySelectorAll('.nday-select').forEach(s=>s.selectedIndex=0);
+  document.querySelectorAll('.prep-method-input').forEach(i=>i.value='');
+  document.querySelectorAll('.prep-method.filled').forEach(m=>m.classList.remove('filled'));
+  document.querySelectorAll('[id^="qage-"]').forEach(el=>{el.textContent='—';el.dataset.raw=0;el.className='age-cell age-zero';});
+  document.querySelectorAll('[id^="qbadge-"]').forEach(b=>{b.textContent='AGE 0,0';b.className='q-sec-badge';});
+  document.querySelectorAll('[id^="qtot-"]').forEach(b=>{b.textContent='—';b.className='total-badge zero';});
+  document.querySelectorAll('[id^="pbar-"]').forEach(b=>{b.style.width='0%';b.className='prep-bar';});
+  document.querySelectorAll('[id^="pmsg-"]').forEach(m=>{m.textContent='Defina Qtd + Dias + N/dia para liberar a distribuição';m.className='prep-msg';m.style.color='var(--ink4)';});
+  Object.keys(qState).forEach(k=>{const p=qState[k].prep?Array(qState[k].prep.length).fill(0):[];qState[k]={days:[0,0,0,0,0,0,0],qty:1,nday:1,prep:p};});
+  updateSumBar(); updateResumoTab();
+}
+
+function exportQuestCSV(){
+  if(!curApPart){toast('⚠️ Nenhum participante selecionado');return;}
+  const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
+  let csv=`Questionário AGE — ${curApPart.name} — ${new Date().toLocaleDateString('pt-BR')}
+AGE Q1,${q1.toFixed(2)}
+AGE Q2,${q2.toFixed(2)}
+AGE Semanal,${tot.toFixed(2)}
+AGE Diário,${(tot/7).toFixed(2)}
+
+Alimento,AGE Semanal
+`;
+  Q1C.forEach(c=>c.foods.forEach(f=>{const a=getAge(f.id);if(a>0)csv+=`${f.n},${a.toFixed(2)}
+`;}));
+  Q2C.forEach(c=>c.items.forEach(f=>{const a=getAge(f.id);if(a>0)csv+=`${f.n},${a.toFixed(2)}
+`;}));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`AGE_${curApPart.name.replace(/\s+/g,'_')}.csv`;a.click();
+  toast('📄 CSV exportado!');
+}
+
+function exportQuestXLSX(){
+  if(!curApPart){toast('⚠️ Nenhum participante selecionado');return;}
+  const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
+  const rows=[
+    ['Participante',curApPart.name,'ID',curApPart.id,'Grupo',curApPart.group],
+    ['Idade',curApPart.age,'Sexo',curApPart.sex,'Data',new Date().toLocaleDateString('pt-BR')],
+    [],
+    ['AGE Q1 — Carnes (kU/sem)',q1.toFixed(2)],
+    ['AGE Q2 — Laticínios (kU/sem)',q2.toFixed(2)],
+    ['AGE Semanal Total (kU/sem)',tot.toFixed(2)],
+    ['AGE Diário Médio (kU/d)',(tot/7).toFixed(2)],
+    [],
+    ['Alimento','AGE (kU/sem)']
+  ];
+  Q1C.forEach(c=>{rows.push([c.name]);c.foods.forEach(f=>{const a=getAge(f.id);if(a>0)rows.push([f.n,a.toFixed(2)]);});});
+  Q2C.forEach(c=>{rows.push([c.name]);c.items.forEach(f=>{const a=getAge(f.id);if(a>0)rows.push([f.n,a.toFixed(2)]);});});
+  const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'AGEscore');
+  XLSX.writeFile(wb,`AGE_${curApPart.name.replace(/\s+/g,'_')}.xlsx`);
+  toast('📊 Excel exportado!');
+}
+
+function exportQuestPDF(){
+  if(!curApPart){toast('⚠️ Nenhum participante selecionado');return;}
+  const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AGEscore — ${curApPart.name}</title>
+  <style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;max-width:800px;margin:0 auto}
+  h1{font-size:18px;margin-bottom:4px}h2{font-size:13px;margin:14px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11px}
+  th{background:#1A1A18;color:#fff;padding:5px 8px;text-align:left}
+  td{padding:4px 8px;border-bottom:1px solid #eee}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+  .card{border:1px solid #ccc;border-radius:6px;padding:10px;text-align:center}
+  .card .v{font-size:20px;font-weight:700;color:#1A1A18}.card .l{font-size:10px;color:#7A7A74}
+  @media print{body{padding:10px}}</style></head><body>
+  <h1>AGEscore Brasil — Questionário Dietético AGE</h1>
+  <p style="color:#7A7A74;font-size:11px">Participante: <b>${curApPart.name}</b> | ID: ${curApPart.id} | Grupo: ${curApPart.group} | ${curApPart.age} anos, ${curApPart.sex} | Data: ${new Date().toLocaleDateString('pt-BR')}</p>
+  <div class="cards">
+    <div class="card"><div class="v">${fmt(q1)}</div><div class="l">AGE Q1 Carnes (kU/sem)</div></div>
+    <div class="card"><div class="v">${fmt(q2)}</div><div class="l">AGE Q2 Laticínios (kU/sem)</div></div>
+    <div class="card"><div class="v">${fmt(tot)}</div><div class="l">AGE Semanal (kU/sem)</div></div>
+    <div class="card" style="background:#1A1A18;color:#fff"><div class="v" style="color:#C8A882">${fmt(tot/7)}</div><div class="l" style="color:#7A7A74">AGE Diário (kU/d)</div></div>
+  </div>`);
+  // Q1 foods
+  w.document.write('<h2>Q1 — Carnes e Proteínas</h2><table><tr><th>Alimento</th><th>AGE (kU/sem)</th></tr>');
+  Q1C.forEach(c=>c.foods.forEach(f=>{const a=getAge(f.id);if(a>0)w.document.write(`<tr><td>${f.n}</td><td>${fmt(a)}</td></tr>`);}));
+  w.document.write('</table>');
+  // Q2 foods
+  w.document.write('<h2>Q2 — Laticínios, Óleos e Outros</h2><table><tr><th>Alimento</th><th>AGE (kU/sem)</th></tr>');
+  Q2C.forEach(c=>c.items.forEach(f=>{const a=getAge(f.id);if(a>0)w.document.write(`<tr><td>${f.n}</td><td>${fmt(a)}</td></tr>`);}));
+  w.document.write('</table>');
+  w.document.write('<p style="text-align:center;margin-top:20px;font-size:10px;color:#7A7A74">Gerado por AGEscore Brasil · agescorebrasil.com.br</p></body></html>');
+  w.document.close();
+  setTimeout(()=>w.print(),500);
+}
+
+// ══ CHANGE PASSWORD ══
+async function changeApPass(){
+  const oldP=document.getElementById('ap-pass-old').value;
+  const newP=document.getElementById('ap-pass-new').value;
+  const confP=document.getElementById('ap-pass-confirm').value;
+  const errEl=document.getElementById('ap-pass-err');
+  errEl.style.display='none';
+  if(!oldP||!newP||!confP){errEl.textContent='Preencha todos os campos.';errEl.style.display='block';return;}
+  if(oldP!==curUser.pass){errEl.textContent='Senha atual incorreta.';errEl.style.display='block';return;}
+  if(newP.length<6){errEl.textContent='A nova senha deve ter no mínimo 6 caracteres.';errEl.style.display='block';return;}
+  if(newP!==confP){errEl.textContent='As senhas não coincidem.';errEl.style.display='block';return;}
+  try{
+    await db.collection('users').doc(curUser._id).update({pass:newP});
+    curUser.pass=newP;
+    document.getElementById('ap-pass-old').value='';
+    document.getElementById('ap-pass-new').value='';
+    document.getElementById('ap-pass-confirm').value='';
+    toast('✅ Senha atualizada com sucesso!');
+  }catch(e){errEl.textContent='Erro ao salvar. Tente novamente.';errEl.style.display='block';}
+}
+
+async function changeCoordPass(){
+  const oldP=document.getElementById('coord-pass-old').value;
+  const newP=document.getElementById('coord-pass-new').value;
+  const confP=document.getElementById('coord-pass-confirm').value;
+  const errEl=document.getElementById('coord-pass-err');
+  errEl.style.display='none';
+  if(!oldP||!newP||!confP){errEl.textContent='Preencha todos os campos.';errEl.style.display='block';return;}
+  if(oldP!==curUser.pass){errEl.textContent='Senha atual incorreta.';errEl.style.display='block';return;}
+  if(newP.length<6){errEl.textContent='A nova senha deve ter no mínimo 6 caracteres.';errEl.style.display='block';return;}
+  if(newP!==confP){errEl.textContent='As senhas não coincidem.';errEl.style.display='block';return;}
+  try{
+    await db.collection('users').doc(curUser._id).update({pass:newP});
+    curUser.pass=newP;
+    document.getElementById('coord-pass-old').value='';
+    document.getElementById('coord-pass-new').value='';
+    document.getElementById('coord-pass-confirm').value='';
+    toast('✅ Senha atualizada com sucesso!');
+  }catch(e){errEl.textContent='Erro ao salvar. Tente novamente.';errEl.style.display='block';}
 }
 
 // ══ UTILS ══
