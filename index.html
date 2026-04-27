@@ -1114,12 +1114,12 @@ async function renderUsersPanel(){
   _uCache=null; // always fresh
   const users=await getUsers(),data=await getData();
   const coords=users.filter(u=>u.role==='coord');
-  const aps=users.filter(u=>u.role==='aplicador');
+  const aps=users.filter(u=>u.role==='ap'||u.role==='aplicador');
   document.getElementById('coord-tb').innerHTML=coords.length
-    ?coords.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="badge bp">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u.id}')">Remover</button></td></tr>`).join('')
+    ?coords.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="badge bp">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u._id||u.id}')">Remover</button></td></tr>`).join('')
     :'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum coordenador cadastrado.</td></tr>';
   document.getElementById('ap-tb-admin').innerHTML=aps.length
-    ?aps.map(u=>{const cnt=data.filter(p=>p.applicator===u.name).length;return`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td>${cnt}</td><td><span class="badge bg">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u.id}')">Remover</button></td></tr>`;}).join('')
+    ?aps.map(u=>{const cnt=data.filter(p=>p.applicator===u.name).length;return`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td>${cnt}</td><td><span class="badge bg">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u._id||u.id}')">Remover</button></td></tr>`;}).join('')
     :'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum aplicador cadastrado.</td></tr>';
 }
 
