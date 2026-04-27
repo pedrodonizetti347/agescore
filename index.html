@@ -245,11 +245,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
     <div class="fg"><label>Senha</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
     <button class="btn-main" onclick="doLogin()">Entrar</button>
     <div class="l-err" id="l-err">E-mail ou senha incorretos.</div>
-    <div style="margin-top:14px;padding:10px;background:var(--cream);border-radius:8px;font-size:.75rem;color:var(--ink3)">
-      <b>Acesso inicial:</b><br>
-      Admin: pedrodonizettipalestrante@gmail.com / pedro@AGE2025<br>
-      Coordenador e Aplicadores: cadastrados pelo Admin
-    </div>
+
   </div>
 </div>
 
@@ -575,7 +571,14 @@ async function saveUser_DB(u){
 }
 async function deleteUser_DB(id){try{if(id)await db.collection('users').doc(id).delete();_uCache=null;}catch(e){console.warn(e);}}
 
-function adminCreds(){try{const c=JSON.parse(localStorage.getItem(CK)||'null');if(c)return c}catch(e){}return{email:'pedrodonizettipalestrante@gmail.com',pass:'pedro@AGE2025'}}
+// Admin creds always fixed — login via Firebase Auth not needed
+// Reset: use email pedrodonizettipalestrante@gmail.com / pedro@AGE2025
+function adminCreds(){
+  // Try localStorage first (set by saveAdminCreds)
+  try{const c=JSON.parse(localStorage.getItem(CK)||'null');if(c&&c.email&&c.pass)return c;}catch(e){}
+  // Default fallback
+  return{email:'pedrodonizettipalestrante@gmail.com',pass:'pedro@AGE2025'};
+}
 
 // ══ AUTH ══
 let loginRole='admin', curUser=null, curApPart=null, qState={}, newUserRole='ap';
@@ -590,19 +593,54 @@ async function doLogin(){
   const pass=document.getElementById('l-pass').value;
   const errEl=document.getElementById('l-err'); errEl.style.display='none';
   if(loginRole==='admin'){
-    const c=adminCreds();
-    if(email===c.email.toLowerCase()&&pass===c.pass){showScreen('sc-admin');loadDash();return;}
+    // Check Firestore first, then localStorage, then default
+    let adminOk=false;
+    try{
+      const doc=await db.collection('config').doc('admin').get();
+      if(doc.exists){
+        const d=doc.data();
+        if(email===d.email.toLowerCase()&&pass===d.pass) adminOk=true;
+      } else {
+        // First time: save default to Firestore
+        await db.collection('config').doc('admin').set({email:'pedrodonizettipalestrante@gmail.com',pass:'pedro@AGE2025'});
+        if(email==='pedrodonizettipalestrante@gmail.com'&&pass==='pedro@AGE2025') adminOk=true;
+      }
+    }catch(e){
+      // Fallback to local
+      const c=adminCreds();
+      if(email===c.email.toLowerCase()&&pass===c.pass) adminOk=true;
+    }
+    if(adminOk){showScreen('sc-admin');loadDash();return;}
     errEl.style.display='block';return;
   }
-  const users=await getUsers();
-  const u=users.find(u=>u.email.toLowerCase()===email&&u.pass===pass&&u.role===loginRole);
-  if(u){
-    curUser=u;
-    if(loginRole==='coord'){document.getElementById('coord-name-display').textContent=u.name;showScreen('sc-coord');renderCoordList();}
-    else{document.getElementById('ap-name-display').textContent=u.name;showScreen('sc-ap');renderAPList();populateQuestSel();}
-    return;
+  // Check Firestore users
+  let userOk=false;
+  try{
+    const snap=await db.collection('users').where('email','==',email).where('role','==',loginRole).get();
+    if(!snap.empty){
+      const uDoc=snap.docs[0];
+      const uData={...uDoc.data(),_id:uDoc.id};
+      if(uData.pass===pass){
+        curUser=uData;userOk=true;
+        if(loginRole==='coord'){
+          document.getElementById('coord-name-display').textContent=uData.name;
+          showScreen('sc-coord');renderCoordList();
+        } else {
+          document.getElementById('ap-name-display').textContent=uData.name;
+          showScreen('sc-ap');renderAPList();populateQuestSel();
+        }
+      }
+    }
+  }catch(e){
+    // Fallback localStorage
+    const users=await getUsers();
+    const u=users.find(u=>u.email.toLowerCase()===email&&u.pass===pass&&u.role===loginRole);
+    if(u){curUser=u;userOk=true;
+      if(loginRole==='coord'){document.getElementById('coord-name-display').textContent=u.name;showScreen('sc-coord');renderCoordList();}
+      else{document.getElementById('ap-name-display').textContent=u.name;showScreen('sc-ap');renderAPList();populateQuestSel();}
+    }
   }
-  errEl.style.display='block';
+  if(!userOk) errEl.style.display='block';
 }
 
 function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
@@ -1012,13 +1050,26 @@ async function exportCSV(){
   toast('📄 CSV exportado!');
 }
 
-function saveAdminCreds(){
+async function saveAdminCreds(){
   const email=document.getElementById('set-adm-email').value.trim();
   const pass=document.getElementById('set-adm-pass').value;
-  if(!email)return;
-  const c=adminCreds();
-  localStorage.setItem(CK,JSON.stringify({email,pass:pass||c.pass}));
-  toast('✅ Credenciais salvas!');
+  if(!email){toast('⚠️ Informe um e-mail');return;}
+  try{
+    // Get current pass if not changing
+    let finalPass=pass;
+    if(!finalPass){
+      const doc=await db.collection('config').doc('admin').get();
+      finalPass=doc.exists?doc.data().pass:'pedro@AGE2025';
+    }
+    await db.collection('config').doc('admin').set({email,pass:finalPass});
+    localStorage.setItem(CK,JSON.stringify({email,pass:finalPass}));
+    toast('✅ Credenciais salvas no Firebase!');
+  }catch(e){
+    // Fallback to local
+    const c=adminCreds();
+    localStorage.setItem(CK,JSON.stringify({email,pass:pass||c.pass}));
+    toast('✅ Credenciais salvas localmente!');
+  }
 }
 async function clearAll(){const data=await getData();for(const p of data){await deleteP_DB(p._id);}_pCache=null;toast('🗑 Dados apagados');loadDash();}
 
