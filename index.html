@@ -6,6 +6,8 @@
 <title>AGEscore Brasil — Plataforma</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
 :root{
   --cream:#F7F4EF;--ink:#1A1A18;--ink2:#3D3D39;--ink3:#7A7A74;--ink4:#B8B8B0;
@@ -534,12 +536,45 @@ canvas{max-width:100%;display:block;margin:0 auto}
 </div>
 
 <script>
-// ══ STORE ══
-const SK='age_p_v6',UK='age_u_v2',CK='age_adm_v2';
-function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]')}catch(e){return[]}}
-function setData(d){localStorage.setItem(SK,JSON.stringify(d))}
-function getUsers(){try{return JSON.parse(localStorage.getItem(UK)||'[]')}catch(e){return[]}}
-function setUsers(d){localStorage.setItem(UK,JSON.stringify(d))}
+// ══ FIREBASE CONFIG ══
+const firebaseConfig={apiKey:"AIzaSyCtT4WmLM67op19qWsItCP2ft2P4XEwC_g",authDomain:"agescorebrasil.firebaseapp.com",projectId:"agescorebrasil",storageBucket:"agescorebrasil.firebasestorage.app",messagingSenderId:"290463576400",appId:"1:290463576400:web:a2468ed1064655fb387c55"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+// ══ CACHE + FIREBASE STORE ══
+const CK='age_adm_v2';
+let _pCache=null,_uCache=null;
+
+async function getData(){
+  if(_pCache)return _pCache;
+  try{const s=await db.collection('participants').get();_pCache=s.docs.map(d=>({...d.data(),_id:d.id}));return _pCache;}
+  catch(e){return JSON.parse(localStorage.getItem('age_p_bk')||'[]');}
+}
+async function setData(list){_pCache=list;localStorage.setItem('age_p_bk',JSON.stringify(list));}
+async function saveP(p){
+  try{const {_id,...data}=p;
+    if(_id){await db.collection('participants').doc(_id).set(data);}
+    else{const r=await db.collection('participants').add({...data,_ts:firebase.firestore.FieldValue.serverTimestamp()});p._id=r.id;}
+    _pCache=null;
+  }catch(e){console.warn('saveP:',e);}
+}
+async function deleteP_DB(id){try{if(id)await db.collection('participants').doc(id).delete();_pCache=null;}catch(e){console.warn(e);}}
+
+async function getUsers(){
+  if(_uCache)return _uCache;
+  try{const s=await db.collection('users').get();_uCache=s.docs.map(d=>({...d.data(),_id:d.id}));return _uCache;}
+  catch(e){return JSON.parse(localStorage.getItem('age_u_bk')||'[]');}
+}
+async function setUsers(list){_uCache=list;}
+async function saveUser_DB(u){
+  try{const {_id,...data}=u;
+    if(_id){await db.collection('users').doc(_id).set(data);}
+    else{const r=await db.collection('users').add(data);u._id=r.id;}
+    _uCache=null;
+  }catch(e){console.warn('saveUser:',e);}
+}
+async function deleteUser_DB(id){try{if(id)await db.collection('users').doc(id).delete();_uCache=null;}catch(e){console.warn(e);}}
+
 function adminCreds(){try{const c=JSON.parse(localStorage.getItem(CK)||'null');if(c)return c}catch(e){}return{email:'pedrodonizettipalestrante@gmail.com',pass:'pedro@AGE2025'}}
 
 // ══ AUTH ══
@@ -550,7 +585,7 @@ function setRole(r){
   ['adm','coord','ap'].forEach((id,i)=>document.getElementById(['tab-adm','tab-coord','tab-ap'][i]).classList.toggle('on',(['admin','coord','aplicador'][i])===r));
 }
 
-function doLogin(){
+async function doLogin(){
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
   const errEl=document.getElementById('l-err'); errEl.style.display='none';
@@ -559,7 +594,7 @@ function doLogin(){
     if(email===c.email.toLowerCase()&&pass===c.pass){showScreen('sc-admin');loadDash();return;}
     errEl.style.display='block';return;
   }
-  const users=getUsers();
+  const users=await getUsers();
   const u=users.find(u=>u.email.toLowerCase()===email&&u.pass===pass&&u.role===loginRole);
   if(u){
     curUser=u;
@@ -590,8 +625,8 @@ function showP(id,el){
   if(map[id])map[id]();
 }
 
-function loadDash(){
-  const data=getData(),ans=data.filter(p=>p.status==='Respondido');
+async function loadDash(){
+  const data=await getData(),ans=data.filter(p=>p.status==='Respondido');
   const avg=ans.length?ans.reduce((s,p)=>s+p.daily,0)/ans.length:0;
   document.getElementById('dash-kpis').innerHTML=`
     <div class="kpi"><div class="v">${data.length}</div><div class="l">Participantes</div></div>
@@ -603,34 +638,34 @@ function loadDash(){
     :'<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink3)">Nenhuma resposta ainda.</td></tr>';
 }
 
-function renderPTable(){
+async function renderPTable(){
   const q=(document.getElementById('ps-q')?.value||'').toLowerCase();
   const g=document.getElementById('ps-g')?.value||'',s=document.getElementById('ps-s')?.value||'';
-  const list=getData().filter(p=>(!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)))&&(!g||p.group===g)&&(!s||p.status===s));
+  const all=await getData();const list=all.filter(p=>(!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)))&&(!g||p.group===g)&&(!s||p.status===s));
   document.getElementById('p-tb').innerHTML=list.length
     ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="ap-badge">👩‍⚕️ ${p.applicator||'—'}</span></td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td>${p.status==='Respondido'?fmt(p.daily)+' kU/d':'—'}</td><td style="display:flex;gap:5px"><button class="btn btn-o" onclick="viewP('${p.id}')">Ver</button><button class="btn btn-r" onclick="deleteP('${p.id}')">✕</button></td></tr>`).join('')
     :'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink3)">Nenhum participante.</td></tr>';
 }
 
-function deleteP(id){if(!confirm(`Remover ${id}?`))return;setData(getData().filter(p=>p.id!==id));renderPTable();loadDash();toast('Participante removido');}
+async function deleteP(id){if(!confirm(`Remover ${id}?`))return;const data=await getData();const p=data.find(x=>x.id===id);await deleteP_DB(p?._id);_pCache=null;renderPTable();loadDash();toast('Participante removido');}
 
-function viewP(id){
-  const p=getData().find(x=>x.id===id);
+async function viewP(id){
+  const data=await getData();const p=data.find(x=>x.id===id);
   document.getElementById('mv-title').textContent=`${p.id} — ${p.name}`;
   document.getElementById('mv-body').innerHTML=iRow('Grupo',p.group)+iRow('Idade/Sexo',p.age+' anos, '+p.sex)+(p.obs?iRow('Obs.',p.obs):'')+iRow('Aplicador',p.applicator||'—')+iRow('Status',`<span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span>`)+iRow('AGE Semanal',fmt(p.total)+' kU/sem')+iRow('AGE Diário','<b>'+fmt(p.daily)+' kU/d</b>')+iRow('Data',p.date);
   document.getElementById('modal-view').classList.add('open');
 }
 function iRow(l,v){return`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border);font-size:.84rem"><span style="color:var(--ink3)">${l}</span><span>${v}</span></div>`;}
 
-function populateRespSel(){
-  const ans=getData().filter(p=>p.status==='Respondido');
+async function populateRespSel(){
+  const d=await getData();const ans=d.filter(p=>p.status==='Respondido');
   document.getElementById('resp-sel').innerHTML='<option value="">— Selecione —</option>'+ans.map(p=>`<option value="${p.id}">${p.id} — ${p.name}</option>`).join('');
 }
 
-function loadIndResp(){
-  const id=document.getElementById('resp-sel').value,area=document.getElementById('resp-area');
+async function loadIndResp(){
+  const id=document.getElementById('resp-sel').value,area=document.getElementById('resp-area');const allD=await getData();
   if(!id){area.innerHTML='<div class="empty"><div class="ei">📋</div><p>Selecione um participante.</p></div>';return;}
-  const p=getData().find(x=>x.id===id);
+  const data=await getData();const p=data.find(x=>x.id===id);
   const q1=p.foods?.q1||[],q2=p.foods?.q2||[];
   const maxA=Math.max(...[...q1,...q2].map(f=>f.age||0),1);
   area.innerHTML=`<div style="max-width:680px"><div class="card"><div style="padding:16px">
@@ -644,15 +679,15 @@ function loadIndResp(){
 }
 
 // ══ STATISTICS ══
-function calcStats(){
+async function calcStats(){
   const gf=document.getElementById('st-g').value;
-  let list=getData().filter(p=>p.status==='Respondido');
+  const _all=await getData();let list=_all.filter(p=>p.status==='Respondido');
   if(gf)list=list.filter(p=>p.group===gf);
   if(!list.length){document.getElementById('stats-area').innerHTML='<div class="empty"><div class="ei">📈</div><p>Nenhuma resposta para calcular.</p></div>';return;}
   const stats=computeStats(list.map(p=>p.daily));
-  const groups=[...new Set(getData().filter(p=>p.status==='Respondido').map(p=>p.group))];
+  const groups=[...new Set(_all.filter(p=>p.status==='Respondido').map(p=>p.group))];
   const gstats=groups.map(g=>{
-    const gl=getData().filter(p=>p.status==='Respondido'&&p.group===g);
+    const gl=_all.filter(p=>p.status==='Respondido'&&p.group===g);
     return{g,n:gl.length,...computeStats(gl.map(p=>p.daily))};
   }).filter(x=>x.n>0);
   document.getElementById('stats-area').innerHTML=`
@@ -707,9 +742,9 @@ function computeStats(vals){
 let chartInstances={};
 function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
 
-function buildCharts(){
+async function buildCharts(){
   const gf=document.getElementById('ch-g').value;
-  const answered=getData().filter(p=>p.status==='Respondido');
+  const _allC=await getData();const answered=_allC.filter(p=>p.status==='Respondido');
   const groups=[...new Set(answered.map(p=>p.group))];
   const colors=['#2D6A4F','#1A4A7A','#9B6000','#8B2020'];
 
@@ -858,8 +893,8 @@ function buildScatterChart(answered,groups,colors,gf){
 }
 
 // ══ SCIENTIFIC REPORT ══
-function buildSciReport(){
-  const answered=getData().filter(p=>p.status==='Respondido');
+async function buildSciReport(){
+  const _allSci=await getData();const answered=_allSci.filter(p=>p.status==='Respondido');
   if(!answered.length){document.getElementById('sci-area').innerHTML='<div class="empty"><div class="ei">🔬</div><p>Nenhuma resposta disponível para gerar o relatório.</p></div>';return;}
   const groups=[...new Set(answered.map(p=>p.group))];
   const all=computeStats(answered.map(p=>p.daily));
@@ -894,13 +929,13 @@ function buildSciReport(){
       <table class="sci-table">
         <thead><tr><th>Variável · Variable</th><th>Total (n=${answered.length})</th>${groups.map((g,i)=>`<th>${g} (n=${gstats[i].n})</th>`).join('')}</tr></thead>
         <tbody>
-          <tr><td>AGE Semanal (kU/sem) · Weekly AGE (kU/wk) — Média ± DP</td><td>${fmtStatArr(answered.map(p=>p.total))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.total))}</td>`).join('')}</tr>
+          <tr><td>AGE Semanal (kU/sem) · Weekly AGE (kU/wk) — Média ± DP</td><td>${fmtStatArr(answered.map(p=>p.total))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.total))}</td>`).join('')}</tr>
           <tr><td>AGE Diário (kU/d) · Daily AGE (kU/d) — Média ± DP</td><td>${fmt(all.mean)} ± ${fmt(all.sd)}</td>${gstats.map(gs=>`<td>${fmt(gs.st.mean)} ± ${fmt(gs.st.sd)}</td>`).join('')}</tr>
           <tr><td>AGE Diário — Mediana (IIQ) · Median (IQR)</td><td>${fmt(all.median)} (${fmt(all.iqr)})</td>${gstats.map(gs=>`<td>${fmt(gs.st.median)} (${fmt(gs.st.iqr)})</td>`).join('')}</tr>
           <tr><td>AGE Diário — Mín–Máx · Min–Max</td><td>${fmt(all.min)} – ${fmt(all.max)}</td>${gstats.map(gs=>`<td>${fmt(gs.st.min)} – ${fmt(gs.st.max)}</td>`).join('')}</tr>
           <tr><td>IC 95% · 95% CI</td><td>${fmt(all.ci95[0])} – ${fmt(all.ci95[1])}</td>${gstats.map(gs=>`<td>${fmt(gs.st.ci95[0])} – ${fmt(gs.st.ci95[1])}</td>`).join('')}</tr>
-          <tr><td>AGE Q1 — Carnes (kU/sem) · Meat AGE</td><td>${fmtStatArr(answered.map(p=>p.q1))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q1))}</td>`).join('')}</tr>
-          <tr><td>AGE Q2 — Laticínios/Óleos (kU/sem) · Dairy/Oils AGE</td><td>${fmtStatArr(answered.map(p=>p.q2))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q2))}</td>`).join('')}</tr>
+          <tr><td>AGE Q1 — Carnes (kU/sem) · Meat AGE</td><td>${fmtStatArr(answered.map(p=>p.q1))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q1))}</td>`).join('')}</tr>
+          <tr><td>AGE Q2 — Laticínios/Óleos (kU/sem) · Dairy/Oils AGE</td><td>${fmtStatArr(answered.map(p=>p.q2))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q2))}</td>`).join('')}</tr>
         </tbody>
       </table>
       <div class="sci-note">AGE: Produtos Finais de Glicação Avançada · Advanced Glycation End-products. kU: quilounidades AGE · kU: kilounits AGE. IIQ: Intervalo Interquartil · IQR: Interquartile Range. IC 95%: Intervalo de Confiança de 95% · 95% CI: 95% Confidence Interval.</div>
@@ -948,17 +983,17 @@ function printSciReport(){
 }
 
 // ══ EXPORT ══
-function loadExportPreview(){
-  document.getElementById('exp-tb').innerHTML=getData().map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${p.group}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('');
+async function loadExportPreview(){
+  const _expD=await getData();document.getElementById('exp-tb').innerHTML=_expD.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${p.group}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('');
 }
 
-function exportExcel(){
-  const data=getData();
+async function exportExcel(){
+  const data=await getData();
   const rows=[['ID','Nome','Idade','Sexo','Grupo','Obs','Aplicador','Status','AGE Q1 (kU/sem)','AGE Q2 (kU/sem)','AGE Semanal','AGE Diário','Data']];
   data.forEach(p=>rows.push([p.id,p.name,p.age,p.sex,p.group,p.obs||'',p.applicator||'',p.status,p.q1,p.q2,p.total,p.daily,p.date]));
   const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Dados');
-  const ans=getData().filter(p=>p.status==='Respondido');
+  const d=await getData();const ans=d.filter(p=>p.status==='Respondido');
   const st=computeStats(ans.map(p=>p.daily));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
     ['Estatística','Valor'],['N',st.n],['Média (kU/d)',+st.mean.toFixed(2)],['DP (kU/d)',+st.sd.toFixed(2)],
@@ -969,8 +1004,8 @@ function exportExcel(){
   XLSX.writeFile(wb,'AGEscore_dados.xlsx');toast('📊 Excel exportado!');
 }
 
-function exportCSV(){
-  const data=getData();
+async function exportCSV(){
+  const data=await getData();
   const h='ID,Nome,Idade,Sexo,Grupo,Aplicador,Status,AGE_Q1,AGE_Q2,AGE_Semanal,AGE_Diario,Data\n';
   const rows=data.map(p=>[p.id,'"'+p.name+'"',p.age,p.sex,p.group,p.applicator||'',p.status,p.q1,p.q2,p.total,p.daily,p.date].join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h+rows],{type:'text/csv;charset=utf-8'}));a.download='AGEscore.csv';a.click();
@@ -985,11 +1020,11 @@ function saveAdminCreds(){
   localStorage.setItem(CK,JSON.stringify({email,pass:pass||c.pass}));
   toast('✅ Credenciais salvas!');
 }
-function clearAll(){setData([]);toast('🗑 Dados apagados');loadDash();}
+async function clearAll(){const data=await getData();for(const p of data){await deleteP_DB(p._id);}_pCache=null;toast('🗑 Dados apagados');loadDash();}
 
 // ══ USERS MANAGEMENT ══
-function renderUsersPanel(){
-  const users=getUsers(),data=getData();
+async function renderUsersPanel(){
+  const users=await getUsers(),data=await getData();
   const coords=users.filter(u=>u.role==='coord');
   const aps=users.filter(u=>u.role==='aplicador');
   document.getElementById('coord-tb').innerHTML=coords.length
@@ -1008,21 +1043,20 @@ function openNewUser(role){
   document.getElementById('modal-new-user').classList.add('open');
 }
 
-function createUser(){
+async function createUser(){
   const name=document.getElementById('nu-name').value.trim();
   const email=document.getElementById('nu-email').value.trim();
   const pass=document.getElementById('nu-pass').value;
   const errEl=document.getElementById('nu-err');
   if(!name||!email||!pass){errEl.textContent='Preencha todos os campos.';errEl.style.display='block';return;}
-  const users=getUsers();
+  const users=await getUsers();
   if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())){errEl.textContent='E-mail já cadastrado.';errEl.style.display='block';return;}
-  users.push({id:'USR-'+Date.now(),name,email,pass,role:newUserRole});
-  setUsers(users);closeM('modal-new-user');renderUsersPanel();toast(`✅ ${name} criado(a)!`);
+  const newU={id:'USR-'+Date.now(),name,email,pass,role:newUserRole};await saveUser_DB(newU);closeM('modal-new-user');renderUsersPanel();toast(`✅ ${name} criado(a)!`);
 }
 
-function deleteUser(id){
+async function deleteUser(id){
   if(!confirm('Remover este usuário?'))return;
-  setUsers(getUsers().filter(u=>u.id!==id));renderUsersPanel();toast('Usuário removido');
+  const us=await getUsers();const u=us.find(x=>x.id===id);await deleteUser_DB(u?._id);renderUsersPanel();toast('Usuário removido');
 }
 
 // ══ COORDENADOR ══
@@ -1034,9 +1068,9 @@ function showCoord(id,el){
   if(id==='coord-list')renderCoordList();
 }
 
-function renderCoordList(){
+async function renderCoordList(){
   const q=(document.getElementById('coord-search')?.value||'').toLowerCase();
-  const list=getData().filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
+  const _coordAll=await getData();const list=_coordAll.filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
   document.getElementById('coord-p-tb').innerHTML=list.length
     ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td>
       <td style="display:flex;gap:5px"><button class="btn btn-o" onclick="viewPCoord('${p.id}')">Ver</button><button class="btn btn-r" onclick="deletePCoord('${p.id}')">✕</button></td></tr>`).join('')
@@ -1046,15 +1080,16 @@ function renderCoordList(){
 function deletePCoord(id){if(!confirm(`Remover ${id}?`))return;setData(getData().filter(p=>p.id!==id));renderCoordList();toast('Participante removido');}
 function viewPCoord(id){viewP(id);} // reuse admin viewP
 
-function createParticipantCoord(){
+async function createParticipantCoord(){
   const name=document.getElementById('cnp-name').value.trim();
   const age=document.getElementById('cnp-age').value;
   const errEl=document.getElementById('cnp-err');
   if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
   errEl.style.display='none';
-  const data=getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
-  data.push({id:newId,name,age:parseInt(age),sex:document.getElementById('cnp-sex').value,group:document.getElementById('cnp-group').value,obs:document.getElementById('cnp-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}});
-  setData(data);document.getElementById('cnp-name').value='';document.getElementById('cnp-age').value='';document.getElementById('cnp-obs').value='';
+  const data=await getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  const newPCoord={id:newId,name,age:parseInt(age),sex:document.getElementById('cnp-sex').value,group:document.getElementById('cnp-group').value,obs:document.getElementById('cnp-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}};
+  await saveP(newPCoord);
+  document.getElementById('cnp-name').value='';document.getElementById('cnp-age').value='';document.getElementById('cnp-obs').value='';
   toast(`✅ ${newId} cadastrado!`);renderCoordList();
 }
 
@@ -1068,31 +1103,33 @@ function showAP(id,el){
   if(id==='ap-quest')populateQuestSel();
 }
 
-function renderAPList(){
+async function renderAPList(){
   const q=(document.getElementById('ap-search')?.value||'').toLowerCase();
-  const list=getData().filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
+  const _apAll=await getData();const list=_apAll.filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
   document.getElementById('ap-p-tb').innerHTML=list.length
     ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td><button class="btn btn-g" onclick="goApplyFor('${p.id}')">📝 Aplicar</button></td></tr>`).join('')
     :'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--ink3)">Nenhum participante cadastrado.</td></tr>';
 }
 
-function createParticipant(){
+async function createParticipant(){
   const name=document.getElementById('np-name').value.trim();
   const age=document.getElementById('np-age').value;
   const errEl=document.getElementById('np-err');
   if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
   errEl.style.display='none';
-  const data=getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
-  data.push({id:newId,name,age:parseInt(age),sex:document.getElementById('np-sex').value,group:document.getElementById('np-group').value,obs:document.getElementById('np-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}});
-  setData(data);document.getElementById('np-name').value='';document.getElementById('np-age').value='';document.getElementById('np-obs').value='';
+  const data=await getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  const newPAP={id:newId,name,age:parseInt(age),sex:document.getElementById('np-sex').value,group:document.getElementById('np-group').value,obs:document.getElementById('np-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}};
+  await saveP(newPAP);
+  document.getElementById('np-name').value='';document.getElementById('np-age').value='';document.getElementById('np-obs').value='';
   toast(`✅ ${newId} cadastrado!`);populateQuestSel();renderAPList();
 }
 
 function goApplyFor(id){document.getElementById('q-part-sel').value=id;showAP('ap-quest',document.querySelectorAll('#sc-ap .nav')[2]);loadQuestParticipant();}
 
-function populateQuestSel(){
+async function populateQuestSel(){
   const sel=document.getElementById('q-part-sel'),cur=sel.value;
-  sel.innerHTML='<option value="">— Selecione o participante —</option>'+getData().map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
+  const _qAll=await getData();
+  sel.innerHTML='<option value="">— Selecione o participante —</option>'+_qAll.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
 }
 
 // ══ QUESTIONNAIRE ══
@@ -1126,11 +1163,11 @@ function initSt(id,nP){if(!qState[id])qState[id]={days:[0,0,0,0,0,0,0],qty:1,nda
 function getDias(id){return qState[id]?.days.reduce((a,v)=>a+(v?1:0),0)||0;}
 function getTotalP(id){const s=qState[id];if(!s)return 0;return Math.round(((s.qty||0)*getDias(id)*(s.nday||1))*100)/100;}
 
-function loadQuestParticipant(){
+async function loadQuestParticipant(){
   const id=document.getElementById('q-part-sel').value;
   const area=document.getElementById('quest-area'),bar=document.getElementById('sumbar');
   if(!id){area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';bar.style.display='none';return;}
-  const p=getData().find(x=>x.id===id);
+  const data=await getData();const p=data.find(x=>x.id===id);
   curApPart=p;bar.style.display='flex';qState={};
   area.innerHTML=`
     <div class="q-patient-bar"><h3>📋 Participante selecionado</h3>
@@ -1274,13 +1311,13 @@ function calcQ1(){return Q1C.reduce((s,c)=>s+c.foods.reduce((ss,f)=>ss+getAge(f.
 function calcQ2(){return Q2C.reduce((s,c)=>s+c.items.reduce((ss,f)=>ss+getAge(f.id),0),0);}
 function updateSumBar(){const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;setEl('sb1',fmt(q1));setEl('sb2',fmt(q2));setEl('sbt',fmt(tot));setEl('sbd',fmt(tot/7));}
 
-function saveQuestionnaire(){
+async function saveQuestionnaire(){
   if(!curApPart){toast('⚠️ Nenhum participante selecionado');return;}
   const q1foods=Q1C.flatMap(cat=>cat.foods.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;let prep='';if(!cat.fixedScore&&cat.methods)cat.methods.forEach((m,i)=>{if((qState[f.id]?.prep[i]||0)>0)prep=m;});return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,prep,age:getAge(f.id)};}).filter(Boolean));
   const q2foods=Q2C.flatMap(cat=>cat.items.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,age:getAge(f.id)};}).filter(Boolean));
   const q1=calcQ1(),q2=calcQ2(),tot=q1+q2,today=new Date().toLocaleDateString('pt-BR');
-  const data=getData(),idx=data.findIndex(x=>x.id===curApPart.id);
-  if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});setData(data);curApPart=data[idx];}
+  const data=await getData(),idx=data.findIndex(x=>x.id===curApPart.id);
+  if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});await saveP(data[idx]);_pCache=null;curApPart=data[idx];}
   toast('✅ Questionário salvo com sucesso!');populateQuestSel();renderAPList();
 }
 
