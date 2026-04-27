@@ -1,874 +1,1294 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Questionário AGE — Escore Dietético</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AGEscore Brasil — Plataforma</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --cream:#F7F4EF;--ink:#1A1A18;--ink2:#3D3D39;--ink3:#7A7A74;--ink4:#B8B8B0;
-  --border:#DDD9D0;--green:#2D6A4F;--green-bg:#EAF4EE;--amber:#9B6000;--amber-bg:#FDF3E3;
-  --red:#8B2020;--red-bg:#FDEAEA;--blue:#1A4A7A;--blue-bg:#E8F0FA;
+  --border:#DDD9D0;--green:#2D6A4F;--green-bg:#EAF4EE;
+  --amber:#9B6000;--amber-bg:#FDF3E3;
+  --red:#8B2020;--red-bg:#FDEAEA;
+  --blue:#1A4A7A;--blue-bg:#E8F0FA;
   --accent:#C8502A;--white:#FFFFFF;
   --shadow:0 1px 3px rgba(26,26,24,.08),0 4px 12px rgba(26,26,24,.04);
-  --shadow-lg:0 4px 24px rgba(26,26,24,.12)
+  --shadow-lg:0 4px 24px rgba(26,26,24,.12);--r:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
-.app-header{background:var(--ink);color:var(--cream);position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
-.header-inner{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:20px}
-.header-logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--cream);white-space:nowrap}
-.header-logo span{color:#C8A882}
-.header-meta{flex:1}
-.header-patient{font-size:13px;font-weight:500;color:var(--cream)}
-.header-sub{font-size:11px;color:var(--ink4)}
-.header-totals{display:flex;gap:20px}
-.htot{text-align:right}
-.htot-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4)}
-.htot-val{font-family:'DM Serif Display',serif;font-size:20px;color:var(--cream);line-height:1}
-.htot-val.alert{color:#E8966A}
-.patient-bar{background:var(--white);border-bottom:1px solid var(--border)}
-.patient-inner{max-width:1200px;margin:0 auto;padding:12px 24px;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
-.pf{display:flex;flex-direction:column;gap:3px}
-.pf label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:500}
-.pf input,.pf select{border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);height:32px;transition:border-color .15s}
-.pf input:focus,.pf select:focus{outline:none;border-color:var(--accent);background:var(--white)}
-.pf.wide input{width:200px}.pf.med input,.pf.med select{width:110px}.pf.sm input{width:70px}
-.tabs-bar{background:var(--white);border-bottom:2px solid var(--border);position:sticky;top:53px;z-index:90}
-.tabs-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex}
-.tab-btn{padding:12px 18px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;background:none;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap}
-.tab-btn:hover{color:var(--ink)}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-.main{max-width:1200px;margin:0 auto;padding:24px 24px 60px}
-.section{margin-bottom:28px}
-.section-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:9px;border-bottom:2px solid var(--ink)}
-.section-icon{width:30px;height:30px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.section-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--ink);flex:1}
-.section-age-badge{font-size:13px;padding:3px 11px;border-radius:20px;background:var(--ink);color:var(--cream);white-space:nowrap}
-.section-age-badge.has-val{background:var(--accent)}
-.food-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);font-size:12.5px}
-.food-table thead tr{background:var(--ink2);color:var(--cream)}
-.food-table thead th{padding:8px 6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap;line-height:1.3}
-.food-table thead th:first-child{text-align:left;padding-left:12px}
-.score-row td{background:#2A2A28;color:var(--cream);font-size:10px;font-weight:800;text-align:center;padding:3px 5px;letter-spacing:.03em}
-.score-row td:first-child{text-align:left;padding-left:12px;color:var(--ink4);font-weight:600}
-.food-row td{padding:6px 4px;border-bottom:1px solid var(--cream);vertical-align:middle;text-align:center}
-.food-row:last-child td{border-bottom:none}
-.food-row:hover td{background:#FAFAF8}
-.food-row td.food-name{text-align:left;padding-left:12px;font-weight:500;color:var(--ink);min-width:180px;max-width:220px}
-.food-desc{font-size:12.5px;color:var(--ink);font-weight:500;display:block;margin-top:2px}
-.day-cell{padding:4px 2px}
-.day-toggle{width:27px;height:25px;border:1.5px solid var(--border);border-radius:5px;background:var(--cream);cursor:pointer;font-size:10px;font-weight:700;font-family:'DM Sans',sans-serif;color:var(--ink3);transition:all .12s;display:flex;align-items:center;justify-content:center;margin:0 auto}
-.day-toggle.on{background:var(--green);border-color:var(--green);color:white}
-.num-input{width:44px;border:1px solid var(--border);border-radius:5px;padding:4px 5px;text-align:center;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);transition:border-color .12s}
-.num-input:focus{outline:none;border-color:var(--accent);background:var(--white)}
-.num-input.nday{width:38px}
-.nday-select{border:1px solid var(--border);border-radius:5px;padding:3px 4px;font-size:10.5px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--cream);cursor:pointer;transition:border-color .12s;width:130px;height:30px}
-.nday-select:focus{outline:none;border-color:var(--accent);background:var(--white)}
-.total-badge{font-size:12px;font-weight:700;background:var(--blue-bg);color:var(--blue);border-radius:5px;padding:3px 7px;min-width:38px;display:inline-block;text-align:center;font-family:'DM Serif Display',serif}
-.total-badge.zero{background:var(--cream);color:var(--ink4);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:400}
-.formula-hint{font-size:9px;color:var(--ink4);display:block;margin-top:2px}
-.age-cell{font-family:'DM Serif Display',serif;font-size:13px;padding:5px 8px;border-radius:5px;min-width:46px;display:inline-block;text-align:center}
-.age-zero{color:var(--ink4)}
-.age-low{background:var(--green-bg);color:var(--green)}
-.age-mid{background:var(--amber-bg);color:var(--amber)}
-.age-high{background:var(--red-bg);color:var(--red)}
+.screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
 
-/* PREP PANEL */
+/* LOGIN */
+#sc-login{align-items:center;justify-content:center;background:var(--ink);padding:20px;position:relative;overflow:hidden}
+#sc-login::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 20%,rgba(200,80,42,.12),transparent 60%)}
+.login-box{background:var(--white);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);position:relative;z-index:1;animation:up .5s ease}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{text-align:center;margin-bottom:26px}
+.login-logo h1{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--ink);line-height:1}
+.login-logo h1 span{color:var(--accent)}
+.login-logo p{color:var(--ink3);font-size:.8rem;margin-top:6px}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:20px}
+.role-tab{padding:8px 4px;border:2px solid var(--border);border-radius:8px;background:transparent;font-family:inherit;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--ink3);transition:all .2s;text-align:center}
+.role-tab.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:.72rem;font-weight:600;color:var(--ink3);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
+.fg input,.fg select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.92rem;font-family:inherit;background:var(--cream);color:var(--ink);transition:border .2s}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--accent);background:var(--white)}
+.btn-main{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px}
+.btn-main:hover{background:#a84018}.btn-main:active{transform:scale(.98)}
+.l-err{color:var(--red);font-size:.8rem;text-align:center;margin-top:10px;display:none}
+
+/* TOPBAR */
+.topbar{background:var(--ink);color:var(--cream);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg);position:sticky;top:0;z-index:300;flex-shrink:0;gap:10px}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{font-family:'DM Serif Display',serif;font-size:1.25rem}
+.topbar-logo span{color:#C8A882}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar-role{font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.12);padding:3px 9px;border-radius:20px;white-space:nowrap}
+.topbar-user{font-size:.78rem;opacity:.8;white-space:nowrap}
+.btn-xs{padding:5px 12px;border:1.5px solid rgba(255,255,255,.3);border-radius:6px;background:transparent;color:var(--cream);font-size:.76rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
+.btn-xs:hover{background:rgba(255,255,255,.12)}
+.hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:4px;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--cream);border-radius:2px;transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* LAYOUT */
+.body-wrap{display:flex;flex:1;min-height:0;position:relative;overflow:hidden}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200}
+.sidebar-overlay.open{display:block}
+.sidebar{width:220px;background:var(--white);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:3px;flex-shrink:0;overflow-y:auto;position:fixed;top:52px;left:0;bottom:0;z-index:201;transform:translateX(-100%);transition:transform .28s ease}
+.sidebar.open{transform:translateX(0)}
+@media(min-width:800px){.sidebar{position:static;transform:none;top:auto;left:auto;bottom:auto;z-index:auto}.hamburger{display:none}.sidebar-overlay{display:none!important}}
+.main{flex:1;padding:18px;overflow-y:auto}
+@media(min-width:600px){.main{padding:24px}}
+.nav{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;font-size:.84rem;font-weight:600;color:var(--ink3);transition:all .15s;border:none;background:transparent;font-family:inherit;width:100%;text-align:left}
+.nav:hover{background:var(--cream);color:var(--ink)}.nav.on{background:var(--ink);color:var(--cream)}
+.nav-ico{width:18px;text-align:center;font-size:.92rem}
+.nav-sep{height:1px;background:var(--border);margin:8px 4px}
+.nav-group-label{font-size:.65rem;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em;padding:6px 11px 2px}
+
+/* PANELS */
+.panel{display:none}.panel.on{display:block}
+.ptitle{font-family:'DM Serif Display',serif;font-size:1.45rem;color:var(--ink);margin-bottom:3px}
+.psub{color:var(--ink3);font-size:.82rem;margin-bottom:20px}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+@media(min-width:600px){.kpi-row{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 14px;box-shadow:var(--shadow)}
+.kpi .v{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent)}
+.kpi .l{font-size:.72rem;color:var(--ink3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.card-head{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-title{font-weight:700;font-size:.9rem}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th{background:var(--cream);font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;padding:9px 12px;text-align:left;white-space:nowrap}
+td{padding:10px 12px;font-size:.83rem;border-top:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:#FAF9F6}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.69rem;font-weight:700}
+.bg{background:var(--green-bg);color:var(--green)}.bo{background:var(--amber-bg);color:var(--amber)}
+.bb{background:var(--blue-bg);color:var(--blue)}.br{background:var(--red-bg);color:var(--red)}
+.bp{background:#f3e8ff;color:#6b21a8}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:7px;font-size:.8rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.97)}.btn:hover{opacity:.85}
+.btn-g{background:var(--green);color:#fff}.btn-r{background:var(--red);color:#fff}
+.btn-a{background:var(--accent);color:#fff}.btn-b{background:var(--blue);color:#fff}
+.btn-o{background:transparent;border:1.5px solid var(--border);color:var(--ink)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.frow{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.frow input,.frow select{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:.82rem;font-family:inherit;background:var(--white);color:var(--ink);min-width:0}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:14px;padding:26px 22px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);animation:up .28s ease;max-height:90vh;overflow-y:auto}
+.modal h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--ink3);margin-top:-4px}
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* STATS & CHARTS */
+.sg{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+@media(min-width:640px){.sg{grid-template-columns:1fr 1fr}}
+.sbox{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.sbox h4{font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.srow:last-child{border:none}.sv{font-weight:700;color:var(--green)}
+.bar-wrap{margin:5px 0}
+.bar-lbl{font-size:.72rem;color:var(--ink3);margin-bottom:3px;display:flex;justify-content:space-between;gap:8px}
+.bar-bg{background:var(--cream);border-radius:4px;height:7px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{background:var(--green);height:100%;border-radius:4px;transition:width .5s ease}
+.chart-container{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.chart-title{font-weight:700;font-size:.88rem;margin-bottom:14px;color:var(--ink)}
+canvas{max-width:100%;display:block;margin:0 auto}
+.charts-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+@media(min-width:700px){.charts-grid{grid-template-columns:1fr 1fr}}
+
+/* EXPORT */
+.exp-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:18px}
+@media(min-width:500px){.exp-grid{grid-template-columns:repeat(3,1fr)}}
+.exp-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);text-align:center}
+.exp-card .ico{font-size:1.8rem;margin-bottom:8px}
+.exp-card h3{font-weight:700;margin-bottom:5px;font-size:.88rem}
+.exp-card p{font-size:.76rem;color:var(--ink3);margin-bottom:12px}
+
+/* QUESTIONNAIRE */
+.q-wrap{padding-bottom:90px}
+.q-patient-bar{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.q-patient-bar h3{font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:10px}
+.pinfo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:500px){.pinfo-grid{grid-template-columns:repeat(3,1fr)}}
+.pii .l{font-size:.7rem;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+.pii .v{font-size:.86rem;font-weight:600}
+.q-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--white);border-radius:var(--r) var(--r) 0 0;overflow:hidden}
+.q-tab{flex:1;padding:10px 6px;background:none;border:none;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--ink3);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;text-align:center}
+.q-tab.on{color:var(--accent);border-bottom-color:var(--accent);background:#FEF8F5}
+.qpanel{display:none;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);box-shadow:var(--shadow)}.qpanel.on{display:block}
+.instruction{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--blue);margin:14px 14px 0;line-height:1.6}
+.q-section{margin:14px}
+.q-section-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.q-sec-icon{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.q-sec-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);flex:1}
+.q-sec-badge{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--ink);color:var(--cream);white-space:nowrap}
+.q-sec-badge.has{background:var(--accent)}
+.food-table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:var(--shadow);font-size:12px}
+.food-table thead tr{background:var(--ink2);color:var(--cream)}
+.food-table thead th{padding:7px 5px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap;line-height:1.3}
+.food-table thead th:first-child{text-align:left;padding-left:10px}
+.score-row td{background:#2A2A28;color:var(--cream);font-size:9.5px;font-weight:800;text-align:center;padding:3px 4px}
+.score-row td:first-child{text-align:left;padding-left:10px;color:var(--ink4)}
+.food-row td{padding:5px 3px;border-bottom:1px solid var(--cream);vertical-align:middle;text-align:center;background:var(--white)}
+.food-row:last-child td{border-bottom:none}.food-row:hover td{background:#FAFAF8}
+.food-row td.food-name{text-align:left;padding-left:10px;font-weight:600;color:var(--ink);min-width:150px}
+.food-desc{font-size:11px;color:var(--ink3);font-weight:400;display:block;margin-top:1px}
+.day-toggle{width:24px;height:22px;border:1.5px solid var(--border);border-radius:5px;background:var(--cream);cursor:pointer;font-size:9.5px;font-weight:700;font-family:inherit;color:var(--ink3);transition:all .12s;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.day-toggle.on{background:var(--green);border-color:var(--green);color:#fff}
+.num-input{width:42px;border:1px solid var(--border);border-radius:5px;padding:4px;text-align:center;font-size:11.5px;font-family:inherit;color:var(--ink);background:var(--cream)}
+.num-input:focus{outline:none;border-color:var(--accent);background:var(--white)}
+.nday-select{border:1px solid var(--border);border-radius:5px;padding:3px 4px;font-size:10px;font-family:inherit;color:var(--ink);background:var(--cream);cursor:pointer;width:118px;height:27px}
+.nday-select:focus{outline:none;border-color:var(--accent)}
+.total-badge{font-size:11.5px;font-weight:700;background:var(--blue-bg);color:var(--blue);border-radius:5px;padding:2px 6px;min-width:34px;display:inline-block;text-align:center;font-family:'DM Serif Display',serif}
+.total-badge.zero{background:var(--cream);color:var(--ink4);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:400}
+.formula-hint{font-size:9px;color:var(--ink4);display:block;margin-top:1px}
+.age-cell{font-family:'DM Serif Display',serif;font-size:12.5px;padding:4px 6px;border-radius:5px;min-width:42px;display:inline-block;text-align:center}
+.age-zero{color:var(--ink4)}.age-low{background:var(--green-bg);color:var(--green)}
+.age-mid{background:var(--amber-bg);color:var(--amber)}.age-high{background:var(--red-bg);color:var(--red)}
 .prep-panel{background:#F5F2EC}
-.prep-panel>td{padding:8px 14px 10px!important;text-align:left!important;border-bottom:2px solid var(--border)!important}
-.prep-header{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:8px}
-.prep-total-lbl{background:var(--blue-bg);color:var(--blue);border-radius:4px;padding:1px 7px;font-size:11px;font-family:'DM Serif Display',serif;font-weight:700}
-.prep-methods{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px}
-.prep-method{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;min-width:82px;transition:border-color .15s}
-.prep-method:not(.disabled):hover{border-color:var(--ink3)}
+.prep-panel>td{padding:7px 12px 9px!important;text-align:left!important;border-bottom:2px solid var(--border)!important}
+.prep-header{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.prep-total-lbl{background:var(--blue-bg);color:var(--blue);border-radius:4px;padding:1px 7px;font-size:10.5px;font-family:'DM Serif Display',serif;font-weight:700}
+.prep-methods{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.prep-method{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:6px 8px;min-width:76px;transition:border-color .15s}
 .prep-method.filled{border-color:var(--accent);background:#FEF8F5}
 .prep-method.disabled{opacity:.35;cursor:not-allowed}
-.prep-method-label{font-size:10.5px;color:var(--ink2);font-weight:600;text-align:center;white-space:nowrap}
+.prep-method-label{font-size:10px;color:var(--ink2);font-weight:700;text-align:center;white-space:nowrap}
 .prep-method-score{font-size:9px;color:var(--ink4);margin-bottom:1px;font-weight:700}
-.prep-method-input{width:50px;border:1px solid var(--border);border-radius:5px;padding:4px;text-align:center;font-size:13px;font-family:'DM Serif Display',serif;font-weight:700;color:var(--ink);background:var(--cream);outline:none;transition:border-color .15s}
+.prep-method-input{width:46px;border:1px solid var(--border);border-radius:5px;padding:4px;text-align:center;font-size:12px;font-family:'DM Serif Display',serif;font-weight:700;color:var(--ink);background:var(--cream);outline:none}
 .prep-method-input:focus{border-color:var(--accent);background:var(--white)}
 .prep-method-input::-webkit-outer-spin-button,.prep-method-input::-webkit-inner-spin-button{-webkit-appearance:none}
 .prep-method-unit{font-size:9px;color:var(--ink4)}
 .prep-progress{display:flex;align-items:center;gap:10px}
-.prep-bar-wrap{flex:1;min-width:100px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.prep-bar-wrap{flex:1;min-width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
 .prep-bar{height:100%;border-radius:3px;background:var(--green);transition:width .25s}
 .prep-bar.over{background:var(--red)}
-.prep-msg{font-size:11px;color:var(--ink3);white-space:nowrap}
-.prep-msg.ok{color:var(--green);font-weight:600}
-.prep-msg.over{color:var(--red);font-weight:600}
-.prep-msg.pending{color:var(--amber)}
+.prep-msg{font-size:10.5px;color:var(--ink3);white-space:nowrap}
+.prep-msg.ok{color:var(--green);font-weight:700}.prep-msg.over{color:var(--red);font-weight:700}.prep-msg.pending{color:var(--amber)}
+.q2-score-col{font-size:11px;color:var(--ink3);font-weight:800;text-align:center;padding:4px 6px}
+.sumbar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:var(--cream);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(0,0,0,.2);z-index:150;gap:8px;flex-wrap:wrap}
+.sumvals{display:flex;gap:14px;flex-wrap:wrap}
+.si .sl{font-size:.62rem;opacity:.7;text-transform:uppercase;letter-spacing:.04em}
+.si .sn{font-family:'DM Serif Display',serif;font-size:1.15rem;color:#C8A882}
+.toast{position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--green);color:#fff;padding:10px 20px;border-radius:8px;font-size:.84rem;font-weight:700;box-shadow:var(--shadow-lg);z-index:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:36px 16px;color:var(--ink3)}
+.empty .ei{font-size:2rem;margin-bottom:8px}
+.ap-badge{display:inline-flex;align-items:center;gap:4px;background:var(--cream);border:1px solid var(--border);border-radius:20px;padding:2px 8px;font-size:.73rem;font-weight:600;color:var(--ink2)}
 
-/* Q1 PEIXES — AGE fixo (sem painel de preparo), mesmo estilo do Q2 */
-.fish-age-fixed{font-family:'DM Serif Display',serif;font-size:13px;font-weight:700;color:var(--ink2);text-align:center}
-
-.q2-score-col{font-size:11px;color:var(--ink3);font-weight:800;text-align:center;padding:5px 7px}
-.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.scard{background:var(--white);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);border-left:4px solid var(--border)}
-.scard.green{border-left-color:var(--green)}.scard.amber{border-left-color:#C88A00}.scard.red{border-left-color:var(--red)}.scard.accent{border-left-color:var(--accent);background:var(--ink)}
-.scard-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;margin-bottom:5px}
-.scard.accent .scard-label{color:var(--ink4)}
-.scard-val{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;color:var(--ink)}
-.scard.accent .scard-val{color:var(--cream)}
-.scard-sub{font-size:11px;color:var(--ink3);margin-top:3px}
-.scard.accent .scard-sub{color:var(--ink4)}
-.export-section{background:var(--white);border-radius:10px;padding:18px 22px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.export-text{flex:1}
-.export-text h3{font-family:'DM Serif Display',serif;font-size:16px;margin-bottom:2px}
-.export-text p{font-size:12px;color:var(--ink3)}
-.btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
-.btn-primary{background:var(--accent);color:white}
-.btn-primary:hover{background:#A8401A;transform:translateY(-1px)}
-.btn-secondary{background:var(--ink);color:var(--cream)}
-.btn-secondary:hover{background:var(--ink2)}
-.btn-outline{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
-.btn-outline:hover{border-color:var(--ink);background:var(--cream)}
-.btn-pdf{background:#1A4A7A;color:white}
-.btn-pdf:hover{background:#153d67;transform:translateY(-1px)}
-.instruction{background:var(--blue-bg);border-left:3px solid var(--blue);border-radius:6px;padding:9px 13px;font-size:12px;color:var(--blue);margin-bottom:14px;line-height:1.6}
-@media(max-width:900px){.summary-grid{grid-template-columns:repeat(2,1fr)}.header-totals{display:none}.food-table{font-size:11px}.prep-methods{gap:5px}.prep-method{min-width:70px;padding:5px 7px}}
-
-/* PRINT / PDF */
-@media print{
-  .app-header,.patient-bar,.tabs-bar,.export-section,.btn,#lock-overlay{display:none!important}
-  body{background:white;font-size:11px}
-  .main{padding:10px}
-  .food-table{box-shadow:none;border:1px solid #ccc}
-  .section{page-break-inside:avoid}
-  #tab-q1,#tab-q2,#tab-resumo{display:block!important}
-}
+/* SCIENTIFIC REPORT */
+.sci-report{font-family:'DM Sans',sans-serif;max-width:800px;margin:0 auto}
+.sci-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.sci-section h3{font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.sci-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px}
+.sci-table th{background:var(--ink2);color:var(--cream);padding:8px 10px;text-align:center;font-size:.75rem;font-weight:700;letter-spacing:.04em}
+.sci-table td{padding:7px 10px;text-align:center;border:1px solid var(--border)}
+.sci-table tr:nth-child(even) td{background:var(--cream)}
+.sci-note{font-size:.76rem;color:var(--ink3);margin-top:8px;font-style:italic}
 </style>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 
-<header class="app-header">
-  <div class="header-inner">
-    <div class="header-logo">AGE<span>score</span></div>
-    <div class="header-meta">
-      <div class="header-patient" id="hdr-patient">Novo paciente</div>
-      <div class="header-sub">Questionário de Consumo de Produtos Finais de Glicação Avançada</div>
+<!-- ══ LOGIN ══ -->
+<div id="sc-login" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>AGE<span>score</span></h1>
+      <p>Plataforma de Escore Dietético · Glicação Avançada</p>
     </div>
-    <div class="header-totals">
-      <div class="htot"><div class="htot-label">AGE Semanal</div><div class="htot-val" id="hdr-weekly">0,0</div></div>
-      <div class="htot"><div class="htot-label">AGE Diário</div><div class="htot-val alert" id="hdr-daily">0,0</div></div>
+    <div class="role-tabs">
+      <button class="role-tab on" id="tab-adm" onclick="setRole('admin')">🔬 Admin</button>
+      <button class="role-tab" id="tab-coord" onclick="setRole('coord')">📋 Coord.</button>
+      <button class="role-tab" id="tab-ap" onclick="setRole('aplicador')">👩‍⚕️ Aplicador</button>
+    </div>
+    <div class="fg"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com" autocomplete="username"/></div>
+    <div class="fg"><label>Senha</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-main" onclick="doLogin()">Entrar</button>
+    <div class="l-err" id="l-err">E-mail ou senha incorretos.</div>
+    <div style="margin-top:14px;padding:10px;background:var(--cream);border-radius:8px;font-size:.75rem;color:var(--ink3)">
+      <b>Acesso inicial:</b><br>
+      Admin: pedrodonizettipalestrante@gmail.com / pedro@AGE2025<br>
+      Coordenador e Aplicadores: cadastrados pelo Admin
     </div>
   </div>
-</header>
+</div>
 
-<div class="patient-bar">
-  <div class="patient-inner">
-    <div class="pf wide"><label>Nome completo</label><input type="text" id="p-name" placeholder="Nome do paciente" oninput="updateHeader()"></div>
-    <div class="pf sm"><label>Idade</label><input type="number" id="p-age" placeholder="58" min="0" max="120"></div>
-    <div class="pf med"><label>Sexo</label><select id="p-sex"><option value="">—</option><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
-    <div class="pf med"><label>Data</label><input type="date" id="p-date"></div>
-    <div class="pf wide"><label>Entrevistador</label><input type="text" id="p-interviewer" placeholder="Nome"></div>
-    <div class="pf sm"><label>Quest. nº</label><input type="text" id="p-qnum" placeholder="1"></div>
+<!-- ══ ADMIN ══ -->
+<div id="sc-admin" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="adm-hbg" onclick="toggleSB('adm')"><span></span><span></span><span></span></button>
+      <div class="topbar-logo">AGE<span>score</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-role">Administrador</span>
+      <span class="topbar-user">Pedro Donizetti</span>
+      <button class="btn-xs" onclick="logout()">Sair</button>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <div class="sidebar-overlay" id="adm-ov" onclick="closeSB('adm')"></div>
+    <div class="sidebar" id="adm-sb">
+      <button class="nav on" onclick="showP('dash',this)"><span class="nav-ico">📊</span>Dashboard</button>
+      <button class="nav" onclick="showP('participants',this)"><span class="nav-ico">👥</span>Participantes</button>
+      <button class="nav" onclick="showP('responses',this)"><span class="nav-ico">📋</span>Respostas</button>
+      <div class="nav-sep"></div>
+      <div class="nav-group-label">Análises</div>
+      <button class="nav" onclick="showP('statistics',this)"><span class="nav-ico">📈</span>Estatísticas</button>
+      <button class="nav" onclick="showP('charts',this)"><span class="nav-ico">📉</span>Gráficos</button>
+      <button class="nav" onclick="showP('scientific',this)"><span class="nav-ico">🔬</span>Relatório Científico</button>
+      <button class="nav" onclick="showP('export',this)"><span class="nav-ico">⬇️</span>Exportar</button>
+      <div class="nav-sep"></div>
+      <div class="nav-group-label">Gestão</div>
+      <button class="nav" onclick="showP('users',this)"><span class="nav-ico">👤</span>Usuários</button>
+      <button class="nav" onclick="showP('settings',this)"><span class="nav-ico">⚙️</span>Configurações</button>
+    </div>
+    <div class="main">
+
+      <div id="p-dash" class="panel on">
+        <div class="ptitle">Dashboard</div>
+        <div class="psub">Visão geral da pesquisa AGEscore</div>
+        <div class="kpi-row" id="dash-kpis"></div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Últimas respostas</span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Participante</th><th>Grupo</th><th>Aplicador</th><th>AGE Diário</th><th>Data</th><th>Status</th></tr></thead><tbody id="dash-tb"></tbody></table></div>
+        </div>
+      </div>
+
+      <div id="p-participants" class="panel">
+        <div class="ptitle">Participantes</div>
+        <div class="psub">Lista completa dos participantes cadastrados</div>
+        <div class="frow">
+          <input type="text" id="ps-q" placeholder="Buscar nome ou ID..." oninput="renderPTable()" style="flex:1;min-width:120px"/>
+          <select id="ps-g" onchange="renderPTable()"><option value="">Todos os grupos</option><option>Controle</option><option>Intervenção</option><option>Outro</option></select>
+          <select id="ps-s" onchange="renderPTable()"><option value="">Todos status</option><option>Pendente</option><option>Respondido</option></select>
+        </div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Obs</th><th>Aplicador</th><th>Status</th><th>AGE Diário</th><th>Ações</th></tr></thead><tbody id="p-tb"></tbody></table></div></div>
+      </div>
+
+      <div id="p-responses" class="panel">
+        <div class="ptitle">Respostas Individuais</div>
+        <div class="psub">Detalhamento completo de cada questionário respondido</div>
+        <div class="frow">
+          <select id="resp-sel" onchange="loadIndResp()" style="flex:1;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione —</option></select>
+        </div>
+        <div id="resp-area"><div class="empty"><div class="ei">📋</div><p>Selecione um participante.</p></div></div>
+      </div>
+
+      <div id="p-statistics" class="panel">
+        <div class="ptitle">Estatísticas</div>
+        <div class="psub">Média, desvio padrão, mediana e comparação entre grupos</div>
+        <div class="btn-row">
+          <select id="st-g" onchange="calcStats()" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;background:var(--white)">
+            <option value="">Todos os grupos</option><option>Controle</option><option>Intervenção</option><option>Outro</option>
+          </select>
+          <button class="btn btn-g" onclick="calcStats()">↺ Recalcular</button>
+        </div>
+        <div id="stats-area"></div>
+      </div>
+
+      <div id="p-charts" class="panel">
+        <div class="ptitle">Gráficos</div>
+        <div class="psub">Boxplot, barras com DP e dispersão individual</div>
+        <div class="btn-row">
+          <select id="ch-g" onchange="buildCharts()" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-family:inherit;font-size:.82rem;background:var(--white)">
+            <option value="">Todos os grupos</option><option>Controle</option><option>Intervenção</option><option>Outro</option>
+          </select>
+          <button class="btn btn-g" onclick="buildCharts()">↺ Atualizar</button>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-container"><div class="chart-title">Boxplot — AGE Diário por Grupo (kU/d)</div><canvas id="ch-box" height="280"></canvas></div>
+          <div class="chart-container"><div class="chart-title">Média ± DP por Grupo (kU/d)</div><canvas id="ch-bar" height="280"></canvas></div>
+        </div>
+        <div class="chart-container"><div class="chart-title">Dispersão Individual — AGE Diário (kU/d)</div><canvas id="ch-scatter" height="220"></canvas></div>
+      </div>
+
+      <div id="p-scientific" class="panel">
+        <div class="ptitle">Relatório Científico</div>
+        <div class="psub">Tabelas formatadas para artigo científico — Português / English</div>
+        <div class="btn-row">
+          <button class="btn btn-g" onclick="buildSciReport()">↺ Gerar relatório</button>
+          <button class="btn btn-b" onclick="printSciReport()">🖨 Imprimir / PDF</button>
+        </div>
+        <div id="sci-area"><div class="empty"><div class="ei">🔬</div><p>Clique em "Gerar relatório" para criar as tabelas científicas.</p></div></div>
+      </div>
+
+      <div id="p-export" class="panel">
+        <div class="ptitle">Exportar Dados</div>
+        <div class="psub">Gere relatórios para análise externa</div>
+        <div class="exp-grid">
+          <div class="exp-card"><div class="ico">📊</div><h3>Excel Completo</h3><p>Dados, escores, estatísticas e grupos</p><button class="btn btn-g" onclick="exportExcel()">⬇ .xlsx</button></div>
+          <div class="exp-card"><div class="ico">📄</div><h3>CSV para SPSS / R</h3><p>Dados brutos para softwares estatísticos</p><button class="btn btn-b" onclick="exportCSV()">⬇ .csv</button></div>
+          <div class="exp-card"><div class="ico">🖨</div><h3>Relatório PDF</h3><p>Relatório científico bilíngue formatado</p><button class="btn btn-a" onclick="buildSciReport();showP('scientific',null);printSciReport()">📄 PDF</button></div>
+        </div>
+        <div class="card"><div class="card-head"><span class="card-title">Prévia</span></div>
+          <div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Aplicador</th><th>AGE Semanal</th><th>AGE Diário</th><th>Q1</th><th>Q2</th></tr></thead><tbody id="exp-tb"></tbody></table></div>
+        </div>
+      </div>
+
+      <div id="p-users" class="panel">
+        <div class="ptitle">Gestão de Usuários</div>
+        <div class="psub">Gerencie coordenadores e aplicadores da plataforma</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:16px">
+          <!-- Coordenadores -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">📋 Coordenadores <span style="font-size:.75rem;color:var(--ink3);font-weight:400">(incluem/excluem participantes, sem acesso a relatórios)</span></span>
+              <button class="btn btn-b" onclick="openNewUser('coord')">＋ Novo Coordenador</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Status</th><th>Ações</th></tr></thead><tbody id="coord-tb"></tbody></table></div>
+          </div>
+          <!-- Aplicadores -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">👩‍⚕️ Aplicadores <span style="font-size:.75rem;color:var(--ink3);font-weight:400">(cadastram participantes e aplicam o questionário)</span></span>
+              <button class="btn btn-g" onclick="openNewUser('ap')">＋ Novo Aplicador</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Participantes</th><th>Status</th><th>Ações</th></tr></thead><tbody id="ap-tb-admin"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="p-settings" class="panel">
+        <div class="ptitle">Configurações</div>
+        <div class="psub">Credenciais do administrador</div>
+        <div class="card" style="max-width:440px">
+          <div class="card-head"><span class="card-title">🔬 Administrador — Pedro Donizetti</span></div>
+          <div style="padding:18px">
+            <div class="fg"><label>E-mail</label><input type="email" id="set-adm-email" value="pedrodonizettipalestrante@gmail.com"/></div>
+            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><input type="password" id="set-adm-pass" placeholder="Nova senha"/></div>
+            <button class="btn btn-g" onclick="saveAdminCreds()">💾 Salvar</button>
+          </div>
+        </div>
+        <div class="card" style="max-width:440px;margin-top:14px">
+          <div class="card-head"><span class="card-title">⚠️ Dados da pesquisa</span></div>
+          <div style="padding:16px">
+            <button class="btn btn-r" onclick="if(confirm('Apagar TODOS os dados? Não pode ser desfeito.'))clearAll()">🗑 Limpar todos os dados</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
-<div class="tabs-bar">
-  <div class="tabs-inner">
-    <button class="tab-btn active" onclick="showTab('q1',this)">Questionário 1 — Carnes e Proteínas</button>
-    <button class="tab-btn" onclick="showTab('q2',this)">Questionário 2 — Laticínios, Óleos e Outros</button>
-    <button class="tab-btn" onclick="showTab('resumo',this)">Resumo e Exportação</button>
+<!-- ══ COORDENADOR ══ -->
+<div id="sc-coord" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="coord-hbg" onclick="toggleSB('coord')"><span></span><span></span><span></span></button>
+      <div class="topbar-logo">AGE<span>score</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-role">Coordenador</span>
+      <span class="topbar-user" id="coord-name-display"></span>
+      <button class="btn-xs" onclick="logout()">Sair</button>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <div class="sidebar-overlay" id="coord-ov" onclick="closeSB('coord')"></div>
+    <div class="sidebar" id="coord-sb">
+      <button class="nav on" onclick="showCoord('coord-list',this)"><span class="nav-ico">👥</span>Participantes</button>
+      <button class="nav" onclick="showCoord('coord-new',this)"><span class="nav-ico">➕</span>Novo Participante</button>
+    </div>
+    <div class="main">
+      <div id="coord-list" class="panel on">
+        <div class="ptitle">Participantes</div>
+        <div class="psub">Gerencie os participantes da pesquisa</div>
+        <div class="frow"><input type="text" id="coord-search" placeholder="Buscar..." oninput="renderCoordList()" style="flex:1"/></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="coord-p-tb"></tbody></table></div></div>
+      </div>
+      <div id="coord-new" class="panel">
+        <div class="ptitle">Novo Participante</div>
+        <div class="psub">ID gerado automaticamente</div>
+        <div class="card" style="max-width:500px"><div style="padding:20px">
+          <div class="fg"><label>Nome Completo</label><input type="text" id="cnp-name"/></div>
+          <div class="form-2">
+            <div class="fg"><label>Idade</label><input type="number" id="cnp-age" min="1" max="120"/></div>
+            <div class="fg"><label>Sexo</label><select id="cnp-sex"><option>Feminino</option><option>Masculino</option></select></div>
+          </div>
+          <div class="fg"><label>Grupo</label><select id="cnp-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
+          <div class="fg"><label>Obs. clínicas</label><input type="text" id="cnp-obs" placeholder="Ex: DM2, HAS..."/></div>
+          <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipantCoord()">✅ Cadastrar</button>
+          <div class="l-err" id="cnp-err"></div>
+        </div></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="main">
-
-<div id="tab-q1">
-  <div class="instruction">
-    <strong>Como preencher:</strong>
-    &nbsp;①&nbsp;Marque os <strong>dias</strong> de consumo (SEG–DOM).
-    &nbsp;②&nbsp;Informe a <strong>Qtd</strong> de porções por refeição
-    <em>(0,5 = meia porção · 1 = padrão 110 g · 2 = porção dupla)</em>.
-    &nbsp;③&nbsp;Informe o <strong>N/dia</strong> — vezes ao dia em que consome
-    <em>(almoço = 1 · almoço + jantar = 2)</em>.
-    &nbsp;④&nbsp;O campo <strong>Total Porções</strong> é calculado automaticamente
-    <em>(Qtd × Dias × N/dia)</em>.
-    &nbsp;⑤&nbsp;Distribua esse total pelos <strong>métodos de preparo</strong> até fechar o total.
-    &nbsp;⑥&nbsp;Na seção <strong>Peixes e Frutos do Mar</strong>, o escore AGE já está fixo por item — não é necessário informar o método de preparo.
+<!-- ══ APLICADOR ══ -->
+<div id="sc-ap" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="ap-hbg" onclick="toggleSB('ap')"><span></span><span></span><span></span></button>
+      <div class="topbar-logo">AGE<span>score</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-role">Aplicador(a)</span>
+      <span class="topbar-user" id="ap-name-display"></span>
+      <button class="btn-xs" onclick="logout()">Sair</button>
+    </div>
   </div>
-  <div id="q1-sections"></div>
+  <div class="body-wrap">
+    <div class="sidebar-overlay" id="ap-ov" onclick="closeSB('ap')"></div>
+    <div class="sidebar" id="ap-sb">
+      <button class="nav on" onclick="showAP('ap-list',this)"><span class="nav-ico">👥</span>Participantes</button>
+      <button class="nav" onclick="showAP('ap-new',this)"><span class="nav-ico">➕</span>Novo Cadastro</button>
+      <button class="nav" onclick="showAP('ap-quest',this)"><span class="nav-ico">📝</span>Aplicar Questionário</button>
+    </div>
+    <div class="main">
+      <div id="ap-list" class="panel on">
+        <div class="ptitle">Participantes</div>
+        <div class="psub">Clique em "Aplicar" para iniciar o questionário</div>
+        <div class="frow"><input type="text" id="ap-search" placeholder="Buscar..." oninput="renderAPList()" style="flex:1"/></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Obs</th><th>Status</th><th>Ação</th></tr></thead><tbody id="ap-p-tb"></tbody></table></div></div>
+      </div>
+      <div id="ap-new" class="panel">
+        <div class="ptitle">Novo Participante</div>
+        <div class="psub">ID gerado automaticamente</div>
+        <div class="card" style="max-width:500px"><div style="padding:20px">
+          <div class="fg"><label>Nome Completo</label><input type="text" id="np-name"/></div>
+          <div class="form-2">
+            <div class="fg"><label>Idade</label><input type="number" id="np-age" min="1" max="120"/></div>
+            <div class="fg"><label>Sexo</label><select id="np-sex"><option>Feminino</option><option>Masculino</option></select></div>
+          </div>
+          <div class="fg"><label>Grupo</label><select id="np-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
+          <div class="fg"><label>Obs. clínicas</label><input type="text" id="np-obs" placeholder="Ex: DM2, HAS..."/></div>
+          <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipant()">✅ Cadastrar</button>
+          <div class="l-err" id="np-err"></div>
+        </div></div>
+      </div>
+      <div id="ap-quest" class="panel">
+        <div class="ptitle">Aplicar Questionário AGE</div>
+        <div class="psub">Preencha junto com o participante presencialmente</div>
+        <div class="frow" style="margin-bottom:14px">
+          <select id="q-part-sel" onchange="loadQuestParticipant()" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
+        </div>
+        <div id="quest-area" class="q-wrap"><div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sumbar" id="sumbar" style="display:none">
+    <div style="font-weight:700;font-size:.85rem;flex-shrink:0">AGEscore</div>
+    <div class="sumvals">
+      <div class="si"><div class="sl">Q1 Carnes</div><div class="sn" id="sb1">0,0</div></div>
+      <div class="si"><div class="sl">Q2 Outros</div><div class="sn" id="sb2">0,0</div></div>
+      <div class="si"><div class="sl">Semanal</div><div class="sn" id="sbt">0,0</div></div>
+      <div class="si"><div class="sl">Diário</div><div class="sn" id="sbd">0,0</div></div>
+    </div>
+    <button class="btn-xs" onclick="saveQuestionnaire()" style="flex-shrink:0">💾 Salvar</button>
+  </div>
 </div>
 
-<div id="tab-q2" style="display:none">
-  <div class="instruction">
-    <strong>Como preencher:</strong>
-    &nbsp;①&nbsp;Marque os <strong>dias</strong> de consumo.
-    &nbsp;②&nbsp;Informe a <strong>Qtd</strong> de porções por refeição
-    <em>(0,5 = meia · 1 = padrão · 2 = dobro)</em>.
-    &nbsp;③&nbsp;Informe o <strong>N/dia</strong> <em>(vezes ao dia)</em>.
-    &nbsp;O escore AGE já está fixo para cada alimento — não é necessário informar o método de preparo.
-    &nbsp;Cálculo: <strong>Qtd × Dias × N/dia × Escore</strong>.
+<!-- MODALS -->
+<div class="overlay" id="modal-view"><div class="modal"><button class="modal-close" onclick="closeM('modal-view')">×</button><h2 id="mv-title"></h2><div id="mv-body"></div></div></div>
+<div class="overlay" id="modal-new-user">
+  <div class="modal">
+    <button class="modal-close" onclick="closeM('modal-new-user')">×</button>
+    <h2 id="nu-title">Novo Usuário</h2>
+    <div class="fg"><label>Nome completo</label><input type="text" id="nu-name"/></div>
+    <div class="fg"><label>E-mail</label><input type="email" id="nu-email"/></div>
+    <div class="fg"><label>Senha inicial</label><input type="password" id="nu-pass"/></div>
+    <button class="btn btn-g" style="width:100%;padding:12px" onclick="createUser()">✅ Criar</button>
+    <div class="l-err" id="nu-err"></div>
   </div>
-  <div id="q2-sections"></div>
-</div>
-
-<div id="tab-resumo" style="display:none">
-  <div class="summary-grid">
-    <div class="scard green"><div class="scard-label">AGE Parcial Q1</div><div class="scard-val" id="sum-q1">0,0</div><div class="scard-sub">Carnes e proteínas</div></div>
-    <div class="scard amber"><div class="scard-label">AGE Parcial Q2</div><div class="scard-val" id="sum-q2">0,0</div><div class="scard-sub">Laticínios, óleos e outros</div></div>
-    <div class="scard"><div class="scard-label">AGE Semanal Total</div><div class="scard-val" id="sum-weekly">0,0</div><div class="scard-sub">Q1 + Q2</div></div>
-    <div class="scard accent"><div class="scard-label">AGE Diário Médio</div><div class="scard-val" id="sum-daily">0,0</div><div class="scard-sub">Total ÷ 7</div></div>
-  </div>
-  <div class="export-section">
-    <div class="export-text"><h3>Exportar dados</h3><p>Gera um arquivo Excel (.xlsx) ou PDF para salvar no Drive / OneDrive.</p></div>
-    <button class="btn btn-outline" onclick="resetAll()">Limpar tudo</button>
-    <button class="btn btn-secondary" onclick="exportCSV()">Exportar CSV</button>
-    <button class="btn btn-secondary" onclick="exportXLSX()">⬇ Exportar Excel</button>
-    <button class="btn btn-pdf" onclick="exportPDF()">📄 Exportar PDF</button>
-  </div>
-</div>
-
 </div>
 
 <script>
-const DAYS_SHORT=['S','T','Q','Q','S','S','D'];
-const state={};
+// ══ STORE ══
+const SK='age_p_v6',UK='age_u_v2',CK='age_adm_v2';
+function getData(){try{return JSON.parse(localStorage.getItem(SK)||'[]')}catch(e){return[]}}
+function setData(d){localStorage.setItem(SK,JSON.stringify(d))}
+function getUsers(){try{return JSON.parse(localStorage.getItem(UK)||'[]')}catch(e){return[]}}
+function setUsers(d){localStorage.setItem(UK,JSON.stringify(d))}
+function adminCreds(){try{const c=JSON.parse(localStorage.getItem(CK)||'null');if(c)return c}catch(e){}return{email:'pedrodonizettipalestrante@gmail.com',pass:'pedro@AGE2025'}}
 
-// ── Q1 CATEGORIAS ──
-// peixes: fixedScore=true → AGE único por alimento, sem painel de preparo
-const Q1_CATS=[
-  {id:'carnes',icon:'🥩',name:'Carnes Vermelhas',
-   methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[3,6,8.6,12,10],
-   foods:[
-    {id:'cv-0',name:'Bife (bisteca bovina, chuleta)',desc:'110g · 1 unidade médio'},
-    {id:'cv-1',name:'Moída',desc:'110g · 1 escumadeira'},
-    {id:'cv-2',name:'Almôndega',desc:'110g · 3 unidades médias'},
-    {id:'cv-3',name:'Hambúrguer de carne',desc:'110g · 1 unidade médio'},
-    {id:'cv-4',name:'Cubos ou picados',desc:'110g · 1 escumadeira'},
-  ]},
-  {id:'aves',icon:'🍗',name:'Aves',
-   methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[1.3,5.3,6.5,9.7,7.8],
-   foods:[
-    {id:'av-0',name:'Filé de frango (peito, sassami)',desc:'110g · 1 bife grande'},
-    {id:'av-1',name:'Frango partes (coxa, sobrecoxa)',desc:'110g · 1 unidade grande'},
-    {id:'av-2',name:'Frango nuggets congelado',desc:'110g · 5 unidades'},
-    {id:'av-3',name:'Hambúrguer de frango',desc:'110g · 1 unidade médio'},
-    {id:'av-4',name:'Linguiça de frango',desc:'110g · 2 unidades'},
-    {id:'av-5',name:'Frango filé-peito empanado (crocante)',desc:'110g · 1 unidade'},
-  ]},
-  {id:'suinos',icon:'🥓',name:'Suínos',
-   methods:['Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[4.9,4.3,12,5.2],
-   foods:[
-    {id:'su-0',name:'Bife (bisteca suína)',desc:'110g · 1 unidade médio'},
-    {id:'su-1',name:'Costela',desc:'110g · 3 pedaços médios'},
-    {id:'su-2',name:'Torresmo',desc:'110g · 1 escumadeira'},
-    {id:'su-3',name:'Linguiça de porco (toscana)',desc:'110g · 2 unidades'},
-  ]},
-  {id:'ovos',icon:'🥚',name:'Ovos',
-   methods:['Coz./Micro','Frito'],scores:[0.6,1.4],
-   foods:[
-    {id:'ov-0',name:'Ovo de galinha (inteiro, mexido, omelete)',desc:'50g · 1 unidade médio'},
-    {id:'ov-1',name:'Ovo de codorna',desc:'10g · 5 unidades'},
-  ]},
-  {id:'embutidos',icon:'🌭',name:'Embutidos',
-   methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
-   foods:[
-    {id:'em-0',name:'Salsicha',desc:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},
-    {id:'em-1',name:'Bacon',desc:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},
-    {id:'em-2',name:'Linguiça seca (calabresa, paio, defumada)',desc:'110g · 2 unidades',cs:[null,null,null,null,6.6]},
-    {id:'em-3',name:'Mortadela, presunto, salame, copa',desc:'60g · 3 fatias',cs:[1.2,null,null,null,null]},
-  ]},
-  // PEIXES — AGE fixo por alimento (sem painel de preparo)
-  {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',
-   fixedScore:true,
-   foods:[
-    {id:'px-0',name:'Filé de peixe (pescada, badejo, sardinha)',desc:'110g · 1 unidade médio',fixedAge:null,fixedLabel:'— (varia)'},
-    {id:'px-1',name:'Atum / sardinha (lata em óleo)',desc:'110g · 1 unidade',fixedAge:1,fixedLabel:'AGE 1'},
-    {id:'px-2',name:'Atum / salmão / frutos do mar (cru/ceviche)',desc:'110g · 1 unidade',fixedAge:1,fixedLabel:'AGE 1'},
-    {id:'px-3',name:'Camarão / frutos do mar (empanado)',desc:'110g · 1 porção média',fixedAge:4.8,fixedLabel:'AGE 4,8'},
-    {id:'px-4',name:'Camarão / frutos do mar (cozido/grelhado)',desc:'110g · 1 porção média',fixedAge:2.3,fixedLabel:'AGE 2,3'},
-    {id:'px-5',name:'Casquinha de siri / frutos do mar (gratinado)',desc:'110g · 1 porção média',fixedAge:3.7,fixedLabel:'AGE 3,7'},
-  ]},
-];
+// ══ AUTH ══
+let loginRole='admin', curUser=null, curApPart=null, qState={}, newUserRole='ap';
 
-const Q2_CATS=[
-  {id:'laticinios',icon:'🧀',name:'Leite e derivados',items:[
-    {id:'q2-0',name:'Queijo minas, muçarela',desc:'50g · 1 fatia grossa ou 3 finas',score:1.4},
-    {id:'q2-1',name:'Queijo parmesão, provolone',desc:'30g · 1 col. sopa ou 2 fatias',score:5.1},
-    {id:'q2-2',name:'Queijo gorgonzola',desc:'30g · 1 col. sopa ou 2 fatias',score:2.5},
-    {id:'q2-3',name:'Queijo brie, cheddar',desc:'50g · 1 fatia grossa ou 3 finas',score:2.8},
-    {id:'q2-4',name:'Queijo cremoso, ricota, cottage, minas light',desc:'30g · 1 col. sopa',score:0.4},
-    {id:'q2-5',name:'Requeijão tradicional',desc:'30g · 1 col. sopa',score:2.6},
-    {id:'q2-6',name:'Requeijão light',desc:'30g · 1 col. sopa',score:1.2},
-    {id:'q2-7',name:'Manteiga',desc:'8g · 1 col. de chá',score:1.9},
-  ]},
-  {id:'oleos',icon:'🫒',name:'Óleos, gorduras e oleaginosas',items:[
-    {id:'q2-8',name:'Oleaginosas (amêndoas, nozes, castanhas, pistache)',desc:'30g · 1 col. sopa',score:2.0},
-    {id:'q2-9',name:'Sementes (girassol, chia, linhaça, gergelim)',desc:'30g · 1 col. sopa',score:0.5},
-    {id:'q2-10',name:'Pasta de amendoim ou creme de avelã',desc:'20g · 1 col. sopa',score:2.0},
-    {id:'q2-11',name:'Azeite de oliva, óleo de canola/composto',desc:'13ml · 1 col. sopa',score:1.0},
-    {id:'q2-12',name:'Óleo de girassol e óleo de milho',desc:'13ml · 1 col. sopa',score:0.5},
-    {id:'q2-13',name:'Óleo de gergelim',desc:'13ml · 1 col. sopa',score:2.8},
-    {id:'q2-14',name:'Óleo de coco e banha de porco',desc:'13ml · 1 col. sopa',score:3.0},
-    {id:'q2-15',name:'Margarina',desc:'8g · 1 col. de chá',score:0.8},
-    {id:'q2-16',name:'Margarina light',desc:'8g · 1 col. de chá',score:0.3},
-    {id:'q2-17',name:'Maionese',desc:'30g · 1 col. sopa',score:2.8},
-    {id:'q2-18',name:'Maionese light',desc:'30g · 1 col. sopa',score:0.7},
-  ]},
-  {id:'fastfood',icon:'🍔',name:'Fast food',items:[
-    {id:'q2-19',name:'Salgados (pastel, coxinha, risole, empada)',desc:'50g · 1 unidade médio',score:2.5},
-    {id:'q2-20',name:'Batata chips em saquinho',desc:'45g · 1 pacote pequeno',score:1.0},
-    {id:'q2-21',name:'Tapioca / crepioca recheada / suflê',desc:'80g · 1 unidade',score:1.5},
-    {id:'q2-22',name:'Croassant, folhados',desc:'40g · 1 unidade',score:0.5},
-    {id:'q2-23',name:'Pizza, misto quente ou bauru',desc:'90g · 1 fatia ou 1 unidade',score:5.0},
-    {id:'q2-24',name:'Cachorro quente',desc:'190g · 1 unidade',score:10.0},
-    {id:'q2-25',name:'Mini Cheesebúrguer',desc:'100g · 1 unidade',score:3.9},
-    {id:'q2-26',name:'Cheesebúrguer salada completo (fast food)',desc:'240g · 1 unidade',score:18.2},
-    {id:'q2-27',name:'Cheesebúrguer ou Cheeseburguerbacon',desc:'200g · 1 unidade',score:12.6},
-    {id:'q2-28',name:'Cheese filé de frango',desc:'170g · 1 unidade',score:8.8},
-  ]},
-  {id:'preparacoes',icon:'🍲',name:'Preparações',items:[
-    {id:'q2-29',name:'Lasanha, fricassê, escondidinho de carne/frango',desc:'110g · 1 escumadeira',score:6.0},
-    {id:'q2-30',name:'Feijoada, feijão tropeiro, estrogonofe',desc:'110g · 1 concha',score:2.0},
-    {id:'q2-31',name:'Yakissoba, massa c/ molho bolonhesa, nhoque',desc:'90g · 1 escumadeira',score:1.0},
-    {id:'q2-32',name:'Tapioca/crepioca recheada (frango, queijo, presunto)',desc:'80g · 1 unidade',score:1.5},
-  ]},
-  {id:'diversos',icon:'🍪',name:'Diversos',items:[
-    {id:'q2-33',name:'Chocolate barra (ao leite, branco, amargo)',desc:'30g · 1 unidade',score:1.0},
-    {id:'q2-34',name:'Biscoito recheado, cookies (doces)',desc:'60g · 2 unidades',score:1.5},
-    {id:'q2-35',name:'Bolos, tortas, muffin (doces)',desc:'60g · 1 unidade/fatia',score:2.0},
-    {id:'q2-36',name:'Pão de queijo',desc:'50g · 1 unidade',score:1.3},
-    {id:'q2-37',name:'Pão com queijo derretido',desc:'50g · 1 unidade',score:2.8},
-    {id:'q2-38',name:'Pão com manteiga na chapa',desc:'50g · 1 unidade',score:1.3},
-    {id:'q2-39',name:'Batata congelada frita em óleo',desc:'100g · 1 porção média',score:1.5},
-    {id:'q2-40',name:'Batata/mandioca/polenta (frita em óleo)',desc:'100g · 1 porção média',score:0.6},
-    {id:'q2-41',name:'Batata/mandioca/polenta (assado/air fryer)',desc:'100g · 1 porção média',score:0.3},
-  ]},
-];
-
-// ── STATE ──
-function initSt(id,nPrep){
-  if(!state[id]) state[id]={days:[0,0,0,0,0,0,0],qty:1,nday:1,prep:Array(nPrep).fill(0)};
+function setRole(r){
+  loginRole=r;
+  ['adm','coord','ap'].forEach((id,i)=>document.getElementById(['tab-adm','tab-coord','tab-ap'][i]).classList.toggle('on',(['admin','coord','aplicador'][i])===r));
 }
 
-function getTotalPorcoes(id){
-  const s=state[id];
-  const dias=s.days.reduce((a,v)=>a+(v?1:0),0);
-  return Math.round(((s.qty||0)*dias*(s.nday||1))*100)/100;
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim().toLowerCase();
+  const pass=document.getElementById('l-pass').value;
+  const errEl=document.getElementById('l-err'); errEl.style.display='none';
+  if(loginRole==='admin'){
+    const c=adminCreds();
+    if(email===c.email.toLowerCase()&&pass===c.pass){showScreen('sc-admin');loadDash();return;}
+    errEl.style.display='block';return;
+  }
+  const users=getUsers();
+  const u=users.find(u=>u.email.toLowerCase()===email&&u.pass===pass&&u.role===loginRole);
+  if(u){
+    curUser=u;
+    if(loginRole==='coord'){document.getElementById('coord-name-display').textContent=u.name;showScreen('sc-coord');renderCoordList();}
+    else{document.getElementById('ap-name-display').textContent=u.name;showScreen('sc-ap');renderAPList();populateQuestSel();}
+    return;
+  }
+  errEl.style.display='block';
 }
 
-function fmt(v){return v.toFixed(1).replace('.',',');}
+function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-// ── OPÇÕES N/DIA (com 1 refeição / 2 refeições explícitos) ──
-const NDAY_OPTIONS = [
-  {value:1, label:'1 refeição — almoço'},
-  {value:1, label:'1 refeição — jantar'},
-  {value:1, label:'1 refeição — café'},
-  {value:1, label:'1 refeição — lanche'},
-  {value:2, label:'2 refeições — café x café'},
-  {value:2, label:'2 refeições — almoço + jantar'},
-  {value:2, label:'2 refeições — café + almoço'},
-  {value:2, label:'2 refeições — café + jantar'},
-  {value:3, label:'3 refeições — café + almoço + jantar'},
-  {value:4, label:'4x ou mais'},
+// ══ SIDEBAR ══
+function toggleSB(who){
+  const sb=document.getElementById(who+'-sb'),ov=document.getElementById(who+'-ov'),hb=document.getElementById(who+'-hbg');
+  const open=sb.classList.toggle('open');ov.classList.toggle('open',open);hb.classList.toggle('open',open);
+}
+function closeSB(who){['sb','ov','hbg'].forEach(s=>document.getElementById(who+'-'+s)?.classList.remove('open'));}
+
+// ══ ADMIN PANELS ══
+function showP(id,el){
+  document.querySelectorAll('#sc-admin .panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#sc-admin .nav').forEach(n=>n.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(el){el.classList.add('on');closeSB('adm');}
+  const map={dash:loadDash,participants:renderPTable,responses:populateRespSel,statistics:calcStats,charts:buildCharts,scientific:buildSciReport,export:loadExportPreview,users:renderUsersPanel};
+  if(map[id])map[id]();
+}
+
+function loadDash(){
+  const data=getData(),ans=data.filter(p=>p.status==='Respondido');
+  const avg=ans.length?ans.reduce((s,p)=>s+p.daily,0)/ans.length:0;
+  document.getElementById('dash-kpis').innerHTML=`
+    <div class="kpi"><div class="v">${data.length}</div><div class="l">Participantes</div></div>
+    <div class="kpi"><div class="v">${ans.length}</div><div class="l">Respondidos</div></div>
+    <div class="kpi"><div class="v">${data.length-ans.length}</div><div class="l">Pendentes</div></div>
+    <div class="kpi"><div class="v">${fmt(avg)}</div><div class="l">AGE Diário médio (kU/d)</div></div>`;
+  document.getElementById('dash-tb').innerHTML=ans.length
+    ?ans.slice(0,10).map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td><span class="ap-badge">👩‍⚕️ ${p.applicator||'—'}</span></td><td><b>${fmt(p.daily)}</b> kU/d</td><td>${p.date}</td><td><span class="badge bg">Respondido</span></td></tr>`).join('')
+    :'<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink3)">Nenhuma resposta ainda.</td></tr>';
+}
+
+function renderPTable(){
+  const q=(document.getElementById('ps-q')?.value||'').toLowerCase();
+  const g=document.getElementById('ps-g')?.value||'',s=document.getElementById('ps-s')?.value||'';
+  const list=getData().filter(p=>(!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)))&&(!g||p.group===g)&&(!s||p.status===s));
+  document.getElementById('p-tb').innerHTML=list.length
+    ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="ap-badge">👩‍⚕️ ${p.applicator||'—'}</span></td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td>${p.status==='Respondido'?fmt(p.daily)+' kU/d':'—'}</td><td style="display:flex;gap:5px"><button class="btn btn-o" onclick="viewP('${p.id}')">Ver</button><button class="btn btn-r" onclick="deleteP('${p.id}')">✕</button></td></tr>`).join('')
+    :'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink3)">Nenhum participante.</td></tr>';
+}
+
+function deleteP(id){if(!confirm(`Remover ${id}?`))return;setData(getData().filter(p=>p.id!==id));renderPTable();loadDash();toast('Participante removido');}
+
+function viewP(id){
+  const p=getData().find(x=>x.id===id);
+  document.getElementById('mv-title').textContent=`${p.id} — ${p.name}`;
+  document.getElementById('mv-body').innerHTML=iRow('Grupo',p.group)+iRow('Idade/Sexo',p.age+' anos, '+p.sex)+(p.obs?iRow('Obs.',p.obs):'')+iRow('Aplicador',p.applicator||'—')+iRow('Status',`<span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span>`)+iRow('AGE Semanal',fmt(p.total)+' kU/sem')+iRow('AGE Diário','<b>'+fmt(p.daily)+' kU/d</b>')+iRow('Data',p.date);
+  document.getElementById('modal-view').classList.add('open');
+}
+function iRow(l,v){return`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border);font-size:.84rem"><span style="color:var(--ink3)">${l}</span><span>${v}</span></div>`;}
+
+function populateRespSel(){
+  const ans=getData().filter(p=>p.status==='Respondido');
+  document.getElementById('resp-sel').innerHTML='<option value="">— Selecione —</option>'+ans.map(p=>`<option value="${p.id}">${p.id} — ${p.name}</option>`).join('');
+}
+
+function loadIndResp(){
+  const id=document.getElementById('resp-sel').value,area=document.getElementById('resp-area');
+  if(!id){area.innerHTML='<div class="empty"><div class="ei">📋</div><p>Selecione um participante.</p></div>';return;}
+  const p=getData().find(x=>x.id===id);
+  const q1=p.foods?.q1||[],q2=p.foods?.q2||[];
+  const maxA=Math.max(...[...q1,...q2].map(f=>f.age||0),1);
+  area.innerHTML=`<div style="max-width:680px"><div class="card"><div style="padding:16px">
+    <div style="margin-bottom:14px"><div style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">Identificação</div>
+    ${iRow('ID',p.id)}${iRow('Nome',p.name)}${iRow('Idade/Sexo',p.age+' anos, '+p.sex)}${iRow('Grupo',p.group)}${iRow('Aplicador',p.applicator||'—')}${iRow('Data',p.date)}</div>
+    <div style="margin-bottom:14px"><div style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">Escores AGE</div>
+    ${iRow('Q1 — Carnes',fmt(p.q1)+' kU/sem')}${iRow('Q2 — Laticínios',fmt(p.q2)+' kU/sem')}${iRow('Semanal Total',fmt(p.total)+' kU/sem')}${iRow('<b>AGE Diário Médio</b>','<b style="color:var(--accent);font-size:1rem">'+fmt(p.daily)+' kU/d</b>')}</div>
+    ${q1.length?'<div style="margin-bottom:12px"><div style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">Q1 — Alimentos</div>'+q1.map(f=>`<div class="bar-wrap"><div class="bar-lbl"><span>${f.name}${f.prep?' ('+f.prep+')':''}</span><span>${fmt(f.age)} kU</span></div><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(f.age/maxA*100)}%"></div></div></div>`).join('')+'</div>':''}
+    ${q2.length?'<div><div style="font-size:.7rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)">Q2 — Alimentos</div>'+q2.map(f=>`<div class="bar-wrap"><div class="bar-lbl"><span>${f.name}</span><span>${fmt(f.age)} kU</span></div><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(f.age/maxA*100)}%;background:var(--blue)"></div></div></div>`).join('')+'</div>':''}
+  </div></div></div>`;
+}
+
+// ══ STATISTICS ══
+function calcStats(){
+  const gf=document.getElementById('st-g').value;
+  let list=getData().filter(p=>p.status==='Respondido');
+  if(gf)list=list.filter(p=>p.group===gf);
+  if(!list.length){document.getElementById('stats-area').innerHTML='<div class="empty"><div class="ei">📈</div><p>Nenhuma resposta para calcular.</p></div>';return;}
+  const stats=computeStats(list.map(p=>p.daily));
+  const groups=[...new Set(getData().filter(p=>p.status==='Respondido').map(p=>p.group))];
+  const gstats=groups.map(g=>{
+    const gl=getData().filter(p=>p.status==='Respondido'&&p.group===g);
+    return{g,n:gl.length,...computeStats(gl.map(p=>p.daily))};
+  }).filter(x=>x.n>0);
+  document.getElementById('stats-area').innerHTML=`
+    <div class="sg">
+      <div class="sbox"><h4>Estatísticas Gerais — AGE Diário (kU/d)</h4>
+        <div class="srow"><span>N</span><span class="sv">${stats.n}</span></div>
+        <div class="srow"><span>Média</span><span class="sv">${fmt(stats.mean)}</span></div>
+        <div class="srow"><span>Desvio Padrão (DP)</span><span class="sv">± ${fmt(stats.sd)}</span></div>
+        <div class="srow"><span>Erro Padrão (EP)</span><span class="sv">± ${fmt(stats.se)}</span></div>
+        <div class="srow"><span>Mediana</span><span class="sv">${fmt(stats.median)}</span></div>
+        <div class="srow"><span>Q1 (25%)</span><span class="sv">${fmt(stats.q1)}</span></div>
+        <div class="srow"><span>Q3 (75%)</span><span class="sv">${fmt(stats.q3)}</span></div>
+        <div class="srow"><span>Mínimo</span><span class="sv">${fmt(stats.min)}</span></div>
+        <div class="srow"><span>Máximo</span><span class="sv">${fmt(stats.max)}</span></div>
+        <div class="srow"><span>Amplitude interquartil (IQR)</span><span class="sv">${fmt(stats.iqr)}</span></div>
+        <div class="srow"><span>Coef. de Variação (CV%)</span><span class="sv">${stats.cv.toFixed(1)}%</span></div>
+        <div class="srow"><span>IC 95% (inferior)</span><span class="sv">${fmt(stats.ci95[0])}</span></div>
+        <div class="srow"><span>IC 95% (superior)</span><span class="sv">${fmt(stats.ci95[1])}</span></div>
+      </div>
+      <div class="sbox"><h4>Comparação entre Grupos</h4>
+        ${gstats.map((gs,i)=>`<div style="margin-bottom:14px"><div style="font-weight:700;font-size:.85rem;margin-bottom:4px">${gs.g} <span style="font-weight:400;color:var(--ink3)">(n=${gs.n})</span></div>
+          <div class="srow"><span>Média ± DP</span><span class="sv">${fmt(gs.mean)} ± ${fmt(gs.sd)}</span></div>
+          <div class="srow"><span>Mediana (IQR)</span><span class="sv">${fmt(gs.median)} (${fmt(gs.iqr)})</span></div>
+          <div class="srow"><span>Mín – Máx</span><span class="sv">${fmt(gs.min)} – ${fmt(gs.max)}</span></div>
+          <div class="bar-wrap" style="margin-top:5px"><div class="bar-bg"><div class="bar-fill" style="width:${stats.max?Math.min(100,Math.round(gs.mean/stats.max*100)):0}%;background:${['var(--green)','var(--blue)','var(--amber)'][i%3]}"></div></div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="card"><div class="card-head"><span class="card-title">Ranking individual — AGE Diário</span></div>
+      <div style="padding:14px">${[...list].sort((a,b)=>b.daily-a.daily).map(p=>`
+        <div class="bar-wrap"><div class="bar-lbl"><span><b>${p.id}</b> ${p.name} <span style="color:var(--ink3);font-size:.73rem">(${p.group})</span></span><span>${fmt(p.daily)} kU/d</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${stats.max?Math.round(p.daily/stats.max*100):0}%"></div></div></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function computeStats(vals){
+  const n=vals.length;
+  if(!n) return{n:0,mean:0,sd:0,se:0,median:0,q1:0,q3:0,min:0,max:0,iqr:0,cv:0,ci95:[0,0]};
+  const mean=vals.reduce((a,b)=>a+b,0)/n;
+  const sd=n>1?Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/(n-1)):0;
+  const se=sd/Math.sqrt(n);
+  const sorted=[...vals].sort((a,b)=>a-b);
+  const median=n%2?sorted[Math.floor(n/2)]:(sorted[n/2-1]+sorted[n/2])/2;
+  const q1=sorted[Math.floor(n/4)]||sorted[0];
+  const q3=sorted[Math.floor(3*n/4)]||sorted[n-1];
+  const cv=mean?sd/mean*100:0;
+  return{n,mean,sd,se,median,q1,q3,min:sorted[0],max:sorted[n-1],iqr:q3-q1,cv,ci95:[mean-1.96*se,mean+1.96*se]};
+}
+
+// ══ CHARTS ══
+let chartInstances={};
+function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
+
+function buildCharts(){
+  const gf=document.getElementById('ch-g').value;
+  const answered=getData().filter(p=>p.status==='Respondido');
+  const groups=[...new Set(answered.map(p=>p.group))];
+  const colors=['#2D6A4F','#1A4A7A','#9B6000','#8B2020'];
+
+  // BOXPLOT (SVG-based, no external lib needed)
+  buildBoxplotSVG(answered,groups,colors,gf);
+
+  // BAR CHART (mean ± SD)
+  buildBarChart(answered,groups,colors,gf);
+
+  // SCATTER
+  buildScatterChart(answered,groups,colors,gf);
+}
+
+function buildBoxplotSVG(answered,groups,colors,gf){
+  const container=document.getElementById('ch-box');
+  const filtGroups=gf?[gf]:groups;
+  const W=container.parentElement.clientWidth-40||400,H=260;
+  const pad={l:50,r:20,t:20,b:50};
+  const plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+  const allVals=answered.map(p=>p.daily);
+  const maxV=Math.max(...allVals,1)*1.1,minV=0;
+  const yScale=v=>pad.t+plotH-(v-minV)/(maxV-minV)*plotH;
+  const bw=Math.min(60,plotW/filtGroups.length*0.5);
+  let svgContent=`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg" style="font-family:DM Sans,sans-serif">`;
+  // Y axis
+  for(let i=0;i<=5;i++){
+    const v=maxV*i/5;const y=yScale(v);
+    svgContent+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#DDD9D0" stroke-width="1"/>`;
+    svgContent+=`<text x="${pad.l-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#7A7A74">${v.toFixed(0)}</text>`;
+  }
+  filtGroups.forEach((g,gi)=>{
+    const gVals=answered.filter(p=>p.group===g).map(p=>p.daily);
+    if(!gVals.length)return;
+    const st=computeStats(gVals);
+    const x=pad.l+(gi+0.5)*plotW/filtGroups.length;
+    const col=colors[gi%colors.length];
+    // box
+    const y1=yScale(st.q3),y3=yScale(st.q1),ym=yScale(st.median);
+    svgContent+=`<rect x="${x-bw/2}" y="${y1}" width="${bw}" height="${y3-y1}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
+    svgContent+=`<line x1="${x-bw/2}" y1="${ym}" x2="${x+bw/2}" y2="${ym}" stroke="${col}" stroke-width="2.5"/>`;
+    // whiskers
+    const ymax=yScale(Math.min(st.max,st.q3+1.5*st.iqr));
+    const ymin=yScale(Math.max(st.min,st.q1-1.5*st.iqr));
+    svgContent+=`<line x1="${x}" y1="${y1}" x2="${x}" y2="${ymax}" stroke="${col}" stroke-width="1.5" stroke-dasharray="3"/>`;
+    svgContent+=`<line x1="${x}" y1="${y3}" x2="${x}" y2="${ymin}" stroke="${col}" stroke-width="1.5" stroke-dasharray="3"/>`;
+    svgContent+=`<line x1="${x-bw/4}" y1="${ymax}" x2="${x+bw/4}" y2="${ymax}" stroke="${col}" stroke-width="1.5"/>`;
+    svgContent+=`<line x1="${x-bw/4}" y1="${ymin}" x2="${x+bw/4}" y2="${ymin}" stroke="${col}" stroke-width="1.5"/>`;
+    // outliers
+    gVals.forEach(v=>{
+      if(v<st.q1-1.5*st.iqr||v>st.q3+1.5*st.iqr){
+        svgContent+=`<circle cx="${x}" cy="${yScale(v)}" r="3" fill="none" stroke="${col}" stroke-width="1.5"/>`;
+      }
+    });
+    svgContent+=`<text x="${x}" y="${H-pad.b+18}" text-anchor="middle" font-size="11" fill="#1A1A18" font-weight="600">${g}</text>`;
+    svgContent+=`<text x="${x}" y="${H-pad.b+30}" text-anchor="middle" font-size="9" fill="#7A7A74">n=${gVals.length}</text>`;
+  });
+  svgContent+=`<text x="${pad.l-35}" y="${pad.t+plotH/2}" transform="rotate(-90,${pad.l-35},${pad.t+plotH/2})" text-anchor="middle" font-size="10" fill="#7A7A74">AGE Diário (kU/d)</text>`;
+  svgContent+='</svg>';
+  container.outerHTML=`<div id="ch-box">${svgContent}</div>`;
+}
+
+function buildBarChart(answered,groups,colors,gf){
+  const canvas=document.getElementById('ch-bar');
+  if(!canvas)return; destroyChart('bar');
+  const filtGroups=gf?[gf]:groups;
+  const gstats=filtGroups.map((g,i)=>{
+    const gv=answered.filter(p=>p.group===g).map(p=>p.daily);
+    return{g,st:computeStats(gv),col:colors[i%colors.length]};
+  }).filter(x=>x.st.n>0);
+  const maxV=Math.max(...gstats.map(g=>g.st.mean+g.st.sd),1)*1.15;
+  const W=canvas.parentElement.clientWidth-40||400,H=260;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const pad={l:50,r:20,t:20,b:50};
+  const plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+  const bw=Math.min(60,plotW/gstats.length*0.55);
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#DDD9D0';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const v=maxV*i/5,y=pad.t+plotH-v/maxV*plotH;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='#7A7A74';ctx.font='10px DM Sans';ctx.textAlign='right';
+    ctx.fillText(v.toFixed(0),pad.l-6,y+4);
+  }
+  gstats.forEach((g,i)=>{
+    const x=pad.l+(i+0.5)*plotW/gstats.length;
+    const barH=g.st.mean/maxV*plotH;
+    const y=pad.t+plotH-barH;
+    ctx.fillStyle=g.col+'99';ctx.fillRect(x-bw/2,y,bw,barH);
+    ctx.strokeStyle=g.col;ctx.lineWidth=2;ctx.strokeRect(x-bw/2,y,bw,barH);
+    // error bar
+    const sdH=g.st.sd/maxV*plotH;
+    ctx.beginPath();ctx.strokeStyle=g.col;ctx.lineWidth=2;
+    ctx.moveTo(x,y);ctx.lineTo(x,y-sdH);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x-bw/4,y-sdH);ctx.lineTo(x+bw/4,y-sdH);ctx.stroke();
+    ctx.fillStyle='#1A1A18';ctx.font='bold 11px DM Sans';ctx.textAlign='center';
+    ctx.fillText(g.g,x,H-pad.b+16);
+    ctx.fillStyle='#7A7A74';ctx.font='9px DM Sans';
+    ctx.fillText(`${fmt(g.st.mean)} ± ${fmt(g.st.sd)}`,x,H-pad.b+28);
+  });
+  ctx.save();ctx.fillStyle='#7A7A74';ctx.font='10px DM Sans';ctx.translate(pad.l-35,pad.t+plotH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('AGE Diário (kU/d)',0,0);ctx.restore();
+  chartInstances['bar']={destroy:()=>{}};
+}
+
+function buildScatterChart(answered,groups,colors,gf){
+  const canvas=document.getElementById('ch-scatter');
+  if(!canvas)return; destroyChart('scatter');
+  const list=gf?answered.filter(p=>p.group===gf):answered;
+  if(!list.length)return;
+  const maxV=Math.max(...list.map(p=>p.daily),1)*1.1;
+  const W=canvas.parentElement.clientWidth-40||600,H=200;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const pad={l:50,r:20,t:20,b:50};
+  const plotW=W-pad.l-pad.r,plotH=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#DDD9D0';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const v=maxV*i/5,y=pad.t+plotH-v/maxV*plotH;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='#7A7A74';ctx.font='10px DM Sans';ctx.textAlign='right';ctx.fillText(v.toFixed(0),pad.l-5,y+4);
+  }
+  // mean line
+  const mean=list.reduce((s,p)=>s+p.daily,0)/list.length;
+  const meanY=pad.t+plotH-mean/maxV*plotH;
+  ctx.setLineDash([6,3]);ctx.strokeStyle='#C8502A';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,meanY);ctx.lineTo(W-pad.r,meanY);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#C8502A';ctx.font='9px DM Sans';ctx.textAlign='left';ctx.fillText('Média: '+fmt(mean),W-pad.r-60,meanY-4);
+  list.forEach((p,i)=>{
+    const col=colors[groups.indexOf(p.group)%colors.length]||'#2D6A4F';
+    const x=pad.l+(i+0.5)*plotW/list.length;
+    const y=pad.t+plotH-p.daily/maxV*plotH;
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle=col+'cc';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='#3D3D39';ctx.font='9px DM Sans';ctx.textAlign='center';ctx.fillText(p.id,x,H-pad.b+15);
+  });
+  ctx.save();ctx.fillStyle='#7A7A74';ctx.font='10px DM Sans';ctx.translate(pad.l-38,pad.t+plotH/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText('AGE Diário (kU/d)',0,0);ctx.restore();
+  // legend
+  const uniqG=gf?[gf]:[...new Set(list.map(p=>p.group))];
+  uniqG.forEach((g,i)=>{
+    const col=colors[groups.indexOf(g)%colors.length];
+    ctx.fillStyle=col;ctx.fillRect(pad.l+i*120,H-12,10,10);
+    ctx.fillStyle='#3D3D39';ctx.font='10px DM Sans';ctx.textAlign='left';ctx.fillText(g,pad.l+i*120+14,H-4);
+  });
+  chartInstances['scatter']={destroy:()=>{}};
+}
+
+// ══ SCIENTIFIC REPORT ══
+function buildSciReport(){
+  const answered=getData().filter(p=>p.status==='Respondido');
+  if(!answered.length){document.getElementById('sci-area').innerHTML='<div class="empty"><div class="ei">🔬</div><p>Nenhuma resposta disponível para gerar o relatório.</p></div>';return;}
+  const groups=[...new Set(answered.map(p=>p.group))];
+  const all=computeStats(answered.map(p=>p.daily));
+  const gstats=groups.map(g=>{
+    const gl=answered.filter(p=>p.group===g);
+    return{g,n:gl.length,st:computeStats(gl.map(p=>p.daily))};
+  });
+  const today=new Date().toLocaleDateString('pt-BR');
+  const todayEN=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('sci-area').innerHTML=`
+  <div class="sci-report" id="sci-printable">
+    <div style="text-align:center;padding:20px 0;border-bottom:2px solid var(--ink);margin-bottom:20px">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--ink)">AGEscore Brasil</div>
+      <div style="font-size:.85rem;color:var(--ink3);margin-top:4px">Relatório de Análise Estatística · Statistical Analysis Report</div>
+      <div style="font-size:.78rem;color:var(--ink4);margin-top:2px">${today} · ${todayEN}</div>
+    </div>
+
+    <div class="sci-section">
+      <h3>Tabela 1 · Table 1 — Características da amostra · Sample Characteristics</h3>
+      <table class="sci-table">
+        <thead><tr><th>Variável · Variable</th><th>Total (n=${answered.length})</th>${groups.map((g,i)=>`<th>${g} (n=${gstats[i].n})</th>`).join('')}</tr></thead>
+        <tbody>
+          <tr><td>Sexo Feminino · Female (%)</td><td>${pct(answered.filter(p=>p.sex==='Feminino').length,answered.length)}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${pct(gl.filter(p=>p.sex==='Feminino').length,gl.length)}</td>`}).join('')}</tr>
+          <tr><td>Idade (anos) · Age (years) — Média ± DP · Mean ± SD</td><td>${fmtStat(answered.map(p=>p.age))}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${fmtStat(gl.map(p=>p.age))}</td>`}).join('')}</tr>
+        </tbody>
+      </table>
+      <div class="sci-note">Dados expressos como média ± desvio padrão ou n (%) · Data expressed as mean ± SD or n (%)</div>
+    </div>
+
+    <div class="sci-section">
+      <h3>Tabela 2 · Table 2 — Escore AGE Dietético · Dietary AGE Score</h3>
+      <table class="sci-table">
+        <thead><tr><th>Variável · Variable</th><th>Total (n=${answered.length})</th>${groups.map((g,i)=>`<th>${g} (n=${gstats[i].n})</th>`).join('')}</tr></thead>
+        <tbody>
+          <tr><td>AGE Semanal (kU/sem) · Weekly AGE (kU/wk) — Média ± DP</td><td>${fmtStatArr(answered.map(p=>p.total))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.total))}</td>`).join('')}</tr>
+          <tr><td>AGE Diário (kU/d) · Daily AGE (kU/d) — Média ± DP</td><td>${fmt(all.mean)} ± ${fmt(all.sd)}</td>${gstats.map(gs=>`<td>${fmt(gs.st.mean)} ± ${fmt(gs.st.sd)}</td>`).join('')}</tr>
+          <tr><td>AGE Diário — Mediana (IIQ) · Median (IQR)</td><td>${fmt(all.median)} (${fmt(all.iqr)})</td>${gstats.map(gs=>`<td>${fmt(gs.st.median)} (${fmt(gs.st.iqr)})</td>`).join('')}</tr>
+          <tr><td>AGE Diário — Mín–Máx · Min–Max</td><td>${fmt(all.min)} – ${fmt(all.max)}</td>${gstats.map(gs=>`<td>${fmt(gs.st.min)} – ${fmt(gs.st.max)}</td>`).join('')}</tr>
+          <tr><td>IC 95% · 95% CI</td><td>${fmt(all.ci95[0])} – ${fmt(all.ci95[1])}</td>${gstats.map(gs=>`<td>${fmt(gs.st.ci95[0])} – ${fmt(gs.st.ci95[1])}</td>`).join('')}</tr>
+          <tr><td>AGE Q1 — Carnes (kU/sem) · Meat AGE</td><td>${fmtStatArr(answered.map(p=>p.q1))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q1))}</td>`).join('')}</tr>
+          <tr><td>AGE Q2 — Laticínios/Óleos (kU/sem) · Dairy/Oils AGE</td><td>${fmtStatArr(answered.map(p=>p.q2))}</td>${gstats.map(gs=>`<td>${fmtStatArr(getData().filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q2))}</td>`).join('')}</tr>
+        </tbody>
+      </table>
+      <div class="sci-note">AGE: Produtos Finais de Glicação Avançada · Advanced Glycation End-products. kU: quilounidades AGE · kU: kilounits AGE. IIQ: Intervalo Interquartil · IQR: Interquartile Range. IC 95%: Intervalo de Confiança de 95% · 95% CI: 95% Confidence Interval.</div>
+    </div>
+
+    <div class="sci-section">
+      <h3>Tabela 3 · Table 3 — Dados individuais · Individual Data</h3>
+      <table class="sci-table">
+        <thead><tr><th>ID</th><th>Grupo · Group</th><th>Sexo · Sex</th><th>Idade · Age</th><th>Aplicador · Applicator</th><th>AGE Semanal (kU/sem)</th><th>AGE Diário (kU/d)</th><th>AGE Q1 (kU/sem)</th><th>AGE Q2 (kU/sem)</th></tr></thead>
+        <tbody>${answered.map(p=>`<tr><td>${p.id}</td><td>${p.group}</td><td>${p.sex==='Feminino'?'F':'M'}</td><td>${p.age}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('')}</tbody>
+      </table>
+    </div>
+
+    <div style="text-align:center;padding:16px 0;border-top:1px solid var(--border);margin-top:10px;font-size:.74rem;color:var(--ink3)">
+      Gerado por AGEscore Brasil · Generated by AGEscore Brasil · pedrodonizettipalestrante@gmail.com · ${today}
+    </div>
+  </div>`;
+}
+
+function fmtStat(vals){const s=computeStats(vals);return`${fmt(s.mean)} ± ${fmt(s.sd)}`;}
+function fmtStatArr(vals){const s=computeStats(vals);return`${fmt(s.mean)} ± ${fmt(s.sd)}`;}
+function pct(n,total){return total?n+' ('+((n/total)*100).toFixed(1)+'%)':'0 (0%)';}
+
+function printSciReport(){
+  if(!document.getElementById('sci-printable')){buildSciReport();}
+  setTimeout(()=>{
+    const el=document.getElementById('sci-printable');
+    if(!el)return;
+    const w=window.open('','_blank');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>AGEscore — Relatório Científico</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'DM Sans',sans-serif;font-size:12px;color:#1A1A18;padding:20px;max-width:900px;margin:0 auto}
+    h3{font-family:'DM Serif Display',serif;font-size:14px;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid #1A1A18}
+    table{width:100%;border-collapse:collapse;margin-bottom:6px;font-size:11px}
+    th{background:#3D3D39;color:#fff;padding:7px 8px;text-align:center;font-size:10px;font-weight:700}
+    td{padding:6px 8px;text-align:center;border:1px solid #DDD9D0}
+    tr:nth-child(even) td{background:#F7F4EF}
+    .note{font-size:10px;color:#7A7A74;font-style:italic;margin-top:4px}
+    @media print{body{padding:10px}}</style></head><body>`);
+    w.document.write(el.innerHTML);
+    w.document.write('</body></html>');
+    w.document.close();
+    setTimeout(()=>w.print(),600);
+  },100);
+}
+
+// ══ EXPORT ══
+function loadExportPreview(){
+  document.getElementById('exp-tb').innerHTML=getData().map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${p.group}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('');
+}
+
+function exportExcel(){
+  const data=getData();
+  const rows=[['ID','Nome','Idade','Sexo','Grupo','Obs','Aplicador','Status','AGE Q1 (kU/sem)','AGE Q2 (kU/sem)','AGE Semanal','AGE Diário','Data']];
+  data.forEach(p=>rows.push([p.id,p.name,p.age,p.sex,p.group,p.obs||'',p.applicator||'',p.status,p.q1,p.q2,p.total,p.daily,p.date]));
+  const ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Dados');
+  const ans=getData().filter(p=>p.status==='Respondido');
+  const st=computeStats(ans.map(p=>p.daily));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([
+    ['Estatística','Valor'],['N',st.n],['Média (kU/d)',+st.mean.toFixed(2)],['DP (kU/d)',+st.sd.toFixed(2)],
+    ['EP (kU/d)',+st.se.toFixed(2)],['Mediana',+st.median.toFixed(2)],['Q1 (25%)',+st.q1.toFixed(2)],
+    ['Q3 (75%)',+st.q3.toFixed(2)],['IQR',+st.iqr.toFixed(2)],['Mínimo',+st.min.toFixed(2)],['Máximo',+st.max.toFixed(2)],
+    ['IC95% inferior',+st.ci95[0].toFixed(2)],['IC95% superior',+st.ci95[1].toFixed(2)],['CV%',+st.cv.toFixed(1)]
+  ]),'Estatísticas');
+  XLSX.writeFile(wb,'AGEscore_dados.xlsx');toast('📊 Excel exportado!');
+}
+
+function exportCSV(){
+  const data=getData();
+  const h='ID,Nome,Idade,Sexo,Grupo,Aplicador,Status,AGE_Q1,AGE_Q2,AGE_Semanal,AGE_Diario,Data\n';
+  const rows=data.map(p=>[p.id,'"'+p.name+'"',p.age,p.sex,p.group,p.applicator||'',p.status,p.q1,p.q2,p.total,p.daily,p.date].join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h+rows],{type:'text/csv;charset=utf-8'}));a.download='AGEscore.csv';a.click();
+  toast('📄 CSV exportado!');
+}
+
+function saveAdminCreds(){
+  const email=document.getElementById('set-adm-email').value.trim();
+  const pass=document.getElementById('set-adm-pass').value;
+  if(!email)return;
+  const c=adminCreds();
+  localStorage.setItem(CK,JSON.stringify({email,pass:pass||c.pass}));
+  toast('✅ Credenciais salvas!');
+}
+function clearAll(){setData([]);toast('🗑 Dados apagados');loadDash();}
+
+// ══ USERS MANAGEMENT ══
+function renderUsersPanel(){
+  const users=getUsers(),data=getData();
+  const coords=users.filter(u=>u.role==='coord');
+  const aps=users.filter(u=>u.role==='aplicador');
+  document.getElementById('coord-tb').innerHTML=coords.length
+    ?coords.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="badge bp">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u.id}')">Remover</button></td></tr>`).join('')
+    :'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum coordenador cadastrado.</td></tr>';
+  document.getElementById('ap-tb-admin').innerHTML=aps.length
+    ?aps.map(u=>{const cnt=data.filter(p=>p.applicator===u.name).length;return`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td>${cnt}</td><td><span class="badge bg">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u.id}')">Remover</button></td></tr>`;}).join('')
+    :'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum aplicador cadastrado.</td></tr>';
+}
+
+function openNewUser(role){
+  newUserRole=role;
+  document.getElementById('nu-title').textContent=role==='coord'?'Novo Coordenador':'Novo Aplicador';
+  document.getElementById('nu-name').value='';document.getElementById('nu-email').value='';document.getElementById('nu-pass').value='';
+  document.getElementById('nu-err').style.display='none';
+  document.getElementById('modal-new-user').classList.add('open');
+}
+
+function createUser(){
+  const name=document.getElementById('nu-name').value.trim();
+  const email=document.getElementById('nu-email').value.trim();
+  const pass=document.getElementById('nu-pass').value;
+  const errEl=document.getElementById('nu-err');
+  if(!name||!email||!pass){errEl.textContent='Preencha todos os campos.';errEl.style.display='block';return;}
+  const users=getUsers();
+  if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())){errEl.textContent='E-mail já cadastrado.';errEl.style.display='block';return;}
+  users.push({id:'USR-'+Date.now(),name,email,pass,role:newUserRole});
+  setUsers(users);closeM('modal-new-user');renderUsersPanel();toast(`✅ ${name} criado(a)!`);
+}
+
+function deleteUser(id){
+  if(!confirm('Remover este usuário?'))return;
+  setUsers(getUsers().filter(u=>u.id!==id));renderUsersPanel();toast('Usuário removido');
+}
+
+// ══ COORDENADOR ══
+function showCoord(id,el){
+  document.querySelectorAll('#sc-coord .panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#sc-coord .nav').forEach(n=>n.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(el){el.classList.add('on');closeSB('coord');}
+  if(id==='coord-list')renderCoordList();
+}
+
+function renderCoordList(){
+  const q=(document.getElementById('coord-search')?.value||'').toLowerCase();
+  const list=getData().filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
+  document.getElementById('coord-p-tb').innerHTML=list.length
+    ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td>
+      <td style="display:flex;gap:5px"><button class="btn btn-o" onclick="viewPCoord('${p.id}')">Ver</button><button class="btn btn-r" onclick="deletePCoord('${p.id}')">✕</button></td></tr>`).join('')
+    :'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink3)">Nenhum participante.</td></tr>';
+}
+
+function deletePCoord(id){if(!confirm(`Remover ${id}?`))return;setData(getData().filter(p=>p.id!==id));renderCoordList();toast('Participante removido');}
+function viewPCoord(id){viewP(id);} // reuse admin viewP
+
+function createParticipantCoord(){
+  const name=document.getElementById('cnp-name').value.trim();
+  const age=document.getElementById('cnp-age').value;
+  const errEl=document.getElementById('cnp-err');
+  if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  const data=getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  data.push({id:newId,name,age:parseInt(age),sex:document.getElementById('cnp-sex').value,group:document.getElementById('cnp-group').value,obs:document.getElementById('cnp-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}});
+  setData(data);document.getElementById('cnp-name').value='';document.getElementById('cnp-age').value='';document.getElementById('cnp-obs').value='';
+  toast(`✅ ${newId} cadastrado!`);renderCoordList();
+}
+
+// ══ APLICADOR ══
+function showAP(id,el){
+  document.querySelectorAll('#sc-ap .panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('#sc-ap .nav').forEach(n=>n.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(el){el.classList.add('on');closeSB('ap');}
+  if(id==='ap-list')renderAPList();
+  if(id==='ap-quest')populateQuestSel();
+}
+
+function renderAPList(){
+  const q=(document.getElementById('ap-search')?.value||'').toLowerCase();
+  const list=getData().filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
+  document.getElementById('ap-p-tb').innerHTML=list.length
+    ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td><button class="btn btn-g" onclick="goApplyFor('${p.id}')">📝 Aplicar</button></td></tr>`).join('')
+    :'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--ink3)">Nenhum participante cadastrado.</td></tr>';
+}
+
+function createParticipant(){
+  const name=document.getElementById('np-name').value.trim();
+  const age=document.getElementById('np-age').value;
+  const errEl=document.getElementById('np-err');
+  if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
+  errEl.style.display='none';
+  const data=getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  data.push({id:newId,name,age:parseInt(age),sex:document.getElementById('np-sex').value,group:document.getElementById('np-group').value,obs:document.getElementById('np-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}});
+  setData(data);document.getElementById('np-name').value='';document.getElementById('np-age').value='';document.getElementById('np-obs').value='';
+  toast(`✅ ${newId} cadastrado!`);populateQuestSel();renderAPList();
+}
+
+function goApplyFor(id){document.getElementById('q-part-sel').value=id;showAP('ap-quest',document.querySelectorAll('#sc-ap .nav')[2]);loadQuestParticipant();}
+
+function populateQuestSel(){
+  const sel=document.getElementById('q-part-sel'),cur=sel.value;
+  sel.innerHTML='<option value="">— Selecione o participante —</option>'+getData().map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
+}
+
+// ══ QUESTIONNAIRE ══
+const NDAY_OPTS=[{v:1,l:'1 refeição — almoço'},{v:1,l:'1 refeição — jantar'},{v:1,l:'1 refeição — café'},{v:1,l:'1 refeição — lanche'},{v:2,l:'2 refeições — café x café'},{v:2,l:'2 refeições — almoço + jantar'},{v:2,l:'2 refeições — café + almoço'},{v:2,l:'2 refeições — café + jantar'},{v:3,l:'3 refeições — café + almoço + jantar'},{v:4,l:'4x ou mais'}];
+function ndaySel(onch){return`<select class="nday-select" onchange="${onch}">${NDAY_OPTS.map(o=>`<option value="${o.v}">${o.l}</option>`).join('')}</select>`;}
+
+const Q1C=[
+  {id:'carnes',icon:'🥩',name:'Carnes Vermelhas',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[3,6,8.6,12,10],
+   foods:[{id:'cv-0',n:'Bife (bisteca bovina, chuleta)',d:'110g · 1 unidade médio'},{id:'cv-1',n:'Moída',d:'110g · 1 escumadeira'},{id:'cv-2',n:'Almôndega',d:'110g · 3 unidades médias'},{id:'cv-3',n:'Hambúrguer de carne',d:'110g · 1 unidade médio'},{id:'cv-4',n:'Cubos ou picados',d:'110g · 1 escumadeira'}]},
+  {id:'aves',icon:'🍗',name:'Aves',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[1.3,5.3,6.5,9.7,7.8],
+   foods:[{id:'av-0',n:'Filé de frango (peito, sassami)',d:'110g · 1 bife grande'},{id:'av-1',n:'Frango partes (coxa, sobrecoxa)',d:'110g · 1 unidade grande'},{id:'av-2',n:'Frango nuggets congelado',d:'110g · 5 unidades'},{id:'av-3',n:'Hambúrguer de frango',d:'110g · 1 unidade médio'},{id:'av-4',n:'Linguiça de frango',d:'110g · 2 unidades'},{id:'av-5',n:'Frango filé-peito empanado (crocante)',d:'110g · 1 unidade'}]},
+  {id:'suinos',icon:'🥓',name:'Suínos',methods:['Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[4.9,4.3,12,5.2],
+   foods:[{id:'su-0',n:'Bife (bisteca suína)',d:'110g · 1 unidade médio'},{id:'su-1',n:'Costela',d:'110g · 3 pedaços médios'},{id:'su-2',n:'Torresmo',d:'110g · 1 escumadeira'},{id:'su-3',n:'Linguiça de porco (toscana)',d:'110g · 2 unidades'}]},
+  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Frito'],scores:[0.6,1.4],
+   foods:[{id:'ov-0',n:'Ovo de galinha (inteiro, mexido, omelete)',d:'50g · 1 unidade médio'},{id:'ov-1',n:'Ovo de codorna',d:'10g · 5 unidades'}]},
+  {id:'embutidos',icon:'🌭',name:'Embutidos',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
+   foods:[{id:'em-0',n:'Salsicha',d:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},{id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},{id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',cs:[null,null,null,null,6.6]},{id:'em-3',n:'Mortadela, presunto, salame, copa',d:'60g · 3 fatias',cs:[1.2,null,null,null,null]}]},
+  {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',fixedScore:true,
+   foods:[{id:'px-0',n:'Filé de peixe (pescada, badejo, sardinha)',d:'110g · 1 unidade médio',fa:null},{id:'px-1',n:'Atum / sardinha (lata em óleo)',d:'110g · 1 unidade',fa:1},{id:'px-2',n:'Atum / salmão / frutos do mar (cru/ceviche)',d:'110g · 1 unidade',fa:1},{id:'px-3',n:'Camarão / frutos do mar (empanado)',d:'110g · 1 porção média',fa:4.8},{id:'px-4',n:'Camarão / frutos do mar (cozido/grelhado)',d:'110g · 1 porção média',fa:2.3},{id:'px-5',n:'Casquinha de siri / frutos do mar (gratinado)',d:'110g · 1 porção média',fa:3.7}]},
 ];
+const Q2C=[
+  {id:'laticinios',icon:'🧀',name:'Leite e derivados',items:[{id:'q2-0',n:'Queijo minas, muçarela',d:'50g · 1 fatia grossa ou 3 finas',s:1.4},{id:'q2-1',n:'Queijo parmesão, provolone',d:'30g · 1 col. sopa ou 2 fatias',s:5.1},{id:'q2-2',n:'Queijo gorgonzola',d:'30g · 1 col. sopa ou 2 fatias',s:2.5},{id:'q2-3',n:'Queijo brie, cheddar',d:'50g · 1 fatia grossa ou 3 finas',s:2.8},{id:'q2-4',n:'Queijo cremoso, ricota, cottage, minas light',d:'30g · 1 col. sopa',s:0.4},{id:'q2-5',n:'Requeijão tradicional',d:'30g · 1 col. sopa',s:2.6},{id:'q2-6',n:'Requeijão light',d:'30g · 1 col. sopa',s:1.2},{id:'q2-7',n:'Manteiga',d:'8g · 1 col. de chá',s:1.9}]},
+  {id:'oleos',icon:'🫒',name:'Óleos, gorduras e oleaginosas',items:[{id:'q2-8',n:'Oleaginosas (amêndoas, nozes, castanhas, pistache)',d:'30g · 1 col. sopa',s:2.0},{id:'q2-9',n:'Sementes (girassol, chia, linhaça, gergelim)',d:'30g · 1 col. sopa',s:0.5},{id:'q2-10',n:'Pasta de amendoim ou creme de avelã',d:'20g · 1 col. sopa',s:2.0},{id:'q2-11',n:'Azeite de oliva, óleo de canola/composto',d:'13ml · 1 col. sopa',s:1.0},{id:'q2-12',n:'Óleo de girassol e óleo de milho',d:'13ml · 1 col. sopa',s:0.5},{id:'q2-13',n:'Óleo de gergelim',d:'13ml · 1 col. sopa',s:2.8},{id:'q2-14',n:'Óleo de coco e banha de porco',d:'13ml · 1 col. sopa',s:3.0},{id:'q2-15',n:'Margarina',d:'8g · 1 col. de chá',s:0.8},{id:'q2-16',n:'Margarina light',d:'8g · 1 col. de chá',s:0.3},{id:'q2-17',n:'Maionese',d:'30g · 1 col. sopa',s:2.8},{id:'q2-18',n:'Maionese light',d:'30g · 1 col. sopa',s:0.7}]},
+  {id:'fastfood',icon:'🍔',name:'Fast food',items:[{id:'q2-19',n:'Salgados (pastel, coxinha, risole, empada)',d:'50g · 1 unidade médio',s:2.5},{id:'q2-20',n:'Batata chips em saquinho',d:'45g · 1 pacote pequeno',s:1.0},{id:'q2-21',n:'Tapioca / crepioca recheada / suflê',d:'80g · 1 unidade',s:1.5},{id:'q2-22',n:'Croassant, folhados',d:'40g · 1 unidade',s:0.5},{id:'q2-23',n:'Pizza, misto quente ou bauru',d:'90g · 1 fatia ou 1 unidade',s:5.0},{id:'q2-24',n:'Cachorro quente',d:'190g · 1 unidade',s:10.0},{id:'q2-25',n:'Mini Cheesebúrguer',d:'100g · 1 unidade',s:3.9},{id:'q2-26',n:'Cheesebúrguer salada completo (fast food)',d:'240g · 1 unidade',s:18.2},{id:'q2-27',n:'Cheesebúrguer ou Cheeseburguerbacon',d:'200g · 1 unidade',s:12.6},{id:'q2-28',n:'Cheese filé de frango',d:'170g · 1 unidade',s:8.8}]},
+  {id:'preparacoes',icon:'🍲',name:'Preparações',items:[{id:'q2-29',n:'Lasanha, fricassê, escondidinho de carne/frango',d:'110g · 1 escumadeira',s:6.0},{id:'q2-30',n:'Feijoada, feijão tropeiro, estrogonofe',d:'110g · 1 concha',s:2.0},{id:'q2-31',n:'Yakissoba, massa c/ molho bolonhesa, nhoque',d:'90g · 1 escumadeira',s:1.0},{id:'q2-32',n:'Tapioca/crepioca recheada (frango, queijo, presunto)',d:'80g · 1 unidade',s:1.5}]},
+  {id:'diversos',icon:'🍪',name:'Diversos',items:[{id:'q2-33',n:'Chocolate barra (ao leite, branco, amargo)',d:'30g · 1 unidade',s:1.0},{id:'q2-34',n:'Biscoito recheado, cookies (doces)',d:'60g · 2 unidades',s:1.5},{id:'q2-35',n:'Bolos, tortas, muffin (doces)',d:'60g · 1 unidade/fatia',s:2.0},{id:'q2-36',n:'Pão de queijo',d:'50g · 1 unidade',s:1.3},{id:'q2-37',n:'Pão com queijo derretido',d:'50g · 1 unidade',s:2.8},{id:'q2-38',n:'Pão com manteiga na chapa',d:'50g · 1 unidade',s:1.3},{id:'q2-39',n:'Batata congelada frita em óleo',d:'100g · 1 porção média',s:1.5},{id:'q2-40',n:'Batata/mandioca/polenta (frita em óleo)',d:'100g · 1 porção média',s:0.6},{id:'q2-41',n:'Batata/mandioca/polenta (assado/air fryer)',d:'100g · 1 porção média',s:0.3}]},
+];
+const DS=['S','T','Q','Q','S','S','D'];
 
-function buildNdaySelect(foodId, catId, onChangeCall){
-  let opts = NDAY_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
-  return `<select class="nday-select" onchange="${onChangeCall}">${opts}</select>`;
+function initSt(id,nP){if(!qState[id])qState[id]={days:[0,0,0,0,0,0,0],qty:1,nday:1,prep:Array(nP).fill(0)};}
+function getDias(id){return qState[id]?.days.reduce((a,v)=>a+(v?1:0),0)||0;}
+function getTotalP(id){const s=qState[id];if(!s)return 0;return Math.round(((s.qty||0)*getDias(id)*(s.nday||1))*100)/100;}
+
+function loadQuestParticipant(){
+  const id=document.getElementById('q-part-sel').value;
+  const area=document.getElementById('quest-area'),bar=document.getElementById('sumbar');
+  if(!id){area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';bar.style.display='none';return;}
+  const p=getData().find(x=>x.id===id);
+  curApPart=p;bar.style.display='flex';qState={};
+  area.innerHTML=`
+    <div class="q-patient-bar"><h3>📋 Participante selecionado</h3>
+      <div class="pinfo-grid">
+        <div class="pii"><div class="l">ID</div><div class="v">${p.id}</div></div>
+        <div class="pii"><div class="l">Nome</div><div class="v">${p.name}</div></div>
+        <div class="pii"><div class="l">Grupo</div><div class="v">${p.group}</div></div>
+        <div class="pii"><div class="l">Idade</div><div class="v">${p.age} anos</div></div>
+        <div class="pii"><div class="l">Sexo</div><div class="v">${p.sex}</div></div>
+        <div class="pii"><div class="l">Status</div><div class="v"><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></div></div>
+      </div>
+    </div>
+    <div class="q-tabs">
+      <button class="q-tab on" onclick="swQTab(0)">Q1 — Carnes e Proteínas</button>
+      <button class="q-tab" onclick="swQTab(1)">Q2 — Laticínios, Óleos e Outros</button>
+    </div>
+    <div class="qpanel on" id="qp0">
+      <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong> (SEG–DOM). ② <strong>Qtd</strong> de porções por refeição <em>(0,5=meia · 1=padrão 110g · 2=dupla)</em>. ③ <strong>N/dia</strong> (vezes ao dia). ④ <strong>Total Porções</strong> = Qtd × Dias × N/dia. ⑤ Distribua pelos <strong>métodos de preparo</strong>. ⑥ Peixes: escore já fixo por item.</div>
+      <div id="q1-content"></div>
+    </div>
+    <div class="qpanel" id="qp1">
+      <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong>. ② <strong>Qtd</strong> (porções). ③ <strong>N/dia</strong>. Escore AGE fixo por alimento. Cálculo: <strong>Qtd × Dias × N/dia × Escore</strong>.</div>
+      <div id="q2-content"></div>
+    </div>`;
+  buildQ1full();buildQ2full();updateSumBar();
 }
 
-// ── BUILD Q1 ──
-function buildQ1(){
-  const cont=document.getElementById('q1-sections');
-  Q1_CATS.forEach(cat=>{
-    const section=document.createElement('div');section.className='section';
+function swQTab(i){document.querySelectorAll('.q-tab').forEach((t,j)=>t.classList.toggle('on',j===i));document.querySelectorAll('.qpanel').forEach((p,j)=>p.classList.toggle('on',j===i));}
 
+function buildQ1full(){
+  const cont=document.getElementById('q1-content');cont.innerHTML='';
+  Q1C.forEach(cat=>{
+    const sec=document.createElement('div');sec.className='q-section';
     if(cat.fixedScore){
-      // PEIXES — tabela sem painel de preparo, AGE único por item
-      section.innerHTML=`
-        <div class="section-header">
-          <div class="section-icon">${cat.icon}</div>
-          <div class="section-title">${cat.name}</div>
-          <div class="section-age-badge" id="badge-${cat.id}">AGE 0,0</div>
-        </div>
-        <table class="food-table">
-          <thead><tr>
-            <th>Alimento</th>
-            <th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SAB</th><th>DOM</th>
-            <th>Qtd<br><small style="font-size:9px;opacity:.7;font-weight:400">porções</small></th>
-            <th>Vezes ao dia</th>
-            <th>Escore<br><small style="font-size:9px;opacity:.7;font-weight:400">fixo</small></th>
-            <th>AGE</th>
-          </tr></thead>
-          <tbody id="tbody-${cat.id}"></tbody>
-        </table>`;
-      cont.appendChild(section);
-      const tbody=document.getElementById(`tbody-${cat.id}`);
+      sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
+        <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore fixo</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
+      cont.appendChild(sec);
+      const tb=document.getElementById(`qtb-${cat.id}`);
       cat.foods.forEach(food=>{
         initSt(food.id,0);
         const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=food.id;tr.dataset.cat=cat.id;
-        const dayBtns=DAYS_SHORT.map((d,i)=>
-          `<td class="day-cell"><button class="day-toggle" onclick="tDayFish('${food.id}','${cat.id}',${i},this)">${d}</button></td>`
-        ).join('');
-        const scoreDisplay = food.fixedAge!=null
-          ? `<strong>${String(food.fixedAge).replace('.',',')}</strong>`
-          : `<span style="color:var(--ink4)">—</span>`;
-        tr.innerHTML=`
-          <td class="food-name">${food.name}<span class="food-desc">${food.desc}</span></td>
-          ${dayBtns}
-          <td><input class="num-input" type="number" min="0" step="0.5" placeholder="1" value="1" oninput="recalcFish('${food.id}','${cat.id}')"></td>
-          <td>${buildNdaySelect(food.id, cat.id, `recalcFish('${food.id}','${cat.id}')`)}</td>
-          <td class="q2-score-col">${scoreDisplay}</td>
-          <td><span class="age-cell age-zero" id="age-${food.id}">—</span></td>`;
-        tbody.appendChild(tr);
+        const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${food.id}_${di}" onclick="tDayFish('${food.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
+        tr.innerHTML=`<td class="food-name">${food.n}<span class="food-desc">${food.d}</span></td>${days}
+          <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalcFish('${food.id}','${cat.id}')"></td>
+          <td>${ndaySel(`recalcFish('${food.id}','${cat.id}')`)}</td>
+          <td class="q2-score-col"><strong>${food.fa!=null?food.fa.toFixed(1).replace('.',','):'—'}</strong></td>
+          <td><span class="age-cell age-zero" id="qage-${food.id}">—</span></td>`;
+        tb.appendChild(tr);
       });
       return;
     }
-
-    // Categorias com método de preparo (existente)
     const nP=cat.methods.length;
-    const scores=cat.scores;
-    const scoreRow=scores
-      ? cat.methods.map((m,i)=>`<td><strong>${scores[i]!=null?scores[i].toFixed(1).replace('.',','):''}</strong></td>`).join('')
-      : '';
-
-    section.innerHTML=`
-      <div class="section-header">
-        <div class="section-icon">${cat.icon}</div>
-        <div class="section-title">${cat.name}</div>
-        <div class="section-age-badge" id="badge-${cat.id}">AGE 0,0</div>
-      </div>
-      <table class="food-table">
-        <thead><tr>
-          <th>Alimento</th>
-          <th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SAB</th><th>DOM</th>
-          <th>Qtd<br><small style="font-size:9px;opacity:.7;font-weight:400">porções</small></th>
-          <th>Vezes ao dia</th>
-          <th>Total<br><small style="font-size:9px;opacity:.7;font-weight:400">porções</small></th>
-          <th>AGE</th>
-        </tr></thead>
-        <tbody id="tbody-${cat.id}">
-          ${scores?`<tr class="score-row"><td>Escores AGE por método de preparo →</td><td colspan="7"></td><td colspan="3"></td>${scoreRow}</tr>`:''}
-        </tbody>
-      </table>`;
-    cont.appendChild(section);
-
-    const tbody=document.getElementById(`tbody-${cat.id}`);
+    sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
+      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Total<br>Porções</th><th>AGE</th></tr></thead>
+      <tbody id="qtb-${cat.id}">${cat.scores?`<tr class="score-row"><td>Escores AGE por método de preparo →</td><td colspan="7"></td><td colspan="2"></td>${cat.methods.map((m,i)=>`<td><strong>${cat.scores[i].toFixed(1).replace('.',',')}</strong></td>`).join('')}</tr>`:''}</tbody></table></div>`;
+    cont.appendChild(sec);
+    const tb=document.getElementById(`qtb-${cat.id}`);
     cat.foods.forEach(food=>{
       initSt(food.id,nP);
-
       const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=food.id;tr.dataset.cat=cat.id;
-      const dayBtns=DAYS_SHORT.map((d,i)=>
-        `<td class="day-cell"><button class="day-toggle" onclick="tDay1('${food.id}','${cat.id}',${i},this)">${d}</button></td>`
-      ).join('');
-      tr.innerHTML=`
-        <td class="food-name">${food.name}<span class="food-desc">${food.desc}</span></td>
-        ${dayBtns}
-        <td><input class="num-input" type="number" min="0" step="0.5" placeholder="1" value="1" oninput="recalcQty1('${food.id}','${cat.id}')"></td>
-        <td>${buildNdaySelect(food.id, cat.id, `recalcNday1('${food.id}','${cat.id}')`)}</td>
-        <td><span class="total-badge zero" id="total-${food.id}">—</span><span class="formula-hint">Qtd×Dias×N</span></td>
-        <td><span class="age-cell age-zero" id="age-${food.id}">—</span></td>`;
-      tbody.appendChild(tr);
-
-      // prep panel row
+      const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${food.id}_${di}" onclick="tDay1('${food.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
+      tr.innerHTML=`<td class="food-name">${food.n}<span class="food-desc">${food.d}</span></td>${days}
+        <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalcQty('${food.id}','${cat.id}')"></td>
+        <td>${ndaySel(`recalcNday('${food.id}','${cat.id}')`)}</td>
+        <td><span class="total-badge zero" id="qtot-${food.id}">—</span><span class="formula-hint">Qtd×Dias×N</span></td>
+        <td><span class="age-cell age-zero" id="qage-${food.id}">—</span></td>`;
+      tb.appendChild(tr);
       const prepRow=document.createElement('tr');prepRow.className='prep-panel';prepRow.id=`prep-row-${food.id}`;
-      const prepHTML=cat.methods.map((m,i)=>{
-        const sc=cat.scores?cat.scores[i]:(food.cs?food.cs[i]:null);
-        const dis=(sc==null||sc===undefined);
-        return `<div class="prep-method${dis?' disabled':''}" id="pm-wrap-${food.id}-${i}">
-          <span class="prep-method-label">${m}</span>
-          <span class="prep-method-score">${sc!=null?'escore <strong>'+String(sc).replace('.',',')+'</strong>':' — '}</span>
-          <input class="prep-method-input" id="prep-${food.id}-${i}" type="number" min="0" step="0.5" placeholder="0"
-            ${dis?'disabled':''}
-            oninput="recalcPrep1('${food.id}','${cat.id}',${i},this)">
-          <span class="prep-method-unit">porções</span>
-        </div>`;
-      }).join('');
-      prepRow.innerHTML=`<td colspan="12">
-        <div class="prep-header">
-          ▸ Distribuição por método de preparo
-          <span class="prep-total-lbl" id="prep-total-lbl-${food.id}">Total: —</span>
-        </div>
-        <div class="prep-methods">${prepHTML}</div>
-        <div class="prep-progress">
-          <div class="prep-bar-wrap"><div class="prep-bar" id="bar-${food.id}" style="width:0%"></div></div>
-          <span class="prep-msg" id="msg-${food.id}" style="color:var(--ink4)">Defina Qtd + Dias + N/dia para liberar a distribuição</span>
-        </div>
-      </td>`;
-      tbody.appendChild(prepRow);
+      const prepHTML=cat.methods.map((m,i)=>{const sc=cat.scores?cat.scores[i]:(food.cs?food.cs[i]:null);const dis=(sc==null);return`<div class="prep-method${dis?' disabled':''}" id="pm-${food.id}-${i}"><span class="prep-method-label">${m}</span><span class="prep-method-score">${sc!=null?'escore <strong>'+String(sc).replace('.',',')+'</strong>':'—'}</span><input class="prep-method-input" id="pp-${food.id}-${i}" type="number" min="0" step="0.5" placeholder="0" ${dis?'disabled':''} oninput="recalcPrep('${food.id}','${cat.id}',${i},this)"><span class="prep-method-unit">porções</span></div>`;}).join('');
+      prepRow.innerHTML=`<td colspan="12"><div class="prep-header">▸ Distribuição por método de preparo <span class="prep-total-lbl" id="ptlbl-${food.id}">Total: —</span></div><div class="prep-methods">${prepHTML}</div><div class="prep-progress"><div class="prep-bar-wrap"><div class="prep-bar" id="pbar-${food.id}" style="width:0%"></div></div><span class="prep-msg" id="pmsg-${food.id}" style="color:var(--ink4)">Defina Qtd + Dias + N/dia para liberar a distribuição</span></div></td>`;
+      tb.appendChild(prepRow);
     });
   });
 }
 
-// ── BUILD Q2 ──
-function buildQ2(){
-  const cont=document.getElementById('q2-sections');
-  Q2_CATS.forEach(cat=>{
-    const section=document.createElement('div');section.className='section';
-    section.innerHTML=`
-      <div class="section-header">
-        <div class="section-icon">${cat.icon}</div>
-        <div class="section-title">${cat.name}</div>
-        <div class="section-age-badge" id="badge-${cat.id}">AGE 0,0</div>
-      </div>
-      <table class="food-table">
-        <thead><tr>
-          <th>Alimento</th>
-          <th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SAB</th><th>DOM</th>
-          <th>Qtd<br><small style="font-size:9px;opacity:.7;font-weight:400">porções</small></th>
-          <th>Vezes ao dia</th>
-          <th>Escore</th><th>AGE</th>
-        </tr></thead>
-        <tbody id="tbody-${cat.id}"></tbody>
-      </table>`;
-    cont.appendChild(section);
-    const tbody=document.getElementById(`tbody-${cat.id}`);
+function buildQ2full(){
+  const cont=document.getElementById('q2-content');cont.innerHTML='';
+  Q2C.forEach(cat=>{
+    const sec=document.createElement('div');sec.className='q-section';
+    sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
+      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
+    cont.appendChild(sec);
+    const tb=document.getElementById(`qtb-${cat.id}`);
     cat.items.forEach(item=>{
       initSt(item.id,0);
       const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=item.id;tr.dataset.cat=cat.id;
-      const dayBtns=DAYS_SHORT.map((d,i)=>
-        `<td class="day-cell"><button class="day-toggle" onclick="tDay2('${item.id}','${cat.id}',${i},this)">${d}</button></td>`
-      ).join('');
-      tr.innerHTML=`
-        <td class="food-name">${item.name}<span class="food-desc">${item.desc}</span></td>
-        ${dayBtns}
-        <td><input class="num-input" type="number" min="0" step="0.5" placeholder="1" value="1" oninput="recalc2('${item.id}','${cat.id}')"></td>
-        <td>${buildNdaySelect(item.id, cat.id, `recalc2('${item.id}','${cat.id}')`)}</td>
-        <td class="q2-score-col"><strong>${item.score.toFixed(1).replace('.',',')}</strong></td>
-        <td><span class="age-cell age-zero" id="age-${item.id}">—</span></td>`;
-      tbody.appendChild(tr);
+      const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${item.id}_${di}" onclick="tDay2('${item.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
+      tr.innerHTML=`<td class="food-name">${item.n}<span class="food-desc">${item.d}</span></td>${days}
+        <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalc2('${item.id}','${cat.id}')"></td>
+        <td>${ndaySel(`recalc2('${item.id}','${cat.id}')`)}</td>
+        <td class="q2-score-col"><strong>${item.s.toFixed(1).replace('.',',')}</strong></td>
+        <td><span class="age-cell age-zero" id="qage-${item.id}">—</span></td>`;
+      tb.appendChild(tr);
     });
   });
 }
 
-// ── EVENTS ──
-function tDay1(id,catId,di,btn){
-  state[id].days[di]=state[id].days[di]?0:1;
-  btn.classList.toggle('on',!!state[id].days[di]);
-  refreshTotal1(id,catId);
-}
-function tDay2(id,catId,di,btn){
-  state[id].days[di]=state[id].days[di]?0:1;
-  btn.classList.toggle('on',!!state[id].days[di]);
-  recalc2(id,catId);
-}
-function tDayFish(id,catId,di,btn){
-  state[id].days[di]=state[id].days[di]?0:1;
-  btn.classList.toggle('on',!!state[id].days[di]);
-  recalcFish(id,catId);
-}
-function recalcQty1(id,catId){
-  const row=document.querySelector(`[data-row="${id}"]`);
-  state[id].qty=parseFloat(row.querySelector('.num-input').value)||0;
-  refreshTotal1(id,catId);
-}
-function recalcNday1(id,catId){
-  const row=document.querySelector(`[data-row="${id}"]`);
-  const sel=row.querySelector('.nday-select');
-  state[id].nday=parseFloat(sel.value)||1;
-  refreshTotal1(id,catId);
-}
-function recalcPrep1(id,catId,pi,inp){
-  state[id].prep[pi]=parseFloat(inp.value)||0;
-  const wrap=document.getElementById(`pm-wrap-${id}-${pi}`);
-  if(wrap) wrap.classList.toggle('filled',(parseFloat(inp.value)||0)>0);
-  recalc1full(id,catId);
-}
-
-// PEIXES — AGE fixo por alimento (Qtd × Dias × N/dia × fixedAge)
+function tDay1(id,catId,di,btn){qState[id].days[di]=qState[id].days[di]?0:1;btn.classList.toggle('on',!!qState[id].days[di]);refreshTotal(id,catId);}
+function tDay2(id,catId,di,btn){qState[id].days[di]=qState[id].days[di]?0:1;btn.classList.toggle('on',!!qState[id].days[di]);recalc2(id,catId);}
+function tDayFish(id,catId,di,btn){qState[id].days[di]=qState[id].days[di]?0:1;btn.classList.toggle('on',!!qState[id].days[di]);recalcFish(id,catId);}
+function recalcQty(id,catId){const row=document.querySelector(`[data-row="${id}"]`);qState[id].qty=parseFloat(row.querySelector('.num-input').value)||0;refreshTotal(id,catId);}
+function recalcNday(id,catId){const row=document.querySelector(`[data-row="${id}"]`);qState[id].nday=parseFloat(row.querySelector('.nday-select').value)||1;refreshTotal(id,catId);}
+function recalcPrep(id,catId,pi,inp){qState[id].prep[pi]=parseFloat(inp.value)||0;document.getElementById(`pm-${id}-${pi}`)?.classList.toggle('filled',(parseFloat(inp.value)||0)>0);recalc1full(id,catId);}
 function recalcFish(id,catId){
-  const row=document.querySelector(`[data-row="${id}"]`);
-  state[id].qty=parseFloat(row.querySelector('.num-input').value)||0;
-  state[id].nday=parseFloat(row.querySelector('.nday-select').value)||1;
-  const cat=Q1_CATS.find(c=>c.id===catId);
-  const food=cat.foods.find(f=>f.id===id);
-  const dias=state[id].days.reduce((a,v)=>a+(v?1:0),0);
-  const age= food.fixedAge!=null ? dias*state[id].qty*state[id].nday*food.fixedAge : 0;
-  setAge(id,age);
-  updateCatBadge1(catId);
-  updateTotals();
+  const row=document.querySelector(`[data-row="${id}"]`);qState[id].qty=parseFloat(row.querySelector('.num-input').value)||0;qState[id].nday=parseFloat(row.querySelector('.nday-select').value)||1;
+  const cat=Q1C.find(c=>c.id===catId);const food=cat.foods.find(f=>f.id===id);
+  const age=food.fa!=null?getDias(id)*qState[id].qty*qState[id].nday*food.fa:0;
+  setAge(id,age);updateBadge1(catId);updateSumBar();
 }
-
-function refreshTotal1(id,catId){
-  const total=getTotalPorcoes(id);
-  const badge=document.getElementById(`total-${id}`);
-  const lbl=document.getElementById(`prep-total-lbl-${id}`);
-  if(badge){
-    if(total>0){badge.textContent=fmt(total);badge.className='total-badge';}
-    else{badge.textContent='—';badge.className='total-badge zero';}
-  }
-  if(lbl) lbl.textContent=`Total: ${total>0?fmt(total)+' porções':'—'}`;
+function recalc2(id,catId){
+  const row=document.querySelector(`[data-row="${id}"]`);qState[id].qty=parseFloat(row.querySelector('.num-input').value)||0;qState[id].nday=parseFloat(row.querySelector('.nday-select').value)||1;
+  const cat=Q2C.find(c=>c.id===catId);const item=cat.items.find(x=>x.id===id);
+  setAge(id,getDias(id)*qState[id].qty*qState[id].nday*item.s);updateBadge2(catId);updateSumBar();
+}
+function refreshTotal(id,catId){
+  const total=getTotalP(id);const badge=document.getElementById(`qtot-${id}`);const lbl=document.getElementById(`ptlbl-${id}`);
+  if(badge){if(total>0){badge.textContent=fmt(total);badge.className='total-badge';}else{badge.textContent='—';badge.className='total-badge zero';}}
+  if(lbl)lbl.textContent=`Total: ${total>0?fmt(total)+' porções':'—'}`;
   recalc1full(id,catId);
 }
-
-function recalc2(id,catId){
-  const row=document.querySelector(`[data-row="${id}"]`);
-  state[id].qty=parseFloat(row.querySelector('.num-input').value)||0;
-  state[id].nday=parseFloat(row.querySelector('.nday-select').value)||1;
-  const cat=Q2_CATS.find(c=>c.id===catId);
-  const item=cat.items.find(x=>x.id===id);
-  const dias=state[id].days.reduce((a,v)=>a+(v?1:0),0);
-  const age=dias*state[id].qty*state[id].nday*item.score;
-  setAge(id,age);
-  updateCatBadge2(catId);
-  updateTotals();
-}
-
 function recalc1full(id,catId){
-  const cat=Q1_CATS.find(c=>c.id===catId);
-  const food=cat.foods.find(f=>f.id===id);
-  const scores=cat.scores||null;
-  let age=0;
-  state[id].prep.forEach((p,i)=>{
-    const sc=scores?scores[i]:(food.cs?food.cs[i]:null);
-    if(sc!=null) age+=(p||0)*sc;
-  });
-  setAge(id,age);
-  updatePrepProgress(id);
-  updateCatBadge1(catId);
-  updateTotals();
+  const cat=Q1C.find(c=>c.id===catId);const food=cat.foods.find(f=>f.id===id);
+  let age=0;qState[id].prep.forEach((p,i)=>{const sc=cat.scores?cat.scores[i]:(food.cs?food.cs[i]:null);if(sc!=null)age+=(p||0)*sc;});
+  setAge(id,age);updatePrepProgress(id);updateBadge1(catId);updateSumBar();
 }
-
 function updatePrepProgress(id){
-  const total=getTotalPorcoes(id);
-  const prepSum=Math.round(state[id].prep.reduce((a,v)=>a+(v||0),0)*100)/100;
-  const bar=document.getElementById(`bar-${id}`);
-  const msg=document.getElementById(`msg-${id}`);
-  if(!bar||!msg) return;
-  if(total<=0){
-    bar.style.width='0%';bar.className='prep-bar';
-    msg.textContent='Defina Qtd + Dias + N/dia para liberar a distribuição';
-    msg.style.color='var(--ink4)';msg.className='prep-msg';
-    return;
-  }
-  const pct=Math.min(prepSum/total*100,100);
-  bar.style.width=pct+'%';
-  if(prepSum<total-0.01){
-    bar.className='prep-bar';
-    msg.textContent=`Faltam ${fmt(total-prepSum)} porção(ões) — total a distribuir: ${fmt(total)}`;
-    msg.className='prep-msg pending';
-  } else if(prepSum>total+0.01){
-    bar.className='prep-bar over';
-    msg.textContent=`⚠ Excesso de ${fmt(prepSum-total)} porção(ões) — reduzir (total = ${fmt(total)})`;
-    msg.className='prep-msg over';
-  } else {
-    bar.className='prep-bar';bar.style.width='100%';
-    msg.textContent=`✓ Distribuição completa — ${fmt(total)} porções`;
-    msg.className='prep-msg ok';
-  }
+  const total=getTotalP(id);const prepSum=Math.round(qState[id].prep.reduce((a,v)=>a+(v||0),0)*100)/100;
+  const bar=document.getElementById(`pbar-${id}`);const msg=document.getElementById(`pmsg-${id}`);
+  if(!bar||!msg)return;
+  if(total<=0){bar.style.width='0%';bar.className='prep-bar';msg.textContent='Defina Qtd + Dias + N/dia para liberar a distribuição';msg.style.color='var(--ink4)';msg.className='prep-msg';return;}
+  const pct=Math.min(prepSum/total*100,100);bar.style.width=pct+'%';
+  if(prepSum<total-0.01){bar.className='prep-bar';msg.textContent=`Faltam ${fmt(total-prepSum)} porção(ões) — total: ${fmt(total)}`;msg.className='prep-msg pending';}
+  else if(prepSum>total+0.01){bar.className='prep-bar over';msg.textContent=`⚠ Excesso de ${fmt(prepSum-total)} porção(ões)`;msg.className='prep-msg over';}
+  else{bar.className='prep-bar';bar.style.width='100%';msg.textContent=`✓ Distribuição completa — ${fmt(total)} porções`;msg.className='prep-msg ok';}
+}
+function setAge(id,age){const el=document.getElementById(`qage-${id}`);if(!el)return;el.dataset.raw=age;el.textContent=age>0?age.toFixed(1).replace('.',','):'—';el.className='age-cell '+(age<=0?'age-zero':age<5?'age-low':age<15?'age-mid':'age-high');}
+function getAge(id){const el=document.getElementById(`qage-${id}`);return el?parseFloat(el.dataset.raw||0):0;}
+function updateBadge1(catId){const cat=Q1C.find(c=>c.id===catId);if(!cat)return;const t=cat.foods.reduce((s,f)=>s+getAge(f.id),0);const b=document.getElementById(`qbadge-${catId}`);if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'q-sec-badge has':'q-sec-badge';}}
+function updateBadge2(catId){const cat=Q2C.find(c=>c.id===catId);if(!cat)return;const t=cat.items.reduce((s,f)=>s+getAge(f.id),0);const b=document.getElementById(`qbadge-${catId}`);if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'q-sec-badge has':'q-sec-badge';}}
+function calcQ1(){return Q1C.reduce((s,c)=>s+c.foods.reduce((ss,f)=>ss+getAge(f.id),0),0);}
+function calcQ2(){return Q2C.reduce((s,c)=>s+c.items.reduce((ss,f)=>ss+getAge(f.id),0),0);}
+function updateSumBar(){const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;setEl('sb1',fmt(q1));setEl('sb2',fmt(q2));setEl('sbt',fmt(tot));setEl('sbd',fmt(tot/7));}
+
+function saveQuestionnaire(){
+  if(!curApPart){toast('⚠️ Nenhum participante selecionado');return;}
+  const q1foods=Q1C.flatMap(cat=>cat.foods.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;let prep='';if(!cat.fixedScore&&cat.methods)cat.methods.forEach((m,i)=>{if((qState[f.id]?.prep[i]||0)>0)prep=m;});return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,prep,age:getAge(f.id)};}).filter(Boolean));
+  const q2foods=Q2C.flatMap(cat=>cat.items.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,age:getAge(f.id)};}).filter(Boolean));
+  const q1=calcQ1(),q2=calcQ2(),tot=q1+q2,today=new Date().toLocaleDateString('pt-BR');
+  const data=getData(),idx=data.findIndex(x=>x.id===curApPart.id);
+  if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});setData(data);curApPart=data[idx];}
+  toast('✅ Questionário salvo com sucesso!');populateQuestSel();renderAPList();
 }
 
-// ── VISUAL ──
-function setAge(id,age){
-  const el=document.getElementById(`age-${id}`);if(!el)return;
-  el.dataset.raw=age;
-  el.textContent=age>0?age.toFixed(1).replace('.',','):'—';
-  el.className='age-cell '+(age<=0?'age-zero':age<5?'age-low':age<15?'age-mid':'age-high');
-}
-function getAge(id){const el=document.getElementById(`age-${id}`);return el?parseFloat(el.dataset.raw||0):0;}
-function updateCatBadge1(catId){
-  const cat=Q1_CATS.find(c=>c.id===catId);if(!cat)return;
-  const t=cat.foods.reduce((s,f)=>s+getAge(f.id),0);
-  const b=document.getElementById(`badge-${catId}`);
-  if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'section-age-badge has-val':'section-age-badge';}
-}
-function updateCatBadge2(catId){
-  const cat=Q2_CATS.find(c=>c.id===catId);if(!cat)return;
-  const t=cat.items.reduce((s,f)=>s+getAge(f.id),0);
-  const b=document.getElementById(`badge-${catId}`);
-  if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'section-age-badge has-val':'section-age-badge';}
-}
-function calcQ1(){return Q1_CATS.reduce((s,c)=>s+c.foods.reduce((ss,f)=>ss+getAge(f.id),0),0);}
-function calcQ2(){return Q2_CATS.reduce((s,c)=>s+c.items.reduce((ss,f)=>ss+getAge(f.id),0),0);}
-function updateTotals(){
-  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
-  document.getElementById('sum-q1').textContent=fmt(q1);
-  document.getElementById('sum-q2').textContent=fmt(q2);
-  document.getElementById('sum-weekly').textContent=fmt(wk);
-  document.getElementById('sum-daily').textContent=fmt(dy);
-  document.getElementById('hdr-weekly').textContent=fmt(wk);
-  document.getElementById('hdr-daily').textContent=fmt(dy);
-}
-function updateHeader(){
-  const n=document.getElementById('p-name').value.trim();
-  document.getElementById('hdr-patient').textContent=n||'Novo paciente';
-}
-function showTab(id,btn){
-  ['q1','q2','resumo'].forEach(t=>document.getElementById(`tab-${t}`).style.display=t===id?'block':'none');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  if(id==='resumo') updateTotals();
-}
-function resetAll(){
-  if(!confirm('Limpar todos os dados?')) return;
-  document.querySelectorAll('.day-toggle.on').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.num-input').forEach(i=>i.value='1');
-  document.querySelectorAll('.nday-select').forEach(s=>s.selectedIndex=0);
-  document.querySelectorAll('.prep-method-input').forEach(i=>i.value='');
-  document.querySelectorAll('.prep-method.filled').forEach(m=>m.classList.remove('filled'));
-  document.querySelectorAll('.age-cell').forEach(el=>{el.textContent='—';el.dataset.raw=0;el.className='age-cell age-zero';});
-  document.querySelectorAll('.section-age-badge').forEach(b=>{b.textContent='AGE 0,0';b.className='section-age-badge';});
-  document.querySelectorAll('.total-badge').forEach(b=>{b.textContent='—';b.className='total-badge zero';});
-  document.querySelectorAll('.prep-bar').forEach(b=>{b.style.width='0%';b.className='prep-bar';});
-  document.querySelectorAll('[id^="msg-"]').forEach(m=>{m.textContent='Defina Qtd + Dias + N/dia para liberar a distribuição';m.className='prep-msg';m.style.color='var(--ink4)';});
-  document.querySelectorAll('[id^="prep-total-lbl-"]').forEach(l=>l.textContent='Total: —');
-  Object.keys(state).forEach(k=>{
-    const p=state[k].prep?Array(state[k].prep.length).fill(0):[];
-    state[k]={days:[0,0,0,0,0,0,0],qty:1,nday:1,prep:p};
-  });
-  updateTotals();
-}
-
-// ── EXPORT PDF ──
-function exportPDF(){
-  // Mostra todos os tabs temporariamente para o print
-  const t1=document.getElementById('tab-q1');
-  const t2=document.getElementById('tab-q2');
-  const tr=document.getElementById('tab-resumo');
-  const d1=t1.style.display, d2=t2.style.display, dr=tr.style.display;
-  t1.style.display='block';
-  t2.style.display='block';
-  tr.style.display='block';
-  // Adiciona título de impressão
-  const titleDiv=document.createElement('div');
-  titleDiv.id='print-title';
-  titleDiv.style.cssText='font-family:"DM Serif Display",serif;font-size:20px;color:#1A1A18;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #1A1A18;display:flex;justify-content:space-between;align-items:center;';
-  const nome=document.getElementById('p-name').value||'Paciente';
-  const data=document.getElementById('p-date').value||'';
-  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
-  titleDiv.innerHTML=`<span>AGEscore — ${nome}</span><span style="font-size:13px;color:#7A7A74;">${data} | AGE Semanal: ${fmt(wk)} | AGE Diário: ${fmt(dy)}</span>`;
-  document.querySelector('.main').prepend(titleDiv);
-  window.print();
-  // Restaura estado original
-  setTimeout(()=>{
-    t1.style.display=d1;
-    t2.style.display=d2;
-    tr.style.display=dr;
-    const pt=document.getElementById('print-title');
-    if(pt) pt.remove();
-  },500);
-}
-
-// ── EXPORT CSV/XLSX ──
-function exportCSV(){
-  const name=document.getElementById('p-name').value||'Paciente';
-  const date=document.getElementById('p-date').value||'';
-  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
-  let csv=`Questionário AGE - ${name} - ${date}\nAGE Q1,${q1.toFixed(2)}\nAGE Q2,${q2.toFixed(2)}\nAGE Semanal,${wk.toFixed(2)}\nAGE Diário,${dy.toFixed(2)}\n\nAlimento,Total Porções,AGE Semanal\n`;
-  Q1_CATS.forEach(c=>c.foods.forEach(f=>{const a=getAge(f.id),t=getTotalPorcoes(f.id);if(a>0||t>0)csv+=`${f.name},${t.toFixed(2)},${a.toFixed(2)}\n`;}));
-  Q2_CATS.forEach(c=>c.items.forEach(f=>{const a=getAge(f.id);if(a>0)csv+=`${f.name},,${a.toFixed(2)}\n`;}));
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`AGE_${name.replace(/\s+/g,'_')}.csv`;a.click();
-}
-function exportXLSX(){
-  const name=document.getElementById('p-name').value||'';
-  const age=document.getElementById('p-age').value||'';
-  const sex=document.getElementById('p-sex').value||'';
-  const dt=document.getElementById('p-date').value||'';
-  const intvw=document.getElementById('p-interviewer').value||'';
-  const qnum=document.getElementById('p-qnum').value||'';
-  const q1=calcQ1(),q2=calcQ2(),wk=q1+q2,dy=wk/7;
-  const wb=XLSX.utils.book_new();
-
-  const s1=[
-    ['NOME:',name,'','','','','','','','','','','IDADE:',age,'SEXO:',sex,'',`Quest. nº ${qnum}`],
-    ['ENTREVISTADOR:',intvw,'','','','','DATA:',dt],
-    ['FÓRMULA Q1: AGE = Σ (Porções_método × Escore_método) — sendo Total Porções = Qtd × Dias × N/dia'],
-    ['PEIXES/FRUTOS DO MAR: AGE = Qtd × Dias × N/dia × Escore (fixo por alimento)'],
-    [],
-    ['Categoria','Porção','Descrição','SEG','TER','QUA','QUI','SEX','SAB','DOM','Qtd','N/dia','Total Porções','Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito','AGE Total'],
-  ];
-  Q1_CATS.forEach(cat=>{
-    if(cat.fixedScore){
-      s1.push([`${cat.name}  (Escore AGE fixo por alimento)`,'','','','','','','','','','','','','','','','','','']);
-      cat.foods.forEach(food=>{
-        const st=state[food.id];
-        const days=st.days;
-        const total=getTotalPorcoes(food.id);
-        const p=food.desc.split('·');
-        const ndayEl=document.querySelector(`[data-row="${food.id}"] .nday-select`);
-        const ndayLabel=ndayEl?ndayEl.options[ndayEl.selectedIndex].text:(st.nday||1);
-        s1.push([food.name,p[0]?.trim()||'',p[1]?.trim()||'',...days,st.qty||1,ndayLabel,total,'','','','','',getAge(food.id)]);
-      });
-      return;
-    }
-    const sc=cat.scores?cat.methods.map((m,i)=>`${m}=${cat.scores[i]}`).join(', '):'ver por alimento';
-    s1.push([`${cat.name}  (Escores: ${sc})`,'','','','','','','','','','','','','','','','','','']);
-    cat.foods.forEach(food=>{
-      const st=state[food.id];
-      const days=st.days;
-      const total=getTotalPorcoes(food.id);
-      const pv=st.prep.map(p=>p||0);while(pv.length<5)pv.push('');
-      const p=food.desc.split('·');
-      const ndayEl=document.querySelector(`[data-row="${food.id}"] .nday-select`);
-      const ndayLabel=ndayEl?ndayEl.options[ndayEl.selectedIndex].text:(st.nday||1);
-      s1.push([food.name,p[0]?.trim()||'',p[1]?.trim()||'',...days,st.qty||1,ndayLabel,total,...pv,getAge(food.id)]);
-    });
-  });
-  s1.push([]);s1.push(['','','','','','','','','','','','','','','','','','TOTAL Q1',q1.toFixed(2)]);
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s1),'questionário 1.2');
-
-  const s2=[
-    ['NOME:',name,'','','IDADE:',age,'SEXO:',sex],
-    ['ENTREVISTADOR:',intvw,'','','DATA:',dt],
-    ['FÓRMULA Q2: AGE = Qtd × Dias × N/dia × Escore'],
-    [],
-    ['Categoria','Porção','Descrição','Escore','SEG','TER','QUA','QUI','SEX','SAB','DOM','Qtd','N/dia','AGE Total'],
-  ];
-  Q2_CATS.forEach(cat=>{
-    s2.push([cat.name]);
-    cat.items.forEach(item=>{
-      const st=state[item.id];
-      const p=item.desc.split('·');
-      const ndayEl2=document.querySelector(`[data-row="${item.id}"] .nday-select`);
-      const ndayLabel2=ndayEl2?ndayEl2.options[ndayEl2.selectedIndex].text:(st.nday||1);
-      s2.push([item.name,p[0]?.trim()||'',p[1]?.trim()||'',item.score,...st.days,st.qty||1,ndayLabel2,getAge(item.id)]);
-    });
-  });
-  s2.push([]);
-  s2.push(['','','','','','','','','','','','','TOTAL Q2',q2.toFixed(2)]);
-  s2.push(['','','','','','','','','','','','','TOTAL SEMANAL',wk.toFixed(2)]);
-  s2.push(['','','','','','','','','','','','','TOTAL DIÁRIO',dy.toFixed(2)]);
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s2),'questionário 2.2');
-
-  XLSX.writeFile(wb,`AGE_${(name||'paciente').replace(/\s+/g,'_')}_${dt||'sem_data'}.xlsx`);
-}
-
-// ── INIT ──
-buildQ1();buildQ2();
-document.getElementById('p-date').valueAsDate=new Date();
-updateTotals();
-</script>
-
-<div style="text-align:center;padding:20px;font-family:'DM Sans',sans-serif;font-size:12px;color:#7A7A74;border-top:1px solid #DDD9D0;margin-top:40px;">Desenvolvido por <strong style="color:#1A1A18;">Pedro Donizetti</strong></div>
-
-<div id="lock-overlay" style="display:none;position:fixed;inset:0;background:#1A1A18;z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
-  <div style="font-family:'DM Serif Display',serif;font-size:32px;color:#F7F4EF;">AGE<span style="color:#C8A882;">score</span></div>
-  <div style="background:#2A2A28;border-radius:14px;padding:32px 36px;max-width:340px;width:90%;text-align:center;">
-    <div style="font-size:18px;font-weight:600;color:#F7F4EF;margin-bottom:8px;">Acesso expirado</div>
-    <div style="font-size:13px;color:#7A7A74;margin-bottom:24px;">O período de 60 dias encerrou. Digite a senha para continuar.</div>
-    <input id="lock-input" type="password" placeholder="Digite a senha" style="width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid #3D3D39;background:#1A1A18;color:#F7F4EF;font-size:15px;text-align:center;outline:none;margin-bottom:12px;font-family:'DM Sans',sans-serif;">
-    <button onclick="checkPassword()" style="width:100%;padding:11px;border-radius:8px;background:#C8502A;border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Entrar</button>
-    <div id="lock-error" style="color:#C8502A;font-size:12px;margin-top:10px;display:none;">Senha incorreta. Tente novamente.</div>
-  </div>
-</div>
-
-<script>
-(function(){
-  var EXPIRY=new Date('2026-06-19');
-  var PASSWORD='698600Pp';
-  var KEY='age_unlocked';
-  function unlock(){document.getElementById('lock-overlay').style.display='none';}
-  function check(){
-    if(new Date()<EXPIRY)return;
-    if(localStorage.getItem(KEY)==='true')return;
-    var o=document.getElementById('lock-overlay');
-    o.style.display='flex';
-  }
-  window.checkPassword=function(){
-    var v=document.getElementById('lock-input').value;
-    if(v===PASSWORD){localStorage.setItem(KEY,'true');unlock();}
-    else{document.getElementById('lock-error').style.display='block';document.getElementById('lock-input').value='';}
-  };
-  document.getElementById('lock-input').addEventListener('keydown',function(e){if(e.key==='Enter')window.checkPassword();});
-  check();
-})();
+// ══ UTILS ══
+function fmt(n){if(!n&&n!==0)return'0,0';return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
 </body>
 </html>
