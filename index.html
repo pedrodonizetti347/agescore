@@ -588,9 +588,13 @@ async function saveP(p){
 async function deleteP_DB(id){try{if(id)await db.collection('participants').doc(id).delete();_pCache=null;}catch(e){console.warn(e);}}
 
 async function getUsers(){
-  if(_uCache)return _uCache;
-  try{const s=await db.collection('users').get();_uCache=s.docs.map(d=>({...d.data(),_id:d.id}));return _uCache;}
-  catch(e){return JSON.parse(localStorage.getItem('age_u_bk')||'[]');}
+  try{
+    const s=await db.collection('users').get();
+    _uCache=s.docs.map(d=>({...d.data(),_id:d.id}));
+    return _uCache;
+  }catch(e){
+    return JSON.parse(localStorage.getItem('age_u_bk')||'[]');
+  }
 }
 async function setUsers(list){_uCache=list;}
 async function saveUser_DB(u){
@@ -1107,6 +1111,7 @@ async function clearAll(){const data=await getData();for(const p of data){await 
 
 // ══ USERS MANAGEMENT ══
 async function renderUsersPanel(){
+  _uCache=null; // always fresh
   const users=await getUsers(),data=await getData();
   const coords=users.filter(u=>u.role==='coord');
   const aps=users.filter(u=>u.role==='aplicador');
