@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AGEscore Brasil — Plataforma</title>
+<title>Questionário de Consumo Alimentar de AGE</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -43,6 +43,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);f
 .btn-main{width:100%;padding:12px;background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s,transform .1s;margin-top:4px}
 .btn-main:hover{background:#1a3a0d}.btn-main:active{transform:scale(.98)}
 .l-err{color:var(--red);font-size:.8rem;text-align:center;margin-top:10px;display:none}
+.pass-wrap{position:relative}
+.pass-wrap input{padding-right:40px}
+.pass-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink3);font-size:1.1rem;padding:4px;transition:color .2s}
+.pass-eye:hover{color:var(--green)}
 
 /* TOPBAR */
 .topbar{background:linear-gradient(135deg,#1a3a0d,#2A5C1B);color:var(--cream);padding:0 18px;height:52px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg);position:sticky;top:0;z-index:300;flex-shrink:0;gap:10px}
@@ -235,7 +239,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
   <div class="login-box">
     <div class="login-logo">
       <h1>AGE<span>score</span></h1>
-      <p>Plataforma de Escore Dietético · Glicação Avançada</p>
+      <p>Questionário de Consumo Alimentar de AGE · Escore do Consumo de AGE</p>
     </div>
     <div class="role-tabs">
       <button class="role-tab on" id="tab-adm" onclick="setRole('admin')">🔬 Admin</button>
@@ -243,7 +247,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="role-tab" id="tab-ap" onclick="setRole('aplicador')">👩‍⚕️ Aplicador</button>
     </div>
     <div class="fg"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com" autocomplete="username"/></div>
-    <div class="fg"><label>Senha</label><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="fg"><label>Senha</label><div class="pass-wrap"><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/><button type="button" class="pass-eye" onclick="togglePass('l-pass',this)" tabindex="-1">👁️</button></div></div>
     <button class="btn-main" onclick="doLogin()">Entrar</button>
     <div class="l-err" id="l-err">E-mail ou senha incorretos.</div>
 
@@ -393,7 +397,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="card-head"><span class="card-title">🔬 Administrador — Pedro Donizetti</span></div>
           <div style="padding:18px">
             <div class="fg"><label>E-mail</label><input type="email" id="set-adm-email" value="pedrodonizettipalestrante@gmail.com"/></div>
-            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><input type="password" id="set-adm-pass" placeholder="Nova senha"/></div>
+            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><div class="pass-wrap"><input type="password" id="set-adm-pass" placeholder="Nova senha"/><button type="button" class="pass-eye" onclick="togglePass('set-adm-pass',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" onclick="saveAdminCreds()">💾 Salvar</button>
           </div>
         </div>
@@ -442,9 +446,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Atualize sua senha de acesso</div>
         <div class="card" style="max-width:440px">
           <div style="padding:20px">
-            <div class="fg"><label>Senha atual</label><input type="password" id="coord-pass-old" placeholder="Sua senha atual"/></div>
-            <div class="fg"><label>Nova senha</label><input type="password" id="coord-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/></div>
-            <div class="fg"><label>Confirmar nova senha</label><input type="password" id="coord-pass-confirm" placeholder="Repita a nova senha"/></div>
+            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="coord-pass-old" placeholder="Sua senha atual"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-old',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-new',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-confirm" placeholder="Repita a nova senha"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeCoordPass()">🔑 Atualizar Senha</button>
             <div class="l-err" id="coord-pass-err"></div>
           </div>
@@ -457,7 +461,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="fg"><label>Nome Completo</label><input type="text" id="cnp-name"/></div>
           <div class="form-2">
             <div class="fg"><label>Idade</label><input type="number" id="cnp-age" min="1" max="120"/></div>
-            <div class="fg"><label>Sexo</label><select id="cnp-sex"><option>Feminino</option><option>Masculino</option></select></div>
+            <div class="fg"><label>Identidade de Gênero</label><select id="cnp-sex"><option>Mulher cisgênero</option><option>Homem cisgênero</option><option>Homem transgênero</option><option>Mulher transgênero</option><option>Travesti</option><option>Não binário</option><option>Prefiro não informar</option></select></div>
           </div>
           <div class="fg"><label>Grupo</label><select id="cnp-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
           <div class="fg"><label>Obs. clínicas</label><input type="text" id="cnp-obs" placeholder="Ex: DM2, HAS..."/></div>
@@ -505,7 +509,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="fg"><label>Nome Completo</label><input type="text" id="np-name"/></div>
           <div class="form-2">
             <div class="fg"><label>Idade</label><input type="number" id="np-age" min="1" max="120"/></div>
-            <div class="fg"><label>Sexo</label><select id="np-sex"><option>Feminino</option><option>Masculino</option></select></div>
+            <div class="fg"><label>Identidade de Gênero</label><select id="np-sex"><option>Mulher cisgênero</option><option>Homem cisgênero</option><option>Homem transgênero</option><option>Mulher transgênero</option><option>Travesti</option><option>Não binário</option><option>Prefiro não informar</option></select></div>
           </div>
           <div class="fg"><label>Grupo</label><select id="np-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
           <div class="fg"><label>Obs. clínicas</label><input type="text" id="np-obs" placeholder="Ex: DM2, HAS..."/></div>
@@ -518,9 +522,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Atualize sua senha de acesso</div>
         <div class="card" style="max-width:440px">
           <div style="padding:20px">
-            <div class="fg"><label>Senha atual</label><input type="password" id="ap-pass-old" placeholder="Sua senha atual"/></div>
-            <div class="fg"><label>Nova senha</label><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/></div>
-            <div class="fg"><label>Confirmar nova senha</label><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"/></div>
+            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="ap-pass-old" placeholder="Sua senha atual"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-old',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-new',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeApPass()">🔑 Atualizar Senha</button>
             <div class="l-err" id="ap-pass-err"></div>
           </div>
@@ -539,7 +543,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
   <div class="sumbar" id="sumbar" style="display:none">
     <div style="font-weight:700;font-size:.85rem;flex-shrink:0">AGEscore</div>
     <div class="sumvals">
-      <div class="si"><div class="sl">Q1 Carnes</div><div class="sn" id="sb1">0,0</div></div>
+      <div class="si"><div class="sl">Q1 Proteínas</div><div class="sn" id="sb1">0,0</div></div>
       <div class="si"><div class="sl">Q2 Outros</div><div class="sn" id="sb2">0,0</div></div>
       <div class="si"><div class="sl">Semanal</div><div class="sn" id="sbt">0,0</div></div>
       <div class="si"><div class="sl">Diário</div><div class="sn" id="sbd">0,0</div></div>
@@ -556,7 +560,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
     <h2 id="nu-title">Novo Usuário</h2>
     <div class="fg"><label>Nome completo</label><input type="text" id="nu-name"/></div>
     <div class="fg"><label>E-mail</label><input type="email" id="nu-email"/></div>
-    <div class="fg"><label>Senha inicial</label><input type="password" id="nu-pass"/></div>
+    <div class="fg"><label>Senha inicial</label><div class="pass-wrap"><input type="password" id="nu-pass"/><button type="button" class="pass-eye" onclick="togglePass('nu-pass',this)" tabindex="-1">👁️</button></div></div>
     <button class="btn btn-g" style="width:100%;padding:12px" onclick="createUser()">✅ Criar</button>
     <div class="l-err" id="nu-err"></div>
   </div>
@@ -1008,7 +1012,7 @@ async function buildSciReport(){
           <tr><td>AGE Diário — Mediana (IIQ) · Median (IQR)</td><td>${fmt(all.median)} (${fmt(all.iqr)})</td>${gstats.map(gs=>`<td>${fmt(gs.st.median)} (${fmt(gs.st.iqr)})</td>`).join('')}</tr>
           <tr><td>AGE Diário — Mín–Máx · Min–Max</td><td>${fmt(all.min)} – ${fmt(all.max)}</td>${gstats.map(gs=>`<td>${fmt(gs.st.min)} – ${fmt(gs.st.max)}</td>`).join('')}</tr>
           <tr><td>IC 95% · 95% CI</td><td>${fmt(all.ci95[0])} – ${fmt(all.ci95[1])}</td>${gstats.map(gs=>`<td>${fmt(gs.st.ci95[0])} – ${fmt(gs.st.ci95[1])}</td>`).join('')}</tr>
-          <tr><td>AGE Q1 — Carnes (kU/sem) · Meat AGE</td><td>${fmtStatArr(answered.map(p=>p.q1))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q1))}</td>`).join('')}</tr>
+          <tr><td>AGE Q1 — Proteínas (kU/sem) · Meat AGE</td><td>${fmtStatArr(answered.map(p=>p.q1))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q1))}</td>`).join('')}</tr>
           <tr><td>AGE Q2 — Laticínios/Óleos (kU/sem) · Dairy/Oils AGE</td><td>${fmtStatArr(answered.map(p=>p.q2))}</td>${gstats.map(gs=>`<td>${fmtStatArr(_allSci.filter(p=>p.status==='Respondido'&&p.group===gs.g).map(p=>p.q2))}</td>`).join('')}</tr>
         </tbody>
       </table>
@@ -1242,8 +1246,17 @@ const Q1C=[
    foods:[{id:'ov-0',n:'Ovo de galinha (inteiro, mexido, omelete)',d:'50g · 1 unidade médio'},{id:'ov-1',n:'Ovo de codorna',d:'10g · 5 unidades'}]},
   {id:'embutidos',icon:'🌭',name:'Embutidos',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
    foods:[{id:'em-0',n:'Salsicha',d:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},{id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},{id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',cs:[null,null,null,null,6.6]},{id:'em-3',n:'Mortadela, presunto, salame, copa',d:'60g · 3 fatias',cs:[1.2,null,null,null,null]}]},
-  {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',fixedScore:true,
-   foods:[{id:'px-0',n:'Filé de peixe (pescada, badejo, sardinha)',d:'110g · 1 unidade médio',fa:null},{id:'px-1',n:'Atum / sardinha (lata em óleo)',d:'110g · 1 unidade',fa:1},{id:'px-2',n:'Atum / salmão / frutos do mar (cru/ceviche)',d:'110g · 1 unidade',fa:1},{id:'px-3',n:'Camarão / frutos do mar (empanado)',d:'110g · 1 porção média',fa:4.8},{id:'px-4',n:'Camarão / frutos do mar (cozido/grelhado)',d:'110g · 1 porção média',fa:2.3},{id:'px-5',n:'Casquinha de siri / frutos do mar (gratinado)',d:'110g · 1 porção média',fa:3.7}]},
+  {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',
+   methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
+   mixedScore:true,
+   foods:[
+     {id:'px-0',n:'Filé de peixe ou posta (pescada, badejo, sardinha)',d:'110g · 1 unidade médio',fa:null,cs:[1,5,3.4,2.4,9.7]},
+     {id:'px-1',n:'Atum / sardinha (lata em óleo)',d:'110g · 1 unidade',fa:1,cs:null},
+     {id:'px-2',n:'Atum / salmão / frutos do mar (cru/ceviche)',d:'110g · 1 unidade',fa:1,cs:null},
+     {id:'px-3',n:'Camarão / frutos do mar (empanado)',d:'110g · 1 porção média',fa:4.8,cs:null},
+     {id:'px-4',n:'Camarão / frutos do mar (cozido/grelhado)',d:'110g · 1 porção média',fa:2.3,cs:null},
+     {id:'px-5',n:'Casquinha de siri / frutos do mar (gratinado)',d:'110g · 1 porção média',fa:3.7,cs:null}
+   ]},
 ];
 const Q2C=[
   {id:'laticinios',icon:'🧀',name:'Leite e derivados',items:[{id:'q2-0',n:'Queijo minas, muçarela',d:'50g · 1 fatia grossa ou 3 finas',s:1.4},{id:'q2-1',n:'Queijo parmesão, provolone',d:'30g · 1 col. sopa ou 2 fatias',s:5.1},{id:'q2-2',n:'Queijo gorgonzola',d:'30g · 1 col. sopa ou 2 fatias',s:2.5},{id:'q2-3',n:'Queijo brie, cheddar',d:'50g · 1 fatia grossa ou 3 finas',s:2.8},{id:'q2-4',n:'Queijo cremoso, ricota, cottage, minas light',d:'30g · 1 col. sopa',s:0.4},{id:'q2-5',n:'Requeijão tradicional',d:'30g · 1 col. sopa',s:2.6},{id:'q2-6',n:'Requeijão light',d:'30g · 1 col. sopa',s:1.2},{id:'q2-7',n:'Manteiga',d:'8g · 1 col. de chá',s:1.9}]},
@@ -1253,6 +1266,18 @@ const Q2C=[
   {id:'diversos',icon:'🍪',name:'Diversos',items:[{id:'q2-33',n:'Chocolate barra (ao leite, branco, amargo)',d:'30g · 1 unidade',s:1.0},{id:'q2-34',n:'Biscoito recheado, cookies (doces)',d:'60g · 2 unidades',s:1.5},{id:'q2-35',n:'Bolos, tortas, muffin (doces)',d:'60g · 1 unidade/fatia',s:2.0},{id:'q2-36',n:'Pão de queijo',d:'50g · 1 unidade',s:1.3},{id:'q2-37',n:'Pão com queijo derretido',d:'50g · 1 unidade',s:2.8},{id:'q2-38',n:'Pão com manteiga na chapa',d:'50g · 1 unidade',s:1.3},{id:'q2-39',n:'Batata congelada frita em óleo',d:'100g · 1 porção média',s:1.5},{id:'q2-40',n:'Batata/mandioca/polenta (frita em óleo)',d:'100g · 1 porção média',s:0.6},{id:'q2-41',n:'Batata/mandioca/polenta (assado/air fryer)',d:'100g · 1 porção média',s:0.3}]},
 ];
 const DS=['S','T','Q','Q','S','S','D'];
+function markAllDays(foodId, catId, isQ2){
+  const s=qState[foodId];
+  const allOn=s.days.every(d=>d===1);
+  s.days=allOn?[0,0,0,0,0,0,0]:[1,1,1,1,1,1,1];
+  DS.forEach((_,di)=>{
+    const btn=document.getElementById('d_'+foodId+'_'+di);
+    if(btn) btn.classList.toggle('on',!!s.days[di]);
+  });
+  if(isQ2) recalc2(foodId,catId);
+  else if(catId==='peixes'||catId==='embutidos') recalcFish(foodId,catId);
+  else refreshTotal(foodId,catId);
+}
 
 function initSt(id,nP){if(!qState[id])qState[id]={days:[0,0,0,0,0,0,0],qty:1,nday:1,prep:Array(nP).fill(0)};}
 function getDias(id){return qState[id]?.days.reduce((a,v)=>a+(v?1:0),0)||0;}
@@ -1276,12 +1301,35 @@ async function loadQuestParticipant(){
       </div>
     </div>
     <div class="q-tabs">
-      <button class="q-tab on" onclick="swQTab(0)">Q1 — Carnes e Proteínas</button>
+      <button class="q-tab on" onclick="swQTab(0)">Q1 — Proteínas</button>
       <button class="q-tab" onclick="swQTab(1)">Q2 — Laticínios, Óleos e Outros</button>
       <button class="q-tab" onclick="swQTab(2)">Resumo e Exportação</button>
     </div>
     <div class="qpanel on" id="qp0">
-      <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong> (SEG–DOM). ② <strong>Qtd</strong> de porções por refeição <em>(0,5=meia · 1=padrão 110g · 2=dupla)</em>. ③ <strong>N/dia</strong> (vezes ao dia). ④ <strong>Total Porções</strong> = Qtd × Dias × N/dia. ⑤ Distribua pelos <strong>métodos de preparo</strong>. ⑥ Peixes: escore já fixo por item.</div>
+      <div class="instruction"><strong>Como preencher:</strong> ① Marque os <strong>dias</strong> (SEG–DOM) ou clique <strong>7d</strong> para todos. ② <strong>Qtd</strong> de porções por refeição <em>(0,5=meia · 1=padrão 110g · 2=dupla)</em>. ③ <strong>N/dia</strong> (vezes ao dia). ④ <strong>Total Porções</strong> = Qtd × Dias × N/dia. ⑤ Distribua pelos <strong>métodos de preparo</strong> até completar o total.</div>
+    <div style="margin:10px 14px 0;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+      <div style="background:var(--green);color:#fff;font-size:.72rem;font-weight:700;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        📏 Tabela de Porções e Medidas Caseiras &nbsp;▼
+      </div>
+      <div style="display:none;padding:10px 12px;font-size:11px">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead><tr style="background:var(--green-bg)"><th style="padding:5px 8px;text-align:left;border:1px solid var(--border)">Alimento</th><th style="padding:5px 8px;border:1px solid var(--border)">1 Porção</th><th style="padding:5px 8px;border:1px solid var(--border)">Medida Caseira</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Carnes vermelhas / Aves / Suínos</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 bife médio / 1 escumadeira</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Ovo de galinha</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">50g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 unidade média</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Ovo de codorna</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">10g</td><td style="padding:4px 8px;border:1px solid var(--border)">5 unidades</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Embutidos (salsicha)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">30g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 unidade</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Embutidos (bacon)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">15g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 fatia/pedaço</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Linguiça seca (calabresa)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">2 unidades</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Mortadela / presunto / salame</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">60g</td><td style="padding:4px 8px;border:1px solid var(--border)">3 fatias</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Filé de peixe / posta</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 unidade média</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Atum / sardinha (lata)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 lata pequena</td></tr>
+            <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Camarão / frutos do mar</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 porção média</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px;color:var(--ink3);font-size:10px">💡 0,5 porção = metade da medida caseira · 2 porções = o dobro</div>
+      </div>
+    </div>
       <div id="q1-content"></div>
     </div>
     <div class="qpanel" id="qp1">
@@ -1294,7 +1342,7 @@ async function loadQuestParticipant(){
           <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--green)">
             <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Parcial Q1</div>
             <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--ink)" id="res-q1">0,0</div>
-            <div style="font-size:.76rem;color:var(--ink3);margin-top:3px">Carnes e proteínas</div>
+            <div style="font-size:.76rem;color:var(--ink3);margin-top:3px">Proteínas</div>
           </div>
           <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--amber)">
             <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">AGE Parcial Q2</div>
@@ -1333,6 +1381,16 @@ function swQTab(i){
   document.querySelectorAll('.qpanel').forEach((p,j)=>p.classList.toggle('on',j===i));
   if(i===2) updateResumoTab();
 }
+function goToQ2(){
+  // Alert to continue Q2
+  const q1val=calcQ1();
+  if(q1val>0){
+    swQTab(1);
+    toast('✅ Q1 registrado! Agora preencha o Q2 — Laticínios, Óleos e Outros');
+  } else {
+    swQTab(1);
+  }
+}
 function updateResumoTab(){
   const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
   setEl('res-q1',fmt(q1));
@@ -1348,7 +1406,7 @@ function buildQ1full(){
     const sec=document.createElement('div');sec.className='q-section';
     if(cat.fixedScore){
       sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
-        <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore fixo</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
+        <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th style="font-size:9px">7d</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore fixo</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
       cont.appendChild(sec);
       const tb=document.getElementById(`qtb-${cat.id}`);
       cat.foods.forEach(food=>{
@@ -1356,6 +1414,7 @@ function buildQ1full(){
         const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=food.id;tr.dataset.cat=cat.id;
         const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${food.id}_${di}" onclick="tDayFish('${food.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
         tr.innerHTML=`<td class="food-name">${food.n}<span class="food-desc">${food.d}</span></td>${days}
+          <td><button class="day-toggle" style="font-size:8px;width:28px" onclick="markAllDays('${food.id}','${cat.id}',false)" title="Todos os dias">7d</button></td>
           <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalcFish('${food.id}','${cat.id}')"></td>
           <td>${ndaySel(`recalcFish('${food.id}','${cat.id}')`)}</td>
           <td class="q2-score-col"><strong>${food.fa!=null?food.fa.toFixed(1).replace('.',','):'—'}</strong></td>
@@ -1366,7 +1425,7 @@ function buildQ1full(){
     }
     const nP=cat.methods.length;
     sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
-      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Total<br>Porções</th><th>AGE</th></tr></thead>
+      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th style="font-size:9px">7d</th><th>Qtd</th><th>Vezes ao dia</th><th>Total<br>Porções</th><th>AGE</th></tr></thead>
       <tbody id="qtb-${cat.id}">${cat.scores?`<tr class="score-row"><td>Escores AGE por método de preparo →</td><td colspan="7"></td><td colspan="2"></td>${cat.methods.map((m,i)=>`<td><strong>${cat.scores[i].toFixed(1).replace('.',',')}</strong></td>`).join('')}</tr>`:''}</tbody></table></div>`;
     cont.appendChild(sec);
     const tb=document.getElementById(`qtb-${cat.id}`);
@@ -1375,6 +1434,7 @@ function buildQ1full(){
       const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=food.id;tr.dataset.cat=cat.id;
       const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${food.id}_${di}" onclick="tDay1('${food.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
       tr.innerHTML=`<td class="food-name">${food.n}<span class="food-desc">${food.d}</span></td>${days}
+        <td><button class="day-toggle" style="font-size:8px;width:28px" onclick="markAllDays('${food.id}','${cat.id}',false)" title="Todos os dias">7d</button></td>
         <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalcQty('${food.id}','${cat.id}')"></td>
         <td>${ndaySel(`recalcNday('${food.id}','${cat.id}')`)}</td>
         <td><span class="total-badge zero" id="qtot-${food.id}">—</span><span class="formula-hint">Qtd×Dias×N</span></td>
@@ -1382,7 +1442,7 @@ function buildQ1full(){
       tb.appendChild(tr);
       const prepRow=document.createElement('tr');prepRow.className='prep-panel';prepRow.id=`prep-row-${food.id}`;
       const prepHTML=cat.methods.map((m,i)=>{const sc=cat.scores?cat.scores[i]:(food.cs?food.cs[i]:null);const dis=(sc==null);return`<div class="prep-method${dis?' disabled':''}" id="pm-${food.id}-${i}"><span class="prep-method-label">${m}</span><span class="prep-method-score">${sc!=null?'escore <strong>'+String(sc).replace('.',',')+'</strong>':'—'}</span><input class="prep-method-input" id="pp-${food.id}-${i}" type="number" min="0" step="0.5" placeholder="0" ${dis?'disabled':''} oninput="recalcPrep('${food.id}','${cat.id}',${i},this)"><span class="prep-method-unit">porções</span></div>`;}).join('');
-      prepRow.innerHTML=`<td colspan="12"><div class="prep-header">▸ Distribuição por método de preparo <span class="prep-total-lbl" id="ptlbl-${food.id}">Total: —</span></div><div class="prep-methods">${prepHTML}</div><div class="prep-progress"><div class="prep-bar-wrap"><div class="prep-bar" id="pbar-${food.id}" style="width:0%"></div></div><span class="prep-msg" id="pmsg-${food.id}" style="color:var(--ink4)">Defina Qtd + Dias + N/dia para liberar a distribuição</span></div></td>`;
+      prepRow.innerHTML=`<td colspan="13"><div class="prep-header">▸ Distribuição por método de preparo <span class="prep-total-lbl" id="ptlbl-${food.id}">Total: —</span></div><div class="prep-methods">${prepHTML}</div><div class="prep-progress"><div class="prep-bar-wrap"><div class="prep-bar" id="pbar-${food.id}" style="width:0%"></div></div><span class="prep-msg" id="pmsg-${food.id}" style="color:var(--ink4)">Defina Qtd + Dias + N/dia para liberar a distribuição</span></div></td>`;
       tb.appendChild(prepRow);
     });
   });
@@ -1393,7 +1453,7 @@ function buildQ2full(){
   Q2C.forEach(cat=>{
     const sec=document.createElement('div');sec.className='q-section';
     sec.innerHTML=`<div class="q-section-header"><div class="q-sec-icon">${cat.icon}</div><div class="q-sec-title">${cat.name}</div><div class="q-sec-badge" id="qbadge-${cat.id}">AGE 0,0</div></div>
-      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
+      <div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th><th>S</th><th>D</th><th style="font-size:9px">7d</th><th>Qtd</th><th>Vezes ao dia</th><th>Escore</th><th>AGE</th></tr></thead><tbody id="qtb-${cat.id}"></tbody></table></div>`;
     cont.appendChild(sec);
     const tb=document.getElementById(`qtb-${cat.id}`);
     cat.items.forEach(item=>{
@@ -1401,6 +1461,7 @@ function buildQ2full(){
       const tr=document.createElement('tr');tr.className='food-row';tr.dataset.row=item.id;tr.dataset.cat=cat.id;
       const days=DS.map((_,di)=>`<td><button class="day-toggle" id="d_${item.id}_${di}" onclick="tDay2('${item.id}','${cat.id}',${di},this)">${DS[di]}</button></td>`).join('');
       tr.innerHTML=`<td class="food-name">${item.n}<span class="food-desc">${item.d}</span></td>${days}
+        <td><button class="day-toggle" style="font-size:8px;width:28px" onclick="markAllDays('${item.id}','${cat.id}',true)" title="Todos os dias">7d</button></td>
         <td><input class="num-input" type="number" min="0" step="0.5" value="1" oninput="recalc2('${item.id}','${cat.id}')"></td>
         <td>${ndaySel(`recalc2('${item.id}','${cat.id}')`)}</td>
         <td class="q2-score-col"><strong>${item.s.toFixed(1).replace('.',',')}</strong></td>
@@ -1450,7 +1511,7 @@ function updatePrepProgress(id){
 }
 function setAge(id,age){const el=document.getElementById(`qage-${id}`);if(!el)return;el.dataset.raw=age;el.textContent=age>0?age.toFixed(1).replace('.',','):'—';el.className='age-cell '+(age<=0?'age-zero':age<5?'age-low':age<15?'age-mid':'age-high');}
 function getAge(id){const el=document.getElementById(`qage-${id}`);return el?parseFloat(el.dataset.raw||0):0;}
-function updateBadge1(catId){const cat=Q1C.find(c=>c.id===catId);if(!cat)return;const t=cat.foods.reduce((s,f)=>s+getAge(f.id),0);const b=document.getElementById(`qbadge-${catId}`);if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'q-sec-badge has':'q-sec-badge';}}
+function updateBadge1(catId){const cat=Q1C.find(c=>c.id===catId);if(!cat)return;const t=(cat.foods||cat.foods).reduce((s,f)=>s+getAge(f.id),0);const b=document.getElementById(`qbadge-${catId}`);if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'q-sec-badge has':'q-sec-badge';}}
 function updateBadge2(catId){const cat=Q2C.find(c=>c.id===catId);if(!cat)return;const t=cat.items.reduce((s,f)=>s+getAge(f.id),0);const b=document.getElementById(`qbadge-${catId}`);if(b){b.textContent=`AGE ${t.toFixed(1).replace('.',',')}`;b.className=t>0?'q-sec-badge has':'q-sec-badge';}}
 function calcQ1(){return Q1C.reduce((s,c)=>s+c.foods.reduce((ss,f)=>ss+getAge(f.id),0),0);}
 function calcQ2(){return Q2C.reduce((s,c)=>s+c.items.reduce((ss,f)=>ss+getAge(f.id),0),0);}
@@ -1463,7 +1524,30 @@ async function saveQuestionnaire(){
   const q1=calcQ1(),q2=calcQ2(),tot=q1+q2,today=new Date().toLocaleDateString('pt-BR');
   const data=await getData(),idx=data.findIndex(x=>x.id===curApPart.id);
   if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});await saveP(data[idx]);_pCache=null;curApPart=data[idx];}
-  toast('✅ Questionário salvo com sucesso!');populateQuestSel();renderAPList();
+  // Show completion modal
+  showCompletionModal(+q1.toFixed(2),+q2.toFixed(2),+(tot/7).toFixed(2));
+  populateQuestSel();renderAPList();
+}
+
+function showCompletionModal(q1,q2,daily){
+  const existing=document.getElementById('modal-completion');
+  if(existing) existing.remove();
+  const modal=document.createElement('div');
+  modal.id='modal-completion';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);animation:up .3s ease">
+      <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:#2A5C1B;margin-bottom:8px">Questionários Respondidos!</div>
+      <div style="font-size:.85rem;color:#5A7A5A;margin-bottom:20px">Os dados foram salvos com sucesso na plataforma.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
+        <div style="background:#E6F4E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#2A5C1B;font-weight:700;text-transform:uppercase">AGE Q1</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#2A5C1B">\${q1.toFixed(1).replace('.',',')}</div></div>
+        <div style="background:#FDF3E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#9B6000;font-weight:700;text-transform:uppercase">AGE Q2</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#9B6000">\${q2.toFixed(1).replace('.',',')}</div></div>
+        <div style="background:#2A5C1B;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#C8E6C9;font-weight:700;text-transform:uppercase">Diário</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#fff">\${daily.toFixed(1).replace('.',',')} kU/d</div></div>
+      </div>
+      <button onclick="document.getElementById('modal-completion').remove()" style="background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border:none;border-radius:8px;padding:12px 28px;font-size:.92rem;font-weight:700;cursor:pointer;width:100%">✓ Fechar</button>
+    </div>`;
+  document.body.appendChild(modal);
 }
 
 // ══ QUEST EXPORT ══
@@ -1509,7 +1593,7 @@ function exportQuestXLSX(){
     ['Participante',curApPart.name,'ID',curApPart.id,'Grupo',curApPart.group],
     ['Idade',curApPart.age,'Sexo',curApPart.sex,'Data',new Date().toLocaleDateString('pt-BR')],
     [],
-    ['AGE Q1 — Carnes (kU/sem)',q1.toFixed(2)],
+    ['AGE Q1 — Proteínas (kU/sem)',q1.toFixed(2)],
     ['AGE Q2 — Laticínios (kU/sem)',q2.toFixed(2)],
     ['AGE Semanal Total (kU/sem)',tot.toFixed(2)],
     ['AGE Diário Médio (kU/d)',(tot/7).toFixed(2)],
@@ -1547,7 +1631,7 @@ function exportQuestPDF(){
     <div class="card" style="background:#1A1A18;color:#fff"><div class="v" style="color:#C8A882">${fmt(tot/7)}</div><div class="l" style="color:#7A7A74">AGE Diário (kU/d)</div></div>
   </div>`);
   // Q1 foods
-  w.document.write('<h2>Q1 — Carnes e Proteínas</h2><table><tr><th>Alimento</th><th>AGE (kU/sem)</th></tr>');
+  w.document.write('<h2>Q1 — Proteínas</h2><table><tr><th>Alimento</th><th>AGE (kU/sem)</th></tr>');
   Q1C.forEach(c=>c.foods.forEach(f=>{const a=getAge(f.id);if(a>0)w.document.write(`<tr><td>${f.n}</td><td>${fmt(a)}</td></tr>`);}));
   w.document.write('</table>');
   // Q2 foods
@@ -1601,6 +1685,14 @@ async function changeCoordPass(){
 }
 
 // ══ UTILS ══
+function togglePass(id,btn){
+  const inp=document.getElementById(id);
+  if(!inp)return;
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁️';
+  btn.style.color=show?'var(--green)':'var(--ink3)';
+}
 function fmt(n){if(!n&&n!==0)return'0,0';return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});}
 function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function closeM(id){document.getElementById(id).classList.remove('open');}
