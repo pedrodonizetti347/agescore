@@ -995,7 +995,8 @@ async function buildSciReport(){
       <table class="sci-table">
         <thead><tr><th>Variável · Variable</th><th>Total (n=${answered.length})</th>${groups.map((g,i)=>`<th>${g} (n=${gstats[i].n})</th>`).join('')}</tr></thead>
         <tbody>
-          <tr><td>Sexo Feminino · Female (%)</td><td>${pct(answered.filter(p=>p.sex==='Feminino').length,answered.length)}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${pct(gl.filter(p=>p.sex==='Feminino').length,gl.length)}</td>`}).join('')}</tr>
+          <tr><td>Identidade de Gênero Feminina · Female Gender Identity (%)</td><td>${pct(answered.filter(p=>p.sex==='Mulher cisgênero'||p.sex==='Mulher transgênero'||p.sex==='Feminino').length,answered.length)}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${pct(gl.filter(p=>p.sex==='Mulher cisgênero'||p.sex==='Mulher transgênero'||p.sex==='Feminino').length,gl.length)}</td>`}).join('')}</tr>
+          <tr><td>Identidade de Gênero Masculina · Male Gender Identity (%)</td><td>${pct(answered.filter(p=>p.sex==='Homem cisgênero'||p.sex==='Homem transgênero'||p.sex==='Masculino').length,answered.length)}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${pct(gl.filter(p=>p.sex==='Homem cisgênero'||p.sex==='Homem transgênero'||p.sex==='Masculino').length,gl.length)}</td>`}).join('')}</tr>
           <tr><td>Idade (anos) · Age (years) — Média ± DP · Mean ± SD</td><td>${fmtStat(answered.map(p=>p.age))}</td>${groups.map(g=>{const gl=answered.filter(p=>p.group===g);return`<td>${fmtStat(gl.map(p=>p.age))}</td>`}).join('')}</tr>
         </tbody>
       </table>
@@ -1022,8 +1023,8 @@ async function buildSciReport(){
     <div class="sci-section">
       <h3>Tabela 3 · Table 3 — Dados individuais · Individual Data</h3>
       <table class="sci-table">
-        <thead><tr><th>ID</th><th>Grupo · Group</th><th>Sexo · Sex</th><th>Idade · Age</th><th>Aplicador · Applicator</th><th>AGE Semanal (kU/sem)</th><th>AGE Diário (kU/d)</th><th>AGE Q1 (kU/sem)</th><th>AGE Q2 (kU/sem)</th></tr></thead>
-        <tbody>${answered.map(p=>`<tr><td>${p.id}</td><td>${p.group}</td><td>${p.sex==='Feminino'?'F':'M'}</td><td>${p.age}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('')}</tbody>
+        <thead><tr><th>ID</th><th>Grupo · Group</th><th>Identidade de Gênero · Gender</th><th>Idade · Age</th><th>Aplicador · Applicator</th><th>AGE Semanal (kU/sem)</th><th>AGE Diário (kU/d)</th><th>AGE Q1 (kU/sem)</th><th>AGE Q2 (kU/sem)</th></tr></thead>
+        <tbody>${answered.map(p=>`<tr><td>${p.id}</td><td>${p.group}</td><td>${p.sex||'—'}</td><td>${p.age}</td><td>${p.applicator||'—'}</td><td>${fmt(p.total)}</td><td>${fmt(p.daily)}</td><td>${fmt(p.q1)}</td><td>${fmt(p.q2)}</td></tr>`).join('')}</tbody>
       </table>
     </div>
 
