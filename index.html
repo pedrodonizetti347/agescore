@@ -496,6 +496,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="nav on" onclick="showAP('ap-list',this)"><span class="nav-ico">👥</span>Participantes</button>
       <button class="nav" onclick="showAP('ap-new',this)"><span class="nav-ico">➕</span>Novo Cadastro</button>
       <button class="nav" onclick="showAP('ap-quest',this)"><span class="nav-ico">📝</span>Aplicar Questionário</button>
+      <button class="nav" onclick="showAP('ap-tcle',this)"><span class="nav-ico">📄</span>TCLE / Pesquisa</button>
       <div class="nav-sep"></div>
       <button class="nav" onclick="showAP('ap-conta',this)"><span class="nav-ico">🔑</span>Minha Conta</button>
     </div>
@@ -534,6 +535,57 @@ canvas{max-width:100%;display:block;margin:0 auto}
           </div>
         </div>
       </div>
+      <div id="ap-tcle" class="panel">
+        <div class="ptitle">TCLE — Termo de Consentimento Livre e Esclarecido</div>
+        <div class="psub">Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</div>
+        <div class="card" style="max-width:720px">
+          <div style="padding:20px">
+            <div style="font-size:.75rem;color:var(--ink3);text-align:center;margin-bottom:10px">↓ Role para ler o termo completo antes de aceitar</div>
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:16px;max-height:360px;overflow-y:auto;font-size:.85rem;line-height:1.8;color:var(--ink);margin-bottom:16px">
+              <p style="margin-bottom:12px">O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Professora Doutora Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
+              <p style="margin-bottom:12px">O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
+              <p style="margin-bottom:12px">Sua participação na pesquisa será por meio de uma avaliação realizada em um único momento: você irá responder alguns questionários, sendo eles um questionário de identificação (nome, idade, data de nascimento etc.), um questionário sociodemográfico (onde mora, com quem mora, quantos filhos, renda etc.) e o Questionário de Consumo Alimentar dos produtos de glicação avançada (AGE) para avaliar o escore. Acreditamos que você levará aproximadamente 30 minutos para responder os questionários.</p>
+              <p style="margin-bottom:12px">Os pesquisadores não mostrarão seus questionários respondidos para ninguém, e seus dados pessoais serão mantidos em sigilo. Os resultados da pesquisa serão analisados e publicados, de maneira geral, sem qualquer identificação sua, em um congresso ou em uma revista científica.</p>
+              <p style="margin-bottom:12px">Obedecendo o que manda a lei, o pesquisador responsável vai arquivar seus questionários por cinco anos, ficando à disposição apenas para consulta do comitê de ética, quando este julgar necessário.</p>
+              <p style="margin-bottom:12px">Quando você estiver respondendo os questionários, você poderá sentir um desconforto emocional ou um constrangimento. Se você se sentir assim, avise o pesquisador que estiver com você e pare de responder os questionários. Não haverá qualquer prejuízo para você nem para seu trabalho.</p>
+              <p style="margin-bottom:12px">Se você participar da pesquisa, os pesquisadores estimam que o benefício será um conhecimento sobre os resultados obtidos, auxiliando em uma autorreflexão a respeito da sua saúde.</p>
+              <p style="margin-bottom:12px">A sua participação na pesquisa é voluntária, ou seja, você não é obrigado (a) a participar. Não receberá qualquer forma de remuneração pela sua participação.</p>
+              <p style="margin-bottom:12px">Em caso de dúvidas e/ou denúncias em relação às questões éticas, você pode entrar em contato com o Comitê de Ética em Pesquisa da Universidade São Judas pelo telefone <strong>(11) 2799-1950</strong> ou e-mail <a href="mailto:cep@saojudas.br" style="color:var(--green)">cep@saojudas.br</a> — Rua Taquari, 546 – Mooca, 2º andar, bloco C, CEP: 03166-000, São Paulo-SP.</p>
+              <p style="margin-bottom:0">Se você tiver dúvidas sobre a pesquisa, entre em contato com a Prof.ª Dr.ª Adriana Machado Saldiba de Lima pelo telefone <strong>(11) 997744587</strong> ou e-mail <a href="mailto:prof.adrianalima@usjt.br" style="color:var(--green)">prof.adrianalima@usjt.br</a>. Se você concordar em participar, este documento será assinado online, sendo que uma via ficará com você e a outra via ficará com o pesquisador.</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;cursor:pointer" onclick="toggleTCLE()">
+              <input type="checkbox" id="tcle-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation();toggleTCLE()">
+              <label for="tcle-check" style="font-size:.88rem;color:var(--ink);line-height:1.6;cursor:pointer">
+                Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este Termo de Consentimento Livre e Esclarecido.
+              </label>
+            </div>
+            <a id="tcle-btn" href="#" target="_blank"
+              onclick="return handleTCLE(event)"
+              style="display:block;width:100%;padding:13px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:not-allowed;opacity:.4;transition:all .25s;text-align:center;text-decoration:none;font-family:inherit">
+              Acessar o Questionário Sociodemográfico →
+            </a>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:18px">
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pesquisadora responsável</div>
+                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">Prof.ª Dr.ª Adriana Machado Saldiba de Lima</div>
+              </div>
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pesquisadora</div>
+                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">Adriana Lemos França Cunha</div>
+              </div>
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">CEP USJT</div>
+                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">(11) 2799-1950</div>
+              </div>
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Duração estimada</div>
+                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">~30 minutos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="ap-quest" class="panel">
         <div class="ptitle">Aplicar Questionário AGE</div>
         <div class="psub">Preencha junto com o participante presencialmente</div>
@@ -688,6 +740,10 @@ async function doLogin(){
 }
 
 function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
+// ══ TCLE ══
+const TCLE_FORMS_URL='https://docs.google.com/forms/d/e/1FAIpQLSdDLjCDRCYB_bFs9H824CKGy62aE31U4gTu4MIhc7BgQJS8EQ/viewform';
+function toggleTCLE(){const cb=document.getElementById('tcle-check');const btn=document.getElementById('tcle-btn');if(!cb)return;cb.checked=!cb.checked;if(cb.checked){btn.style.opacity='1';btn.style.cursor='pointer';btn.href=TCLE_FORMS_URL;}else{btn.style.opacity='.4';btn.style.cursor='not-allowed';btn.href='#';}}
+function handleTCLE(e){const cb=document.getElementById('tcle-check');if(!cb||!cb.checked){e.preventDefault();alert('Por favor, leia e aceite o Termo de Consentimento antes de prosseguir.');return false;}return true;}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
 // ══ SIDEBAR ══
