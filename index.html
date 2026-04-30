@@ -282,6 +282,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="nav" onclick="showP('statistics',this)"><span class="nav-ico">📈</span>Estatísticas</button>
       <button class="nav" onclick="showP('charts',this)"><span class="nav-ico">📉</span>Gráficos</button>
       <button class="nav" onclick="showP('scientific',this)"><span class="nav-ico">🔬</span>Relatório Científico</button>
+      <button class="nav" onclick="showP('socio-report',this);buildSocioReport()"><span class="nav-ico">👥</span>Rel. Sociodemográfico</button>
       <button class="nav" onclick="showP('export',this)"><span class="nav-ico">⬇️</span>Exportar</button>
       <div class="nav-sep"></div>
       <div class="nav-group-label">Gestão</div>
@@ -368,6 +369,52 @@ canvas{max-width:100%;display:block;margin:0 auto}
         </div>
         <div class="card"><div class="card-head"><span class="card-title">Prévia</span></div>
           <div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Aplicador</th><th>AGE Semanal</th><th>AGE Diário</th><th>Q1</th><th>Q2</th></tr></thead><tbody id="exp-tb"></tbody></table></div>
+        </div>
+      </div>
+
+      <div id="p-socio-report" class="panel">
+        <div class="ptitle">Relatório Sociodemográfico</div>
+        <div class="psub">Comparativo dos participantes — dados coletados via formulário</div>
+
+        <div class="kpi-row" id="socio-kpis" style="margin-bottom:20px"></div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head">
+            <span class="card-title">📋 Dados por Participante</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="socio-search" placeholder="Buscar participante..." oninput="filterSocioTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.82rem;width:180px"/>
+              <button class="btn btn-g" onclick="exportSocioCSV()">⬇ CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="socio-table">
+              <thead><tr>
+                <th>ID</th><th>Nome</th><th>Idade</th><th>Gênero</th><th>Etnia</th>
+                <th>Est. Civil</th><th>Escolaridade</th><th>Renda</th><th>Moradia</th>
+                <th>Doenças</th><th>TCLE</th>
+              </tr></thead>
+              <tbody id="socio-tb"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+          <div class="card">
+            <div class="card-head"><span class="card-title">👤 Distribuição por Gênero</span></div>
+            <div style="padding:14px" id="socio-genero"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">🎓 Escolaridade</span></div>
+            <div style="padding:14px" id="socio-escolar"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">💰 Renda Familiar</span></div>
+            <div style="padding:14px" id="socio-renda"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">🏥 Doenças Relatadas</span></div>
+            <div style="padding:14px" id="socio-doencas"></div>
+          </div>
         </div>
       </div>
 
@@ -811,7 +858,7 @@ function showP(id,el){
   document.querySelectorAll('#sc-admin .nav').forEach(n=>n.classList.remove('on'));
   document.getElementById('p-'+id).classList.add('on');
   if(el){el.classList.add('on');closeSB('adm');}
-  const map={dash:loadDash,participants:renderPTable,responses:populateRespSel,statistics:calcStats,charts:buildCharts,scientific:buildSciReport,export:loadExportPreview,users:renderUsersPanel};
+  const map={dash:loadDash,participants:renderPTable,responses:populateRespSel,statistics:calcStats,charts:buildCharts,scientific:buildSciReport,export:loadExportPreview,users:renderUsersPanel,'socio-report':buildSocioReport};
   if(map[id])map[id]();
 }
 
@@ -1871,5 +1918,94 @@ async function confirmarTCLE(){
   }catch(e){console.warn('tcle save:',e);}
   document.getElementById('tcle-step').style.display='none';
   await loadQuestParticipant(true);
+}
+
+// ══ RELATÓRIO SOCIODEMOGRÁFICO ══
+let _socioData=[];
+
+async function buildSocioReport(){
+  const data=await getData();
+  _socioData=data;
+  renderSocioTable(data);
+  renderSocioKPIs(data);
+  renderSocioCharts(data);
+}
+
+function renderSocioKPIs(data){
+  const total=data.length;
+  const comTCLE=data.filter(p=>p.tcle_aceito).length;
+  const pendentes=data.filter(p=>p.status==='Pendente').length;
+  const idadeMed=data.length?Math.round(data.reduce((a,p)=>a+(parseInt(p.age)||0),0)/data.length):0;
+  document.getElementById('socio-kpis').innerHTML=`
+    <div class="kpi"><div class="v">${total}</div><div class="l">Total Participantes</div></div>
+    <div class="kpi"><div class="v">${comTCLE}</div><div class="l">TCLE Aceito</div></div>
+    <div class="kpi"><div class="v">${pendentes}</div><div class="l">Pendentes</div></div>
+    <div class="kpi"><div class="v">${idadeMed}</div><div class="l">Idade Média (anos)</div></div>
+  `;
+}
+
+function renderSocioTable(data){
+  const tb=document.getElementById('socio-tb');
+  if(!tb)return;
+  tb.innerHTML=data.map(p=>`<tr>
+    <td>${p.id||'-'}</td>
+    <td>${p.name||'-'}</td>
+    <td>${p.age||'-'}</td>
+    <td>${p.sex||'-'}</td>
+    <td>${p.etnia||'-'}</td>
+    <td>${p.estadoCivil||'-'}</td>
+    <td>${p.escolaridade||'-'}</td>
+    <td>${p.renda||'-'}</td>
+    <td>${p.moradia||'-'}</td>
+    <td>${p.doencas||'-'}</td>
+    <td>${p.tcle_aceito?'<span class="badge bg">✓ Sim</span>':'<span class="badge bo">Não</span>'}</td>
+  </tr>`).join('');
+}
+
+function filterSocioTable(){
+  const q=(document.getElementById('socio-search').value||'').toLowerCase();
+  const filtered=_socioData.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.id||'').toLowerCase().includes(q));
+  renderSocioTable(filtered);
+}
+
+function renderSocioCharts(data){
+  // Gênero
+  const generos={};data.forEach(p=>{const g=p.sex||'Não informado';generos[g]=(generos[g]||0)+1;});
+  document.getElementById('socio-genero').innerHTML=barChart(generos,data.length);
+  // Escolaridade
+  const escolar={};data.forEach(p=>{const e=p.escolaridade||'Não informado';escolar[e]=(escolar[e]||0)+1;});
+  document.getElementById('socio-escolar').innerHTML=barChart(escolar,data.length);
+  // Renda
+  const renda={};data.forEach(p=>{const r=p.renda||'Não informado';renda[r]=(renda[r]||0)+1;});
+  document.getElementById('socio-renda').innerHTML=barChart(renda,data.length);
+  // Doenças
+  const doencas={};data.forEach(p=>{
+    const d=p.doencas||'Não informado';
+    d.split(',').forEach(x=>{const k=x.trim()||'Não informado';doencas[k]=(doencas[k]||0)+1;});
+  });
+  document.getElementById('socio-doencas').innerHTML=barChart(doencas,data.length);
+}
+
+function barChart(obj,total){
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{
+    const pct=total?Math.round(v/total*100):0;
+    return`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+        <span style="color:var(--ink);font-weight:500">${k}</span>
+        <span style="color:var(--ink3)">${v} (${pct}%)</span>
+      </div>
+      <div style="background:var(--border);border-radius:4px;height:8px">
+        <div style="background:var(--green);width:${pct}%;height:8px;border-radius:4px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function exportSocioCSV(){
+  const headers=['ID','Nome','Idade','Gênero','Etnia','Est. Civil','Escolaridade','Renda','Moradia','Doenças','TCLE Aceito','TCLE Timestamp'];
+  const rows=_socioData.map(p=>[p.id,p.name,p.age,p.sex,p.etnia,p.estadoCivil,p.escolaridade,p.renda,p.moradia,p.doencas,p.tcle_aceito?'Sim':'Não',p.tcle_timestamp||''].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='sociodemografico_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 </script>
