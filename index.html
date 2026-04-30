@@ -496,7 +496,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="nav on" onclick="showAP('ap-list',this)"><span class="nav-ico">👥</span>Participantes</button>
       <button class="nav" onclick="showAP('ap-new',this)"><span class="nav-ico">➕</span>Novo Cadastro</button>
       <button class="nav" onclick="showAP('ap-quest',this)"><span class="nav-ico">📝</span>Aplicar Questionário</button>
-      <button class="nav" onclick="showAP('ap-tcle',this)"><span class="nav-ico">📄</span>TCLE / Pesquisa</button>
+      <button class="nav" onclick="showAP('ap-socio',this)"><span class="nav-ico">📋</span>Sociodemográfico</button>
       <div class="nav-sep"></div>
       <button class="nav" onclick="showAP('ap-conta',this)"><span class="nav-ico">🔑</span>Minha Conta</button>
     </div>
@@ -535,55 +535,25 @@ canvas{max-width:100%;display:block;margin:0 auto}
           </div>
         </div>
       </div>
-      <div id="ap-tcle" class="panel">
-        <div class="ptitle">TCLE — Termo de Consentimento Livre e Esclarecido</div>
-        <div class="psub">Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</div>
-        <div class="card" style="max-width:720px">
-          <div style="padding:20px">
-            <div style="font-size:.75rem;color:var(--ink3);text-align:center;margin-bottom:10px">↓ Role para ler o termo completo antes de aceitar</div>
-            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:16px;max-height:360px;overflow-y:auto;font-size:.85rem;line-height:1.8;color:var(--ink);margin-bottom:16px">
-              <p style="margin-bottom:12px">O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Professora Doutora Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
-              <p style="margin-bottom:12px">O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
-              <p style="margin-bottom:12px">Sua participação na pesquisa será por meio de uma avaliação realizada em um único momento: você irá responder alguns questionários, sendo eles um questionário de identificação (nome, idade, data de nascimento etc.), um questionário sociodemográfico (onde mora, com quem mora, quantos filhos, renda etc.) e o Questionário de Consumo Alimentar dos produtos de glicação avançada (AGE) para avaliar o escore. Acreditamos que você levará aproximadamente 30 minutos para responder os questionários.</p>
-              <p style="margin-bottom:12px">Os pesquisadores não mostrarão seus questionários respondidos para ninguém, e seus dados pessoais serão mantidos em sigilo. Os resultados da pesquisa serão analisados e publicados, de maneira geral, sem qualquer identificação sua, em um congresso ou em uma revista científica.</p>
-              <p style="margin-bottom:12px">Obedecendo o que manda a lei, o pesquisador responsável vai arquivar seus questionários por cinco anos, ficando à disposição apenas para consulta do comitê de ética, quando este julgar necessário.</p>
-              <p style="margin-bottom:12px">Quando você estiver respondendo os questionários, você poderá sentir um desconforto emocional ou um constrangimento. Se você se sentir assim, avise o pesquisador que estiver com você e pare de responder os questionários. Não haverá qualquer prejuízo para você nem para seu trabalho.</p>
-              <p style="margin-bottom:12px">Se você participar da pesquisa, os pesquisadores estimam que o benefício será um conhecimento sobre os resultados obtidos, auxiliando em uma autorreflexão a respeito da sua saúde.</p>
-              <p style="margin-bottom:12px">A sua participação na pesquisa é voluntária, ou seja, você não é obrigado (a) a participar. Não receberá qualquer forma de remuneração pela sua participação.</p>
-              <p style="margin-bottom:12px">Em caso de dúvidas e/ou denúncias em relação às questões éticas, você pode entrar em contato com o Comitê de Ética em Pesquisa da Universidade São Judas pelo telefone <strong>(11) 2799-1950</strong> ou e-mail <a href="mailto:cep@saojudas.br" style="color:var(--green)">cep@saojudas.br</a> — Rua Taquari, 546 – Mooca, 2º andar, bloco C, CEP: 03166-000, São Paulo-SP.</p>
-              <p style="margin-bottom:0">Se você tiver dúvidas sobre a pesquisa, entre em contato com a Prof.ª Dr.ª Adriana Machado Saldiba de Lima pelo telefone <strong>(11) 997744587</strong> ou e-mail <a href="mailto:prof.adrianalima@usjt.br" style="color:var(--green)">prof.adrianalima@usjt.br</a>. Se você concordar em participar, este documento será assinado online, sendo que uma via ficará com você e a outra via ficará com o pesquisador.</p>
-            </div>
-            <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;cursor:pointer" onclick="toggleTCLE()">
-              <input type="checkbox" id="tcle-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation();toggleTCLE()">
-              <label for="tcle-check" style="font-size:.88rem;color:var(--ink);line-height:1.6;cursor:pointer">
-                Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este Termo de Consentimento Livre e Esclarecido.
-              </label>
-            </div>
-            <a id="tcle-btn" href="#" target="_blank"
-              onclick="return handleTCLE(event)"
-              style="display:block;width:100%;padding:13px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:not-allowed;opacity:.4;transition:all .25s;text-align:center;text-decoration:none;font-family:inherit">
-              Acessar o Questionário Sociodemográfico →
-            </a>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:18px">
-              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
-                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pesquisadora responsável</div>
-                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">Prof.ª Dr.ª Adriana Machado Saldiba de Lima</div>
-              </div>
-              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
-                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Pesquisadora</div>
-                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">Adriana Lemos França Cunha</div>
-              </div>
-              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
-                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">CEP USJT</div>
-                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">(11) 2799-1950</div>
-              </div>
-              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 14px">
-                <div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Duração estimada</div>
-                <div style="font-size:.82rem;font-weight:600;color:var(--ink)">~30 minutos</div>
-              </div>
-            </div>
+      <div id="ap-socio" class="panel">
+        <div class="ptitle">Questionário Sociodemográfico</div>
+        <div class="psub">Selecione o participante e abra o formulário</div>
+        <div class="card" style="max-width:680px"><div style="padding:20px">
+          <div class="fg" style="margin-bottom:16px">
+            <label>Participante</label>
+            <select id="socio-part-sel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
           </div>
-        </div>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdDLjCDRCYB_bFs9H824CKGy62aE31U4gTu4MIhc7BgQJS8EQ/viewform" target="_blank"
+            style="display:block;width:100%;padding:13px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;text-align:center;text-decoration:none;font-family:inherit;margin-bottom:16px">
+            📋 Abrir Questionário Sociodemográfico →
+          </a>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;margin-bottom:3px">Responsável</div><div style="font-size:.8rem;font-weight:600">Prof.ª Dr.ª Adriana Saldiba de Lima</div></div>
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;margin-bottom:3px">Pesquisadora</div><div style="font-size:.8rem;font-weight:600">Adriana Lemos França Cunha</div></div>
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;margin-bottom:3px">CEP USJT</div><div style="font-size:.8rem;font-weight:600">(11) 2799-1950</div></div>
+            <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 12px"><div style="font-size:.68rem;color:var(--ink3);text-transform:uppercase;margin-bottom:3px">Duração</div><div style="font-size:.8rem;font-weight:600">~30 minutos</div></div>
+          </div>
+        </div></div>
       </div>
 
       <div id="ap-quest" class="panel">
@@ -591,6 +561,39 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Preencha junto com o participante presencialmente</div>
         <div class="frow" style="margin-bottom:14px">
           <select id="q-part-sel" onchange="loadQuestParticipant()" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
+        </div>
+
+        <!-- TCLE step -->
+        <div id="tcle-step" style="display:none;max-width:720px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><span class="card-title">📄 Etapa 1 — Leia e aceite o TCLE</span></div>
+            <div style="padding:16px">
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:300px;overflow-y:auto;font-size:.84rem;line-height:1.8;color:var(--ink);margin-bottom:14px">
+                <p style="margin-bottom:10px">O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Prof.ª Dr.ª Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
+                <p style="margin-bottom:10px">O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
+                <p style="margin-bottom:10px">Sua participação será em um único momento: você responderá um questionário de identificação, um sociodemográfico e o Questionário de Consumo Alimentar de AGE. Duração estimada: ~30 minutos.</p>
+                <p style="margin-bottom:10px">Seus dados serão mantidos em sigilo. Os resultados serão publicados sem qualquer identificação sua. Os questionários serão arquivados por cinco anos à disposição do comitê de ética.</p>
+                <p style="margin-bottom:10px">Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador — não haverá qualquer prejuízo.</p>
+                <p style="margin-bottom:10px">Participação voluntária, sem remuneração. Benefício esperado: conhecimento sobre saúde e autorreflexão.</p>
+                <p style="margin-bottom:10px">Dúvidas éticas: CEP USJT — <strong>(11) 2799-1950</strong> | <a href="mailto:cep@saojudas.br" style="color:var(--green)">cep@saojudas.br</a> — Rua Taquari, 546, Mooca, 2º andar, bloco C, CEP 03166-000, SP.</p>
+                <p style="margin-bottom:0">Dúvidas da pesquisa: Prof.ª Dr.ª Adriana Machado Saldiba de Lima — <strong>(11) 997744587</strong> | <a href="mailto:prof.adrianalima@usjt.br" style="color:var(--green)">prof.adrianalima@usjt.br</a>.</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
+                <input type="checkbox" id="tcle2-check" onchange="toggleTCLE2()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer">
+                <label for="tcle2-check" style="font-size:.86rem;color:var(--ink);line-height:1.6;cursor:pointer">
+                  Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este TCLE.
+                </label>
+              </div>
+              <div id="tcle2-cpf-area" style="display:none">
+                <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Etapa 2 — Confirme sua identidade digitando seu CPF</div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white)"/>
+                  <button onclick="confirmarTCLE()" style="padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer">✅ Confirmar e Iniciar</button>
+                </div>
+                <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- TCLE step (shown before questionnaire) -->
@@ -611,8 +614,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
               </div>
 
               <!-- Checkbox aceite -->
-              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
-                <input type="checkbox" id="tcle2-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onchange="toggleTCLE2()">
+              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;cursor:pointer" onclick="toggleTCLE2()">
+                <input type="checkbox" id="tcle2-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation();toggleTCLE2()">
                 <label for="tcle2-check" style="font-size:.86rem;color:var(--ink);line-height:1.6;cursor:pointer">
                   Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este TCLE.
                 </label>
@@ -783,18 +786,16 @@ async function doLogin(){
 
 function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
 // ══ TCLE ══
-const TCLE_FORMS_URL='https://docs.google.com/forms/d/e/1FAIpQLSdDLjCDRCYB_bFs9H824CKGy62aE31U4gTu4MIhc7BgQJS8EQ/viewform';
 function toggleTCLE2(){
   const cb=document.getElementById('tcle2-check');
   const cpfArea=document.getElementById('tcle2-cpf-area');
   if(!cb||!cpfArea)return;
   cpfArea.style.display=cb.checked?'block':'none';
   if(!cb.checked){
-    const cpfI=document.getElementById('tcle2-cpf');if(cpfI)cpfI.value='';
-    const errEl=document.getElementById('tcle2-err');if(errEl)errEl.style.display='none';
+    const ci=document.getElementById('tcle2-cpf');if(ci)ci.value='';
+    const er=document.getElementById('tcle2-err');if(er)er.style.display='none';
   }
 }
-function formatCPF(input){let v=input.value.replace(/D/g,'');if(v.length>11)v=v.slice(0,11);v=v.replace(/(.d{3})(.d)/,'$1.$2');v=v.replace(/(.d{3}).(.d{3})(.d)/,'$1.$2.$3');v=v.replace(/(.d{3}).(.d{3}).(.d{3})(.d)/,'$1.$2.$3-$4');input.value=v;}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
 // ══ SIDEBAR ══
@@ -1312,6 +1313,7 @@ function showAP(id,el){
   if(el){el.classList.add('on');closeSB('ap');}
   if(id==='ap-list')renderAPList();
   if(id==='ap-quest')populateQuestSel();
+  if(id==='ap-socio')populateSocioSel();
 }
 
 async function renderAPList(){
@@ -1341,6 +1343,12 @@ async function populateQuestSel(){
   const sel=document.getElementById('q-part-sel'),cur=sel.value;
   const _qAll=await getData();
   sel.innerHTML='<option value="">— Selecione o participante —</option>'+_qAll.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
+}
+
+async function populateSocioSel(){
+  const sel=document.getElementById('socio-part-sel');if(!sel)return;
+  const cur=sel.value;const all=await getData();
+  sel.innerHTML='<option value="">— Selecione o participante —</option>'+all.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name}</option>`).join('');
 }
 
 // ══ QUESTIONNAIRE ══
@@ -1400,23 +1408,20 @@ async function loadQuestParticipant(skipTcle=false){
   const area=document.getElementById('quest-area'),bar=document.getElementById('sumbar');
   const tcleStep=document.getElementById('tcle-step');
   if(!id){
-    area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';
-    bar.style.display='none';
     if(tcleStep)tcleStep.style.display='none';
-    return;
+    area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';
+    bar.style.display='none';return;
   }
   const data=await getData();const p=data.find(x=>x.id===id);
   if(!p){area.innerHTML='<div class="empty"><div class="ei">⚠️</div><p>Participante não encontrado.</p></div>';return;}
   if(!skipTcle&&!p.tcle_aceito){
-    const tcleStep=document.getElementById('tcle-step');
-    const area=document.getElementById('quest-area');
     if(tcleStep){tcleStep.style.display='block';area.innerHTML='<div class="empty"><div class="ei">📄</div><p>Complete o TCLE acima para iniciar.</p></div>';bar.style.display='none';}
     const cb=document.getElementById('tcle2-check');if(cb)cb.checked=false;
     const cpfA=document.getElementById('tcle2-cpf-area');if(cpfA)cpfA.style.display='none';
     const cpfI=document.getElementById('tcle2-cpf');if(cpfI)cpfI.value='';
     curApPart=p;return;
   }
-  if(document.getElementById('tcle-step'))document.getElementById('tcle-step').style.display='none';
+  if(tcleStep)tcleStep.style.display='none';
   curApPart=p;bar.style.display='flex';qState={};
   area.innerHTML=`
     <div class="q-patient-bar"><h3>📋 Participante selecionado</h3>
