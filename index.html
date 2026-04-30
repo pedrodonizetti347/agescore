@@ -611,8 +611,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
               </div>
 
               <!-- Checkbox aceite -->
-              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px;cursor:pointer" onclick="toggleTCLE2()">
-                <input type="checkbox" id="tcle2-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation();toggleTCLE2()">
+              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
+                <input type="checkbox" id="tcle2-check" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer" onchange="toggleTCLE2()">
                 <label for="tcle2-check" style="font-size:.86rem;color:var(--ink);line-height:1.6;cursor:pointer">
                   Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este TCLE.
                 </label>
@@ -784,7 +784,16 @@ async function doLogin(){
 function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
 // ══ TCLE ══
 const TCLE_FORMS_URL='https://docs.google.com/forms/d/e/1FAIpQLSdDLjCDRCYB_bFs9H824CKGy62aE31U4gTu4MIhc7BgQJS8EQ/viewform';
-function toggleTCLE2(){const cb=document.getElementById('tcle2-check');const cpfArea=document.getElementById('tcle2-cpf-area');if(!cb||!cpfArea)return;cb.checked=!cb.checked;cpfArea.style.display=cb.checked?'block':'none';if(!cb.checked){document.getElementById('tcle2-cpf').value='';document.getElementById('tcle2-err').style.display='none';}}
+function toggleTCLE2(){
+  const cb=document.getElementById('tcle2-check');
+  const cpfArea=document.getElementById('tcle2-cpf-area');
+  if(!cb||!cpfArea)return;
+  cpfArea.style.display=cb.checked?'block':'none';
+  if(!cb.checked){
+    const cpfI=document.getElementById('tcle2-cpf');if(cpfI)cpfI.value='';
+    const errEl=document.getElementById('tcle2-err');if(errEl)errEl.style.display='none';
+  }
+}
 function formatCPF(input){let v=input.value.replace(/D/g,'');if(v.length>11)v=v.slice(0,11);v=v.replace(/(.d{3})(.d)/,'$1.$2');v=v.replace(/(.d{3}).(.d{3})(.d)/,'$1.$2.$3');v=v.replace(/(.d{3}).(.d{3}).(.d{3})(.d)/,'$1.$2.$3-$4');input.value=v;}
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
@@ -1389,7 +1398,15 @@ function getTotalP(id){const s=qState[id];if(!s)return 0;return Math.round(((s.q
 async function loadQuestParticipant(skipTcle=false){
   const id=document.getElementById('q-part-sel').value;
   const area=document.getElementById('quest-area'),bar=document.getElementById('sumbar');
+  const tcleStep=document.getElementById('tcle-step');
+  if(!id){
+    area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';
+    bar.style.display='none';
+    if(tcleStep)tcleStep.style.display='none';
+    return;
+  }
   const data=await getData();const p=data.find(x=>x.id===id);
+  if(!p){area.innerHTML='<div class="empty"><div class="ei">⚠️</div><p>Participante não encontrado.</p></div>';return;}
   if(!skipTcle&&!p.tcle_aceito){
     const tcleStep=document.getElementById('tcle-step');
     const area=document.getElementById('quest-area');
