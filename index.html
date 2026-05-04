@@ -294,6 +294,12 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <span class="nav-ico">🔬</span>Projeto Futuro — Pedro
         <span style="position:absolute;top:6px;right:8px;background:#7C3AED;color:#fff;font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:.03em">EM ELABORAÇÃO</span>
       </button>
+      <button class="nav" onclick="showP('settings',this)"><span class="nav-ico">⚙️</span>Configurações</button>
+      <div class="nav-sep"></div>
+      <button class="nav" onclick="showP('projeto-futuro',this)" style="position:relative">
+        <span class="nav-ico">🔬</span>Projeto Futuro — Pedro
+        <span style="position:absolute;top:6px;right:8px;background:#7C3AED;color:#fff;font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:.03em">EM ELABORAÇÃO</span>
+      </button>
     </div>
     <div class="main">
 
@@ -424,51 +430,6 @@ canvas{max-width:100%;display:block;margin:0 auto}
         </div>
       </div>
 
-      <div id="p-users" class="panel">
-        <div class="ptitle">Gestão de Usuários</div>
-        <div class="psub">Gerencie coordenadores e aplicadores da plataforma</div>
-        <div style="display:grid;grid-template-columns:1fr;gap:16px">
-          <!-- Coordenadores -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">📋 Coordenadores <span style="font-size:.75rem;color:var(--ink3);font-weight:400">(incluem/excluem participantes, sem acesso a relatórios)</span></span>
-              <button class="btn btn-b" onclick="openNewUser('coord')">＋ Novo Coordenador</button>
-            </div>
-            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Status</th><th>Ações</th></tr></thead><tbody id="coord-tb"></tbody></table></div>
-          </div>
-          <!-- Aplicadores -->
-          <div class="card">
-            <div class="card-head">
-              <span class="card-title">👩‍⚕️ Aplicadores <span style="font-size:.75rem;color:var(--ink3);font-weight:400">(cadastram participantes e aplicam o questionário)</span></span>
-              <button class="btn btn-g" onclick="openNewUser('ap')">＋ Novo Aplicador</button>
-            </div>
-            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Participantes</th><th>Status</th><th>Ações</th></tr></thead><tbody id="ap-tb-admin"></tbody></table></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="p-settings" class="panel">
-        <div class="ptitle">Configurações</div>
-        <div class="psub">Credenciais do administrador</div>
-        <div class="card" style="max-width:440px">
-          <div class="card-head"><span class="card-title">🔬 Administrador — Pedro Donizetti</span></div>
-          <div style="padding:18px">
-            <div class="fg"><label>E-mail</label><input type="email" id="set-adm-email" value="pedrodonizettipalestrante@gmail.com"/></div>
-            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><div class="pass-wrap"><input type="password" id="set-adm-pass" placeholder="Nova senha"/><button type="button" class="pass-eye" onclick="togglePass('set-adm-pass',this)" tabindex="-1">👁️</button></div></div>
-            <button class="btn btn-g" onclick="saveAdminCreds()">💾 Salvar</button>
-          </div>
-        </div>
-        <div class="card" style="max-width:440px;margin-top:14px">
-          <div class="card-head"><span class="card-title">⚠️ Dados da pesquisa</span></div>
-          <div style="padding:16px">
-            <button class="btn btn-r" onclick="if(confirm('Apagar TODOS os dados? Não pode ser desfeito.'))clearAll()">🗑 Limpar todos os dados</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══════════════════════════════════════════ -->
-      <!-- PRÉ-PROJETO DOUTORADO — PEDRO DONIZETTI     -->
-      <!-- ═══════════════════════════════════════════ -->
       <div id="p-projeto-futuro" class="panel">
         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px">
           <div class="ptitle" style="margin:0">Projeto Futuro — Pedro Donizetti</div>
@@ -671,6 +632,351 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="l-err" id="cnp-err"></div>
         </div></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APLICADOR ══ -->
+<div id="sc-ap" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="ap-hbg" onclick="toggleSB('ap')"><span></span><span></span><span></span></button>
+      <div class="topbar-logo">AGE<span>score</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-role">Aplicador(a)</span>
+      <span class="topbar-user" id="ap-name-display"></span>
+      <button class="btn-xs" onclick="logout()">Sair</button>
+    </div>
+  </div>
+  <div class="body-wrap">
+    <div class="sidebar-overlay" id="ap-ov" onclick="closeSB('ap')"></div>
+    <div class="sidebar" id="ap-sb">
+      <button class="nav on" onclick="showAP('ap-list',this)"><span class="nav-ico">👥</span>Participantes</button>
+      <button class="nav" onclick="showAP('ap-new',this)"><span class="nav-ico">➕</span>Novo Cadastro</button>
+      <button class="nav" onclick="showAP('ap-quest',this)"><span class="nav-ico">📝</span>Aplicar Questionário</button>
+      <button class="nav" onclick="showAP('ap-socio',this)"><span class="nav-ico">📋</span>Sociodemográfico</button>
+      <div class="nav-sep"></div>
+      <button class="nav" onclick="showAP('ap-conta',this)"><span class="nav-ico">🔑</span>Minha Conta</button>
+    </div>
+    <div class="main">
+      <div id="ap-list" class="panel on">
+        <div class="ptitle">Participantes</div>
+        <div class="psub">Clique em "Aplicar" para iniciar o questionário</div>
+        <div class="frow"><input type="text" id="ap-search" placeholder="Buscar..." oninput="renderAPList()" style="flex:1"/></div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Obs</th><th>Status</th><th>Ação</th></tr></thead><tbody id="ap-p-tb"></tbody></table></div></div>
+      </div>
+      <div id="ap-new" class="panel">
+        <div class="ptitle">Novo Participante</div>
+        <div class="psub">ID gerado automaticamente</div>
+        <div class="card" style="max-width:500px"><div style="padding:20px">
+          <div class="fg"><label>Nome Completo</label><input type="text" id="np-name"/></div>
+          <div class="form-2">
+            <div class="fg"><label>Idade</label><input type="number" id="np-age" min="1" max="120"/></div>
+            <div class="fg"><label>Identidade de Gênero</label><select id="np-sex"><option>Mulher cisgênero</option><option>Homem cisgênero</option><option>Homem transgênero</option><option>Mulher transgênero</option><option>Travesti</option><option>Não binário</option><option>Prefiro não informar</option></select></div>
+          </div>
+          <div class="fg"><label>Grupo</label><select id="np-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
+          <div class="fg"><label>Obs. clínicas</label><input type="text" id="np-obs" placeholder="Ex: DM2, HAS..."/></div>
+          <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipant()">✅ Cadastrar</button>
+          <div class="l-err" id="np-err"></div>
+        </div></div>
+      </div>
+      <div id="ap-conta" class="panel">
+        <div class="ptitle">Minha Conta</div>
+        <div class="psub">Atualize sua senha de acesso</div>
+        <div class="card" style="max-width:440px">
+          <div style="padding:20px">
+            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="ap-pass-old" placeholder="Sua senha atual"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-old',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-new',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
+            <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeApPass()">🔑 Atualizar Senha</button>
+            <div class="l-err" id="ap-pass-err"></div>
+          </div>
+        </div>
+      </div>
+      <div id="ap-socio" class="panel">
+        <div class="ptitle">Questionário Sociodemográfico</div>
+        <div class="psub">Preencha junto com o participante presencialmente</div>
+
+        <div class="frow" style="margin-bottom:14px">
+          <select id="socio-part-sel" onchange="loadSocioParticipant()" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
+        </div>
+
+        <div id="socio-form-area" style="display:none;max-width:720px">
+          <!-- Participante selecionado -->
+          <div id="socio-pbar" class="q-patient-bar" style="margin-bottom:16px"></div>
+
+          <!-- Seção 1: Identificação -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-head"><span class="card-title">👤 1. Identificação</span></div>
+            <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="fg" style="grid-column:1/-1"><label>Local da Coleta</label><input type="text" id="s-local" placeholder="Ex: São Judas Mooca" style="width:100%"/></div>
+              <div class="fg" style="grid-column:1/-1"><label>Nome do(a) Pesquisador(a)</label><input type="text" id="s-pesquisador" placeholder="Nome completo do aplicador" style="width:100%"/></div>
+              <div class="fg"><label>Telefone do Pesquisador(a)</label><input type="text" id="s-tel-pesq" placeholder="(11) 99999-9999" style="width:100%"/></div>
+              <div class="fg"><label>Data de Nascimento</label><input type="date" id="s-nascimento" style="width:100%"/></div>
+              <div class="fg"><label>Telefone do Participante</label><input type="text" id="s-telefone" placeholder="(11) 99999-9999" style="width:100%"/></div>
+              <div class="fg"><label>Idade (anos)</label><input type="number" id="s-idade" min="0" max="120" placeholder="Ex: 65" style="width:100%"/></div>
+              <div class="fg"><label>Bairro onde mora</label><input type="text" id="s-bairro" placeholder="Bairro" style="width:100%"/></div>
+              <div class="fg"><label>Cidade onde mora</label><input type="text" id="s-cidade" placeholder="Cidade" style="width:100%"/></div>
+              <div class="fg"><label>Estado</label><select id="s-estado" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Acre</option><option>Alagoas</option><option>Amapá</option><option>Amazonas</option><option>Bahia</option><option>Ceará</option><option>Distrito Federal</option><option>Espírito Santo</option><option>Goiás</option><option>Maranhão</option><option>Mato Grosso</option><option>Mato Grosso do Sul</option><option>Minas Gerais</option><option>Pará</option><option>Paraíba</option><option>Paraná</option><option>Pernambuco</option><option>Piauí</option><option>Rio de Janeiro</option><option>Rio Grande do Norte</option><option>Rio Grande do Sul</option><option>Rondônia</option><option>Roraima</option><option>Santa Catarina</option><option selected>São Paulo</option><option>Sergipe</option><option>Tocantins</option>
+              </select></div>
+            </div>
+          </div>
+
+          <!-- Seção 2: Perfil Sociodemográfico -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-head"><span class="card-title">📊 2. Perfil Sociodemográfico</span></div>
+            <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="fg"><label>Identidade de Gênero</label><select id="s-genero" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Mulher cisgênero</option><option>Homem cisgênero</option>
+                <option>Mulher transgênero</option><option>Homem transgênero</option>
+                <option>Não-binário</option><option>Prefiro não informar</option>
+              </select></div>
+              <div class="fg"><label>Etnia/Raça (Autodeclaração)</label><select id="s-etnia" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Branco</option><option>Preto</option><option>Pardo</option>
+                <option>Amarelo</option><option>Indígena</option><option>Prefiro não informar</option>
+              </select></div>
+              <div class="fg"><label>Estado Civil</label><select id="s-civil" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Solteiro(a)</option>
+                <option>Casado(a), ou vive com o companheiro(a)</option>
+                <option>Separado(a), divorciado(a) ou desquitado(a)</option>
+                <option>Viúvo(a)</option>
+              </select></div>
+              <div class="fg"><label>Número de Filhos</label><input type="number" id="s-filhos" min="0" max="20" placeholder="Ex: 2" style="width:100%"/></div>
+              <div class="fg"><label>Escolaridade</label><select id="s-escolaridade" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Nunca estudou</option><option>Ensino Fundamental incompleto</option>
+                <option>Ensino Fundamental completo</option><option>Ensino Médio incompleto</option>
+                <option>Ensino Médio completo</option><option>Ensino Superior</option>
+                <option>Especialização</option><option>Mestrado</option><option>Doutorado</option>
+              </select></div>
+              <div class="fg"><label>Anos de Estudo (em números)</label><input type="number" id="s-anos-estudo" min="0" max="30" placeholder="Ex: 22" style="width:100%"/></div>
+              <div class="fg"><label>Ocupação</label><select id="s-ocupacao" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Assalariado (CTPS assinada)</option>
+                <option>Autônomo/profissional liberal</option>
+                <option>Sócio/dirigente de alguma empresa</option>
+                <option>Aposentado(a)</option><option>Do lar</option>
+                <option>Desempregado(a)</option><option>Estudante</option>
+              </select></div>
+              <div class="fg"><label>Renda Familiar</label><select id="s-renda" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Até 01 salário mínimo</option>
+                <option>01 a 02 salários mínimos</option>
+                <option>02 a 03 salários mínimos</option>
+                <option>03 a 04 salários mínimos</option>
+                <option>04 a 05 salários mínimos</option>
+                <option>Acima de 05 salários mínimos</option>
+              </select></div>
+              <div class="fg"><label>Dependentes na residência</label><input type="number" id="s-dependentes" min="0" max="20" placeholder="Ex: 1" style="width:100%"/></div>
+              <div class="fg"><label>Tipo de Moradia</label><select id="s-moradia" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Própria</option><option>Alugada</option>
+                <option>Financiada</option><option>Cedida</option>
+              </select></div>
+              <div class="fg" style="grid-column:1/-1"><label>Transporte utilizado</label>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px" id="s-transporte-opts">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Carro próprio"> Carro próprio</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Metrô"> Metrô</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Ônibus"> Ônibus</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Uber/Taxi"> Uber/Taxi</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="A pé"> A pé</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Bicicleta"> Bicicleta</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção 3: Saúde -->
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-head"><span class="card-title">🏥 3. Saúde</span></div>
+            <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="fg" style="grid-column:1/-1"><label>Doenças diagnosticadas</label>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px" id="s-doencas-opts">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Hipertensão"> Hipertensão</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Diabetes"> Diabetes</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Doenças cardiovasculares"> Doenças cardiovasculares</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Obesidade"> Obesidade</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Doença renal"> Doença renal</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Depressão/Ansiedade"> Depressão/Ansiedade</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Glaucoma"> Glaucoma</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Outras"> Outras</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Nenhuma"> Nenhuma</label>
+                </div>
+              </div>
+              <div class="fg" style="grid-column:1/-1"><label>Medicamentos em uso</label><textarea id="s-medicamentos" rows="2" placeholder="Liste os medicamentos utilizados" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+              <div class="fg" style="grid-column:1/-1"><label>Comentários adicionais</label><textarea id="s-comentarios" rows="2" placeholder="Observações relevantes" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+            </div>
+          </div>
+
+          <div id="socio-err" style="color:var(--red);font-size:.82rem;margin-bottom:10px;display:none"></div>
+          <button onclick="salvarSocio()" style="width:100%;padding:14px;background:var(--green);color:#fff;font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;margin-bottom:20px">
+            💾 Salvar Questionário Sociodemográfico
+          </button>
+        </div>
+      </div>
+
+      <div id="ap-quest" class="panel">
+        <div class="ptitle">Aplicar Questionário AGE</div>
+        <div class="psub">Preencha junto com o participante presencialmente</div>
+        <div class="frow" style="margin-bottom:14px">
+          <select id="q-part-sel" onchange="loadQuestParticipant()" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
+        </div>
+
+        <!-- ETAPA 1: TCLE -->
+        <div id="tcle-step" style="display:none;max-width:720px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><span class="card-title">📄 Etapa 1 de 3 — Termo de Consentimento Livre e Esclarecido</span></div>
+            <div style="padding:16px">
+              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:280px;overflow-y:auto;font-size:.84rem;line-height:1.8;color:var(--ink);margin-bottom:14px">
+                <p style="margin-bottom:10px">O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Prof.ª Dr.ª Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
+                <p style="margin-bottom:10px">O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
+                <p style="margin-bottom:10px">Sua participação será em um único momento: você responderá um questionário de identificação, um sociodemográfico e o Questionário de Consumo Alimentar de AGE. Duração estimada: ~30 minutos.</p>
+                <p style="margin-bottom:10px">Seus dados serão mantidos em sigilo. Os resultados serão publicados sem qualquer identificação sua. Os questionários serão arquivados por cinco anos à disposição do comitê de ética.</p>
+                <p style="margin-bottom:10px">Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador — não haverá qualquer prejuízo. Participação voluntária, sem remuneração.</p>
+                <p style="margin-bottom:10px">Dúvidas éticas: CEP USJT — <strong>(11) 2799-1950</strong> | <a href="mailto:cep@saojudas.br" style="color:var(--green)">cep@saojudas.br</a> — Rua Taquari, 546, Mooca, 2º andar, bloco C, CEP 03166-000, SP.</p>
+                <p style="margin-bottom:0">Dúvidas da pesquisa: Prof.ª Dr.ª Adriana Machado Saldiba de Lima — <strong>(11) 997744587</strong> | <a href="mailto:prof.adrianalima@usjt.br" style="color:var(--green)">prof.adrianalima@usjt.br</a>.</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
+                <input type="checkbox" id="tcle2-check" onchange="toggleTCLE2()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer">
+                <label for="tcle2-check" style="font-size:.86rem;color:var(--ink);line-height:1.6;cursor:pointer">
+                  Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este TCLE.
+                </label>
+              </div>
+              <div id="tcle2-cpf-area" style="display:none">
+                <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Confirme sua identidade digitando seu CPF</div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white)"/>
+                  <button onclick="confirmarTCLE()" style="padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer">✅ Confirmar e Avançar</button>
+                </div>
+                <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ETAPA 2: SOCIODEMOGRÁFICO -->
+        <div id="socio-inline-step" style="display:none;max-width:720px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><span class="card-title">📋 Etapa 2 de 3 — Questionário Sociodemográfico</span></div>
+            <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="fg" style="grid-column:1/-1"><label>Local da Coleta</label><input type="text" id="si-local" placeholder="Ex: São Judas Mooca" style="width:100%"/></div>
+              <div class="fg" style="grid-column:1/-1"><label>Nome do(a) Pesquisador(a)</label><input type="text" id="si-pesquisador" placeholder="Nome do aplicador" style="width:100%"/></div>
+              <div class="fg"><label>Data de Nascimento</label><input type="date" id="si-nascimento" style="width:100%"/></div>
+              <div class="fg"><label>Telefone do Participante</label><input type="text" id="si-telefone" placeholder="(11) 99999-9999" style="width:100%"/></div>
+              <div class="fg"><label>Idade (anos)</label><input type="number" id="si-idade" min="0" max="120" placeholder="Ex: 65" style="width:100%"/></div>
+              <div class="fg"><label>Bairro</label><input type="text" id="si-bairro" placeholder="Bairro onde mora" style="width:100%"/></div>
+              <div class="fg"><label>Cidade</label><input type="text" id="si-cidade" placeholder="Cidade" style="width:100%"/></div>
+              <div class="fg"><label>Estado</label><select id="si-estado" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Acre</option><option>Alagoas</option><option>Amapá</option><option>Amazonas</option><option>Bahia</option><option>Ceará</option><option>Distrito Federal</option><option>Espírito Santo</option><option>Goiás</option><option>Maranhão</option><option>Mato Grosso</option><option>Mato Grosso do Sul</option><option>Minas Gerais</option><option>Pará</option><option>Paraíba</option><option>Paraná</option><option>Pernambuco</option><option>Piauí</option><option>Rio de Janeiro</option><option>Rio Grande do Norte</option><option>Rio Grande do Sul</option><option>Rondônia</option><option>Roraima</option><option>Santa Catarina</option><option selected>São Paulo</option><option>Sergipe</option><option>Tocantins</option>
+              </select></div>
+              <div class="fg"><label>Identidade de Gênero</label><select id="si-genero" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Mulher cisgênero</option><option>Homem cisgênero</option>
+                <option>Mulher transgênero</option><option>Homem transgênero</option>
+                <option>Não-binário</option><option>Prefiro não informar</option>
+              </select></div>
+              <div class="fg"><label>Etnia/Raça</label><select id="si-etnia" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Branco</option><option>Preto</option><option>Pardo</option>
+                <option>Amarelo</option><option>Indígena</option><option>Prefiro não informar</option>
+              </select></div>
+              <div class="fg"><label>Estado Civil</label><select id="si-civil" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Solteiro(a)</option>
+                <option>Casado(a), ou vive com o companheiro(a)</option>
+                <option>Separado(a), divorciado(a) ou desquitado(a)</option>
+                <option>Viúvo(a)</option>
+              </select></div>
+              <div class="fg"><label>Nº de Filhos</label><input type="number" id="si-filhos" min="0" max="20" placeholder="Ex: 2" style="width:100%"/></div>
+              <div class="fg"><label>Escolaridade</label><select id="si-escolaridade" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Nunca estudou</option><option>Ensino Fundamental incompleto</option>
+                <option>Ensino Fundamental completo</option><option>Ensino Médio incompleto</option>
+                <option>Ensino Médio completo</option><option>Ensino Superior</option>
+                <option>Especialização</option><option>Mestrado</option><option>Doutorado</option>
+              </select></div>
+              <div class="fg"><label>Anos de Estudo</label><input type="number" id="si-anos-estudo" min="0" max="30" placeholder="Ex: 22" style="width:100%"/></div>
+              <div class="fg"><label>Ocupação</label><select id="si-ocupacao" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Assalariado (CTPS assinada)</option>
+                <option>Autônomo/profissional liberal</option>
+                <option>Sócio/dirigente de alguma empresa</option>
+                <option>Aposentado(a)</option><option>Do lar</option>
+                <option>Desempregado(a)</option><option>Estudante</option>
+              </select></div>
+              <div class="fg"><label>Renda Familiar</label><select id="si-renda" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Até 01 salário mínimo</option>
+                <option>01 a 02 salários mínimos</option>
+                <option>02 a 03 salários mínimos</option>
+                <option>03 a 04 salários mínimos</option>
+                <option>04 a 05 salários mínimos</option>
+                <option>Acima de 05 salários mínimos</option>
+              </select></div>
+              <div class="fg"><label>Dependentes na residência</label><input type="number" id="si-dependentes" min="0" max="20" placeholder="Ex: 1" style="width:100%"/></div>
+              <div class="fg"><label>Tipo de Moradia</label><select id="si-moradia" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Própria</option><option>Alugada</option>
+                <option>Financiada</option><option>Cedida</option>
+              </select></div>
+              <div class="fg" style="grid-column:1/-1"><label>Transporte utilizado</label>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px" id="si-transporte-opts">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Carro próprio"> Carro próprio</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Metrô"> Metrô</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Ônibus"> Ônibus</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Uber/Taxi"> Uber/Taxi</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="A pé"> A pé</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Bicicleta"> Bicicleta</label>
+                </div>
+              </div>
+              <div class="fg" style="grid-column:1/-1"><label>Doenças diagnosticadas</label>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px" id="si-doencas-opts">
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Hipertensão"> Hipertensão</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Diabetes"> Diabetes</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Doenças cardiovasculares"> Doenças cardiovasculares</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Obesidade"> Obesidade</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Doença renal"> Doença renal</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Depressão/Ansiedade"> Depressão/Ansiedade</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Glaucoma"> Glaucoma</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Outras"> Outras</label>
+                  <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:400"><input type="checkbox" value="Nenhuma"> Nenhuma</label>
+                </div>
+              </div>
+              <div class="fg" style="grid-column:1/-1"><label>Medicamentos em uso</label><textarea id="si-medicamentos" rows="2" placeholder="Liste os medicamentos" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+              <div class="fg" style="grid-column:1/-1"><label>Comentários adicionais</label><textarea id="si-comentarios" rows="2" placeholder="Observações" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+              <div style="grid-column:1/-1">
+                <div id="si-err" style="color:var(--red);font-size:.82rem;margin-bottom:8px;display:none"></div>
+                <button onclick="salvarSocioInline()" style="width:100%;padding:13px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">
+                  💾 Salvar e Avançar para o Questionário AGE →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ETAPA 3: QUESTIONÁRIO AGE -->
+        <div id="quest-area" class="q-wrap"><div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sumbar" id="sumbar" style="display:none">
+    <div style="font-weight:700;font-size:.85rem;flex-shrink:0">AGEscore</div>
+    <div class="sumvals">
+      <div class="si"><div class="sl">Q1 Proteínas</div><div class="sn" id="sb1">0,0</div></div>
+      <div class="si"><div class="sl">Q2 Outros</div><div class="sn" id="sb2">0,0</div></div>
+      <div class="si"><div class="sl">Semanal</div><div class="sn" id="sbt">0,0</div></div>
+      <div class="si"><div class="sl">Diário</div><div class="sn" id="sbd">0,0</div></div>
+    </div>
+    <button class="btn-xs" onclick="saveQuestionnaire()" style="flex-shrink:0">💾 Salvar</button>
+  </div>
+</div>
     </div>
   </div>
 </div>
@@ -2463,4 +2769,159 @@ function exportSocioCSV(){
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='sociodemografico_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
+
+async function confirmarTCLE(){
+  const cpfInput=document.getElementById('tcle2-cpf');
+  const errEl=document.getElementById('tcle2-err');
+  const cpf=cpfInput?cpfInput.value:'';
+  errEl.style.display='none';
+  if(!validarCPF(cpf)){errEl.textContent='CPF inválido. Verifique e tente novamente.';errEl.style.display='block';return;}
+  const partId=document.getElementById('q-part-sel').value;
+  const ts=new Date().toISOString();
+  try{
+    await db.collection('participants').doc(partId).update({
+      tcle_aceito:true,
+      tcle_cpf:cpf.replace(/\D/g,''),
+      tcle_timestamp:ts
+    });
+    _pCache=null;
+  }catch(e){console.warn('tcle save:',e);}
+  // Esconde TCLE e mostra Sociodemográfico
+  document.getElementById('tcle-step').style.display='none';
+  // Limpa campos do socio inline
+  document.querySelectorAll('#socio-inline-step input:not([type=checkbox]),#socio-inline-step select,#socio-inline-step textarea').forEach(el=>el.value='');
+  document.querySelectorAll('#socio-inline-step input[type=checkbox]').forEach(cb=>cb.checked=false);
+  document.getElementById('socio-inline-step').style.display='block';
+  document.getElementById('quest-area').innerHTML='<div class="empty"><div class="ei">📋</div><p>Complete o questionário sociodemográfico acima.</p></div>';
+}
+
+
+async function salvarSocioInline(){
+  const id=document.getElementById('q-part-sel').value;
+  const errEl=document.getElementById('si-err');
+  errEl.style.display='none';
+  if(!id){errEl.textContent='Participante não selecionado.';errEl.style.display='block';return;}
+  const transportes=[...document.querySelectorAll('#si-transporte-opts input:checked')].map(c=>c.value).join(', ');
+  const doencas=[...document.querySelectorAll('#si-doencas-opts input:checked')].map(c=>c.value).join(', ');
+  const socio={
+    local:       document.getElementById('si-local').value.trim(),
+    pesquisador: document.getElementById('si-pesquisador').value.trim(),
+    nascimento:  document.getElementById('si-nascimento').value,
+    telefone:    document.getElementById('si-telefone').value.trim(),
+    idade:       document.getElementById('si-idade').value,
+    bairro:      document.getElementById('si-bairro').value.trim(),
+    cidade:      document.getElementById('si-cidade').value.trim(),
+    estado:      document.getElementById('si-estado').value,
+    genero:      document.getElementById('si-genero').value,
+    etnia:       document.getElementById('si-etnia').value,
+    civil:       document.getElementById('si-civil').value,
+    filhos:      document.getElementById('si-filhos').value,
+    escolaridade:document.getElementById('si-escolaridade').value,
+    anos_estudo: document.getElementById('si-anos-estudo').value,
+    ocupacao:    document.getElementById('si-ocupacao').value,
+    renda:       document.getElementById('si-renda').value,
+    dependentes: document.getElementById('si-dependentes').value,
+    moradia:     document.getElementById('si-moradia').value,
+    transporte:  transportes,
+    doencas:     doencas,
+    medicamentos:document.getElementById('si-medicamentos').value.trim(),
+    comentarios: document.getElementById('si-comentarios').value.trim(),
+    timestamp:   new Date().toISOString(),
+  };
+  try{
+    await db.collection('participants').doc(id).update({socio:socio,socio_preenchido:true});
+    _pCache=null;
+    toast('✅ Sociodemográfico salvo! Carregando questionário AGE...');
+  }catch(e){
+    errEl.textContent='Erro ao salvar: '+e.message;errEl.style.display='block';return;
+  }
+  // Esconde socio e carrega questionário AGE
+  document.getElementById('socio-inline-step').style.display='none';
+  await loadQuestParticipant(true);
+}
+
+// ══ RELATÓRIO SOCIODEMOGRÁFICO ══
+
+let _socioData=[];
+
+async function buildSocioReport(){
+  const data=await getData();
+  _socioData=data;
+  const comSocio=data.filter(p=>p.socio_preenchido);
+  renderSocioKPIs(data,comSocio);
+  renderSocioTable(comSocio);
+  renderSocioCharts(comSocio);
+}
+
+function renderSocioKPIs(data,comSocio){
+  const total=data.length;
+  const preenchidos=(comSocio||data).length;
+  const comTCLE=data.filter(p=>p.tcle_aceito).length;
+  const idades=(comSocio||data).map(p=>parseInt(p.socio&&p.socio.idade)||parseInt(p.age)||0).filter(x=>x>0);
+  const idadeMed=idades.length?Math.round(idades.reduce((a,b)=>a+b,0)/idades.length):0;
+  document.getElementById('socio-kpis').innerHTML=`
+    <div class="kpi"><div class="v">${total}</div><div class="l">Total Participantes</div></div>
+    <div class="kpi"><div class="v">${preenchidos}</div><div class="l">Socio Preenchido</div></div>
+    <div class="kpi"><div class="v">${comTCLE}</div><div class="l">TCLE Aceito</div></div>
+    <div class="kpi"><div class="v">${idadeMed||'-'}</div><div class="l">Idade Média (anos)</div></div>
+  `;
+}
+
+function renderSocioTable(data){
+  const tb=document.getElementById('socio-tb');if(!tb)return;
+  tb.innerHTML=data.map(p=>{const s=p.socio||{};return`<tr>
+    <td>${p.id||'-'}</td><td>${p.name||'-'}</td><td>${s.idade||p.age||'-'}</td>
+    <td>${s.genero||p.sex||'-'}</td><td>${s.etnia||'-'}</td><td>${s.civil||'-'}</td>
+    <td>${s.escolaridade||'-'}</td><td>${s.renda||'-'}</td><td>${s.moradia||'-'}</td>
+    <td>${s.doencas||'-'}</td>
+    <td>${p.tcle_aceito?'<span class="badge bg">✓ Sim</span>':'<span class="badge bo">Não</span>'}</td>
+  </tr>`;}).join('');
+}
+
+function filterSocioTable(){
+  const q=(document.getElementById('socio-search').value||'').toLowerCase();
+  const filtered=_socioData.filter(p=>p.socio_preenchido&&((p.name||'').toLowerCase().includes(q)||(p.id||'').toLowerCase().includes(q)));
+  renderSocioTable(filtered);
+}
+
+function renderSocioCharts(data){
+  const get=(p,f)=>(p.socio&&p.socio[f])||'Não informado';
+  const generos=data.map(p=>get(p,'genero'));
+  const escolar=data.map(p=>get(p,'escolaridade'));
+  const renda=data.map(p=>get(p,'renda'));
+  const doencasArr=data.flatMap(p=>get(p,'doencas').split(',').map(x=>x.trim()||'Não informado'));
+  const fq=arr=>{const c={};arr.forEach(v=>{c[v]=(c[v]||0)+1;});return c;};
+  document.getElementById('socio-genero').innerHTML=barChart(fq(generos),data.length);
+  document.getElementById('socio-escolar').innerHTML=barChart(fq(escolar),data.length);
+  document.getElementById('socio-renda').innerHTML=barChart(fq(renda),data.length);
+  document.getElementById('socio-doencas').innerHTML=barChart(fq(doencasArr),data.length);
+}
+
+function barChart(obj,total){
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1]).map(([k,v])=>{
+    const pct=total?Math.round(v/total*100):0;
+    return`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px">
+        <span style="color:var(--ink);font-weight:500">${k}</span>
+        <span style="color:var(--ink3)">${v} (${pct}%)</span>
+      </div>
+      <div style="background:var(--border);border-radius:4px;height:8px">
+        <div style="background:var(--green);width:${pct}%;height:8px;border-radius:4px;transition:width .4s"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function exportSocioCSV(){
+  const headers=['ID','Nome','Idade','Gênero','Etnia','Est. Civil','Escolaridade','Renda','Moradia','Doenças','Medicamentos','TCLE','Timestamp'];
+  const rows=_socioData.filter(p=>p.socio_preenchido).map(p=>{const s=p.socio||{};return[
+    p.id,p.name,s.idade||p.age,s.genero||p.sex,s.etnia,s.civil,s.escolaridade,
+    s.renda,s.moradia,s.doencas,s.medicamentos,p.tcle_aceito?'Sim':'Não',s.timestamp||''
+  ].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',');});
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='sociodemografico_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+
 </script>
