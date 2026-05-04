@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Importar Sociodemográfico — AGEscore Brasil</title>
+<style>
+  body{font-family:Arial,sans-serif;background:#f0f7eb;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px}
+  .card{background:#fff;border-radius:14px;padding:32px;max-width:560px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08);border-top:4px solid #2d5a1b}
+  h1{color:#2d5a1b;font-size:1.3rem;margin-bottom:6px}
+  p{color:#4a5568;font-size:.88rem;line-height:1.6;margin-bottom:20px}
+  .btn{width:100%;padding:14px;background:#2d5a1b;color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn:hover:not(:disabled){background:#1e3e12}
+  #log{margin-top:20px;background:#f8f8f8;border-radius:8px;padding:14px;font-size:.8rem;font-family:monospace;max-height:300px;overflow-y:auto;display:none}
+  .ok{color:#2d5a1b}.err{color:#e53e3e}.info{color:#2b6cb0}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🌿 Importar Sociodemográfico</h1>
+  <p>Este utilitário importa os <strong>8 participantes</strong> com dados sociodemográficos completos diretamente para o Firebase do AGEscore Brasil.<br><br>
+  <strong>Atenção:</strong> Execute apenas uma vez. Clique no botão e aguarde a conclusão.</p>
+  <button class="btn" id="btn" onclick="importar()">▶ Iniciar Importação</button>
+  <div id="log"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyCtT4WmLM67op19qWsItCP2ft2P4XEwC_g",authDomain:"agescorebrasil.firebaseapp.com",projectId:"agescorebrasil",storageBucket:"agescorebrasil.firebasestorage.app",messagingSenderId:"290463576400",appId:"1:290463576400:web:a2468ed1064655fb387c55"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+const participantes=[
+  {
+    id:'PAR-SOCIO-001',
+    name:'Paulla Gabryela do Nascimento Ribeiro',
+    age:'22',sex:'Mulher cisgênero',group:'Controle',status:'Pendente',
+    applier:'Adriana Saldiba',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T19:28:59Z',
+    socio_preenchido:true,
+    socio:{
+      local:'São Judas Mooca',pesquisador:'Adriana Saldiba',tel_pesq:'(11) 997744587',
+      nascimento:'2003-10-19',telefone:'(19)99155-5818',idade:'22',
+      bairro:'Santana',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Mulher cisgênero',etnia:'Branco',civil:'Solteiro(a)',
+      filhos:'0',escolaridade:'Especialização',anos_estudo:'21',
+      ocupacao:'Autônomo/profissional liberal',renda:'Acima de 05 salários mínimos',
+      dependentes:'4',moradia:'Alugada',transporte:'Carro próprio',
+      doencas:'Nenhuma',medicamentos:'Nenhum',comentarios:'',
+      timestamp:'2026-04-09T19:28:59Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-002',
+    name:'Isabella Gomes Scarparo',
+    age:'30',sex:'Mulher cisgênero',group:'Controle',status:'Pendente',
+    applier:'Adriana Saldiba',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T19:37:31Z',
+    socio_preenchido:true,
+    socio:{
+      local:'Universidade São Judas Mooca',pesquisador:'Adriana Saldiba',tel_pesq:'(11) 997744587',
+      nascimento:'1995-06-18',telefone:'(11)94039-6642',idade:'30',
+      bairro:'Pirituba',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Mulher cisgênero',etnia:'Branco',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'0',escolaridade:'Ensino Superior',anos_estudo:'25',
+      ocupacao:'Autônomo/profissional liberal',renda:'Acima de 05 salários mínimos',
+      dependentes:'0',moradia:'Própria',transporte:'Carro próprio',
+      doencas:'Doenças cardiovasculares',medicamentos:'Nenhum',
+      comentarios:'Na pergunta 16 coloquei 0, pois meu marido não é meu dependente',
+      timestamp:'2026-04-09T19:37:31Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-003',
+    name:'Edson S. Moraes',
+    age:'61',sex:'Homem cisgênero',group:'Controle',status:'Pendente',
+    applier:'Edson S. Moraes',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T19:56:19Z',
+    socio_preenchido:true,
+    socio:{
+      local:'São Paulo',pesquisador:'Edson S. Moraes',tel_pesq:'(11)99626-9029',
+      nascimento:'1964-05-07',telefone:'(11)99626-9029',idade:'61',
+      bairro:'Vila Clementino',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Homem cisgênero',etnia:'Branco',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'2',escolaridade:'Especialização',anos_estudo:'25',
+      ocupacao:'Sócio/dirigente de alguma empresa',renda:'Acima de 05 salários mínimos',
+      dependentes:'2',moradia:'Própria',transporte:'Metrô, Uber/Taxi, Carro próprio',
+      doencas:'Hipertensão',medicamentos:'Renitec 20mg e Lipitor 10mg',comentarios:'',
+      timestamp:'2026-04-09T19:56:19Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-004',
+    name:'Marcia Cristina Souza dos Santos',
+    age:'55',sex:'Mulher cisgênero',group:'Controle',status:'Pendente',
+    applier:'Não se aplica',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T20:07:31Z',
+    socio_preenchido:true,
+    socio:{
+      local:'Jacareí - SP',pesquisador:'Não se aplica',tel_pesq:'Não se aplica',
+      nascimento:'1970-04-18',telefone:'(12)98177-4755',idade:'55',
+      bairro:'Jardim Santa Maria',cidade:'Jacareí',estado:'São Paulo',
+      genero:'Mulher cisgênero',etnia:'Preto',civil:'Separado(a), divorciado(a) ou desquitado(a)',
+      filhos:'2',escolaridade:'Especialização',anos_estudo:'23',
+      ocupacao:'Assalariado (CTPS assinada)',renda:'Acima de 05 salários mínimos',
+      dependentes:'2',moradia:'Financiada',transporte:'Carro próprio',
+      doencas:'Glaucoma',medicamentos:'Betoptic colírio',comentarios:'',
+      timestamp:'2026-04-09T20:07:31Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-005',
+    name:'Davi Rufino Pereira Junior',
+    age:'43',sex:'Homem cisgênero',group:'Controle',status:'Pendente',
+    applier:'Adriana Saldiba',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T20:09:39Z',
+    socio_preenchido:true,
+    socio:{
+      local:'São Judas Mooca',pesquisador:'Adriana Saldiba',tel_pesq:'(11) 997744587',
+      nascimento:'1982-11-16',telefone:'(11)98271-7304',idade:'43',
+      bairro:'Parque Rincão',cidade:'Cotia',estado:'São Paulo',
+      genero:'Homem cisgênero',etnia:'Pardo',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'0',escolaridade:'Especialização',anos_estudo:'22',
+      ocupacao:'Autônomo/profissional liberal',renda:'Acima de 05 salários mínimos',
+      dependentes:'0',moradia:'Própria',transporte:'Metrô, Uber/Taxi, Carro próprio',
+      doencas:'Nenhuma',medicamentos:'Nenhum',comentarios:'',
+      timestamp:'2026-04-09T20:09:39Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-006',
+    name:'Pedro Donizetti de Oliveira',
+    age:'58',sex:'Homem cisgênero',group:'Controle',status:'Pendente',
+    applier:'Adriana Saldiba',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T20:15:59Z',
+    socio_preenchido:true,
+    socio:{
+      local:'São Judas Mooca',pesquisador:'Adriana Saldiba',tel_pesq:'(11) 997744587',
+      nascimento:'1967-06-27',telefone:'(11)94307-9866',idade:'58',
+      bairro:'Mooca',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Homem cisgênero',etnia:'Pardo',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'3',escolaridade:'Especialização',anos_estudo:'22',
+      ocupacao:'Autônomo/profissional liberal',renda:'Acima de 05 salários mínimos',
+      dependentes:'1',moradia:'Própria',transporte:'Carro próprio',
+      doencas:'Hipertensão',medicamentos:'Lotar 50x5',comentarios:'',
+      timestamp:'2026-04-09T20:15:59Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-007',
+    name:'Fernanda Cavalhero Baroni',
+    age:'38',sex:'Mulher cisgênero',group:'Controle',status:'Pendente',
+    applier:'Adriana Saldiba',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-09T21:59:59Z',
+    socio_preenchido:true,
+    socio:{
+      local:'Universidade São Judas Tadeu',pesquisador:'Adriana Saldiba',tel_pesq:'(11) 997744587',
+      nascimento:'1987-05-14',telefone:'(11)95727-3550',idade:'38',
+      bairro:'Penha',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Mulher cisgênero',etnia:'Branco',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'0',escolaridade:'Especialização',anos_estudo:'22',
+      ocupacao:'Assalariado (CTPS assinada)',renda:'03 a 04 salários mínimos',
+      dependentes:'0',moradia:'Financiada',transporte:'Carro próprio, Uber/Taxi',
+      doencas:'Depressão/Ansiedade',medicamentos:'Não informado',
+      comentarios:'DLP, SOP, DRGE, Gastrite também relatados',
+      timestamp:'2026-04-09T21:59:59Z'
+    }
+  },
+  {
+    id:'PAR-SOCIO-008',
+    name:'Pedro Donizetti de Oliveira (Teste)',
+    age:'58',sex:'Homem cisgênero',group:'Controle',status:'Pendente',
+    applier:'Pedro Donizetti de Oliveira',createdAt:new Date().toISOString(),
+    tcle_aceito:true,tcle_timestamp:'2026-04-28T08:32:00Z',
+    socio_preenchido:true,
+    socio:{
+      local:'São Paulo',pesquisador:'Pedro Donizetti de Oliveira',tel_pesq:'(11)94307-9866',
+      nascimento:'1967-06-27',telefone:'(11)94090-7890',idade:'58',
+      bairro:'Mooca',cidade:'São Paulo',estado:'São Paulo',
+      genero:'Homem cisgênero',etnia:'Pardo',civil:'Casado(a), ou vive com o companheiro(a)',
+      filhos:'3',escolaridade:'Ensino Superior',anos_estudo:'18',
+      ocupacao:'Autônomo/profissional liberal',renda:'Acima de 05 salários mínimos',
+      dependentes:'1',moradia:'Própria',transporte:'Carro próprio',
+      doencas:'Hipertensão',medicamentos:'Lotar',comentarios:'Registro de teste',
+      timestamp:'2026-04-28T08:32:00Z'
+    }
+  }
+];
+
+function log(msg,cls='info'){
+  const div=document.getElementById('log');
+  div.style.display='block';
+  div.innerHTML+=`<div class="${cls}">${msg}</div>`;
+  div.scrollTop=div.scrollHeight;
+}
+
+async function importar(){
+  const btn=document.getElementById('btn');
+  btn.disabled=true;
+  btn.textContent='⏳ Importando...';
+  log('🚀 Iniciando importação de '+participantes.length+' participantes...');
+
+  let ok=0,erros=0;
+  for(const p of participantes){
+    try{
+      await db.collection('participants').doc(p.id).set(p);
+      log(`✅ ${p.id} — ${p.name}`,'ok');
+      ok++;
+    }catch(e){
+      log(`❌ Erro em ${p.id}: ${e.message}`,'err');
+      erros++;
+    }
+    await new Promise(r=>setTimeout(r,300));
+  }
+
+  if(erros===0){
+    log(`\n🎉 Importação concluída! ${ok} participantes salvos com sucesso.`,'ok');
+    btn.textContent='✅ Importação Concluída!';
+    btn.style.background='#2d5a1b';
+  }else{
+    log(`\n⚠️ Concluído com ${erros} erro(s). Verifique o log acima.`,'err');
+    btn.textContent='⚠️ Concluído com erros';
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>
