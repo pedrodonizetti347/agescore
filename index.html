@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- saved from url=(0030)https://agescorebrasil.com.br/ -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Questionário de Consumo Alimentar de AGE</title> 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a4a2e'/><path d='M45 48 Q52 28 68 35 Q74 42 64 55 Q57 63 45 60 Z' fill='%234caf6e'/><text y='85' x='50' text-anchor='middle' font-size='28' font-weight='bold' fill='white' font-family='Georgia'>A</text></svg>"/>
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231a4a2e'/><path d='M45 48 Q52 28 68 35 Q74 42 64 55 Q57 63 45 60 Z' fill='%234caf6e'/><text y='85' x='50' text-anchor='middle' font-size='28' font-weight='bold' fill='white' font-family='Georgia'>A</text></svg>"/>
-<meta name="apple-mobile-web-app-title" content="AGEscore"/>
-<meta name="application-name" content="AGEscore"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;20&#39; fill=&#39;%231a4a2e&#39;/&gt;&lt;path d=&#39;M45 48 Q52 28 68 35 Q74 42 64 55 Q57 63 45 60 Z&#39; fill=&#39;%234caf6e&#39;/&gt;&lt;text y=&#39;85&#39; x=&#39;50&#39; text-anchor=&#39;middle&#39; font-size=&#39;28&#39; font-weight=&#39;bold&#39; fill=&#39;white&#39; font-family=&#39;Georgia&#39;&gt;A&lt;/text&gt;&lt;/svg&gt;">
+<link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;&gt;&lt;rect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;20&#39; fill=&#39;%231a4a2e&#39;/&gt;&lt;path d=&#39;M45 48 Q52 28 68 35 Q74 42 64 55 Q57 63 45 60 Z&#39; fill=&#39;%234caf6e&#39;/&gt;&lt;text y=&#39;85&#39; x=&#39;50&#39; text-anchor=&#39;middle&#39; font-size=&#39;28&#39; font-weight=&#39;bold&#39; fill=&#39;white&#39; font-family=&#39;Georgia&#39;&gt;A&lt;/text&gt;&lt;/svg&gt;">
+<meta name="apple-mobile-web-app-title" content="AGEscore">
+<meta name="application-name" content="AGEscore">
+<link href="./Questionário de Consumo Alimentar de AGE_files/css2" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script></script>
 <style>
 :root{
   --cream:#F0F7F2;--ink:#1A2E1A;--ink2:#2A4A2A;--ink3:#5A7A5A;--ink4:#9AB89A;
@@ -234,8 +235,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
 .sci-table tr:nth-child(even) td{background:var(--cream)}
 .sci-note{font-size:.76rem;color:var(--ink3);margin-top:8px;font-style:italic}
 </style>
-</head>
-<body>
+<meta id="acfifjfajpekbmhmjppnmmjgmhjkildl"><meta id="bbafmabaelnnkondpfpjmdklbmfnbmol"><style>.vue-notification-group{display:block;position:fixed;z-index:5000}.vue-notification-wrapper{display:block;overflow:hidden;width:100%;margin:0;padding:0}.notification-title{font-weight:600}.vue-notification-template{display:block;box-sizing:border-box;background:#fff;text-align:left}.vue-notification{display:block;box-sizing:border-box;text-align:left;font-size:12px;padding:10px;margin:0 5px 5px;color:#fff;background:#44a4fc;border-left:5px solid #187FE7}.vue-notification.warn{background:#ffb648;border-left-color:#f48a06}.vue-notification.error{background:#e54d42;border-left-color:#b82e24}.vue-notification.success{background:#68cd86;border-left-color:#42a85f}.vn-fade-enter-active,.vn-fade-leave-active,.vn-fade-move{transition:all .5s}.vn-fade-enter-from,.vn-fade-leave-to{opacity:0}</style><style>.vue-notification-group{display:block;position:fixed;z-index:5000}.vue-notification-wrapper{display:block;overflow:hidden;width:100%;margin:0;padding:0}.notification-title{font-weight:600}.vue-notification-template{display:block;box-sizing:border-box;background:#fff;text-align:left}.vue-notification{display:block;box-sizing:border-box;text-align:left;font-size:12px;padding:10px;margin:0 5px 5px;color:#fff;background:#44a4fc;border-left:5px solid #187FE7}.vue-notification.warn{background:#ffb648;border-left-color:#f48a06}.vue-notification.error{background:#e54d42;border-left-color:#b82e24}.vue-notification.success{background:#68cd86;border-left-color:#42a85f}.vn-fade-enter-active,.vn-fade-leave-active,.vn-fade-move{transition:all .5s}.vn-fade-enter-from,.vn-fade-leave-to{opacity:0}</style><style>.vue-notification-group{display:block;position:fixed;z-index:5000}.vue-notification-wrapper{display:block;overflow:hidden;width:100%;margin:0;padding:0}.notification-title{font-weight:600}.vue-notification-template{display:block;box-sizing:border-box;background:#fff;text-align:left}.vue-notification{display:block;box-sizing:border-box;text-align:left;font-size:12px;padding:10px;margin:0 5px 5px;color:#fff;background:#44a4fc;border-left:5px solid #187FE7}.vue-notification.warn{background:#ffb648;border-left-color:#f48a06}.vue-notification.error{background:#e54d42;border-left-color:#b82e24}.vue-notification.success{background:#68cd86;border-left-color:#42a85f}.vn-fade-enter-active,.vn-fade-leave-active,.vn-fade-move{transition:all .5s}.vn-fade-enter-from,.vn-fade-leave-to{opacity:0}</style><link type="text/css" rel="stylesheet" href="./Questionário de Consumo Alimentar de AGE_files/css2(1)"><link type="text/css" rel="stylesheet" href="./Questionário de Consumo Alimentar de AGE_files/css2(1)"></head>
+<body data-new-gr-c-s-check-loaded="14.1286.0" data-gr-ext-installed="">
 <div class="toast" id="toast"></div>
 
 <!-- ══ LOGIN ══ -->
@@ -250,8 +251,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <button class="role-tab" id="tab-coord" onclick="setRole('coord')">📋 Coord.</button>
       <button class="role-tab" id="tab-ap" onclick="setRole('aplicador')">👩‍⚕️ Aplicador</button>
     </div>
-    <div class="fg"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com" autocomplete="username"/></div>
-    <div class="fg"><label>Senha</label><div class="pass-wrap"><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/><button type="button" class="pass-eye" onclick="togglePass('l-pass',this)" tabindex="-1">👁️</button></div></div>
+    <div class="fg"><label>E-mail</label><input type="email" id="l-email" placeholder="seu@email.com" autocomplete="username"></div>
+    <div class="fg"><label>Senha</label><div class="pass-wrap"><input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" class="pass-eye" onclick="togglePass('l-pass',this)" tabindex="-1">👁️</button></div></div>
     <button class="btn-main" onclick="doLogin()">Entrar</button>
     <div class="l-err" id="l-err">E-mail ou senha incorretos.</div>
 
@@ -310,7 +311,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="ptitle">Participantes</div>
         <div class="psub">Lista completa dos participantes cadastrados</div>
         <div class="frow">
-          <input type="text" id="ps-q" placeholder="Buscar nome ou ID..." oninput="renderPTable()" style="flex:1;min-width:120px"/>
+          <input type="text" id="ps-q" placeholder="Buscar nome ou ID..." oninput="renderPTable()" style="flex:1;min-width:120px">
           <select id="ps-g" onchange="renderPTable()"><option value="">Todos os grupos</option><option>Controle</option><option>Intervenção</option><option>Outro</option></select>
           <select id="ps-s" onchange="renderPTable()"><option value="">Todos status</option><option>Pendente</option><option>Respondido</option></select>
         </div>
@@ -387,7 +388,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="card-head">
             <span class="card-title">📋 Dados por Participante</span>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input type="text" id="socio-search" placeholder="Buscar participante..." oninput="filterSocioTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.82rem;width:180px"/>
+              <input type="text" id="socio-search" placeholder="Buscar participante..." oninput="filterSocioTable()" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.82rem;width:180px">
               <button class="btn btn-g" onclick="exportSocioCSV()">⬇ CSV</button>
             </div>
           </div>
@@ -452,8 +453,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="card" style="max-width:440px">
           <div class="card-head"><span class="card-title">🔬 Administrador — Pedro Donizetti</span></div>
           <div style="padding:18px">
-            <div class="fg"><label>E-mail</label><input type="email" id="set-adm-email" value="pedrodonizettipalestrante@gmail.com"/></div>
-            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><div class="pass-wrap"><input type="password" id="set-adm-pass" placeholder="Nova senha"/><button type="button" class="pass-eye" onclick="togglePass('set-adm-pass',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>E-mail</label><input type="email" id="set-adm-email" value="pedrodonizettipalestrante@gmail.com"></div>
+            <div class="fg"><label>Nova senha (deixe vazio para manter)</label><div class="pass-wrap"><input type="password" id="set-adm-pass" placeholder="Nova senha"><button type="button" class="pass-eye" onclick="togglePass('set-adm-pass',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" onclick="saveAdminCreds()">💾 Salvar</button>
           </div>
         </div>
@@ -576,7 +577,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
               <span style="font-size:2rem">🔗</span>
               <div>
                 <div style="font-weight:700;color:#5B21B6;font-size:.9rem;margin-bottom:4px">Vinculação ao Projeto Guarda-Chuva — AGEscore Brasil</div>
-                <div style="font-size:.82rem;color:#4C1D95;line-height:1.7">Este projeto integra o <strong>AGEscore Brasil</strong> (<a href="https://agescorebrasil.com.br" target="_blank" style="color:#7C3AED">agescorebrasil.com.br</a>), coordenado pela Profª Adriana. O doutorado constitui uma etapa avançada e complementar — enquanto o mestrado estabeleceu as bases psicométricas do instrumento, o doutorado amplia seu escopo ao investigar a validade preditiva para desfechos cognitivos em idosos com DM2.</div>
+                <div style="font-size:.82rem;color:#4C1D95;line-height:1.7">Este projeto integra o <strong>AGEscore Brasil</strong> (<a href="https://agescorebrasil.com.br/" target="_blank" style="color:#7C3AED">agescorebrasil.com.br</a>), coordenado pela Profª Adriana. O doutorado constitui uma etapa avançada e complementar — enquanto o mestrado estabeleceu as bases psicométricas do instrumento, o doutorado amplia seu escopo ao investigar a validade preditiva para desfechos cognitivos em idosos com DM2.</div>
               </div>
             </div>
           </div>
@@ -613,7 +614,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <div id="coord-list" class="panel on">
         <div class="ptitle">Participantes</div>
         <div class="psub">Gerencie os participantes da pesquisa</div>
-        <div class="frow"><input type="text" id="coord-search" placeholder="Buscar..." oninput="renderCoordList()" style="flex:1"/></div>
+        <div class="frow"><input type="text" id="coord-search" placeholder="Buscar..." oninput="renderCoordList()" style="flex:1"></div>
         <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="coord-p-tb"></tbody></table></div></div>
       </div>
       <div id="coord-conta" class="panel">
@@ -621,9 +622,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Atualize sua senha de acesso</div>
         <div class="card" style="max-width:440px">
           <div style="padding:20px">
-            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="coord-pass-old" placeholder="Sua senha atual"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-old',this)" tabindex="-1">👁️</button></div></div>
-            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-new',this)" tabindex="-1">👁️</button></div></div>
-            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-confirm" placeholder="Repita a nova senha"/><button type="button" class="pass-eye" onclick="togglePass('coord-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="coord-pass-old" placeholder="Sua senha atual"><button type="button" class="pass-eye" onclick="togglePass('coord-pass-old',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-new" placeholder="Nova senha (mín. 6 caracteres)"><button type="button" class="pass-eye" onclick="togglePass('coord-pass-new',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="coord-pass-confirm" placeholder="Repita a nova senha"><button type="button" class="pass-eye" onclick="togglePass('coord-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeCoordPass()">🔑 Atualizar Senha</button>
             <div class="l-err" id="coord-pass-err"></div>
           </div>
@@ -633,13 +634,13 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="ptitle">Novo Participante</div>
         <div class="psub">ID gerado automaticamente</div>
         <div class="card" style="max-width:500px"><div style="padding:20px">
-          <div class="fg"><label>Nome Completo</label><input type="text" id="cnp-name"/></div>
+          <div class="fg"><label>Nome Completo</label><input type="text" id="cnp-name"></div>
           <div class="form-2">
-            <div class="fg"><label>Idade</label><input type="number" id="cnp-age" min="1" max="120"/></div>
+            <div class="fg"><label>Idade</label><input type="number" id="cnp-age" min="1" max="120"></div>
             <div class="fg"><label>Identidade de Gênero</label><select id="cnp-sex"><option>Mulher cisgênero</option><option>Homem cisgênero</option><option>Homem transgênero</option><option>Mulher transgênero</option><option>Travesti</option><option>Não binário</option><option>Prefiro não informar</option></select></div>
           </div>
           <div class="fg"><label>Grupo</label><select id="cnp-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
-          <div class="fg"><label>Obs. clínicas</label><input type="text" id="cnp-obs" placeholder="Ex: DM2, HAS..."/></div>
+          <div class="fg"><label>Obs. clínicas</label><input type="text" id="cnp-obs" placeholder="Ex: DM2, HAS..."></div>
           <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipantCoord()">✅ Cadastrar</button>
           <div class="l-err" id="cnp-err"></div>
         </div></div>
@@ -675,20 +676,20 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <div id="ap-list" class="panel on">
         <div class="ptitle">Participantes</div>
         <div class="psub">Clique em "Aplicar" para iniciar o questionário</div>
-        <div class="frow"><input type="text" id="ap-search" placeholder="Buscar..." oninput="renderAPList()" style="flex:1"/></div>
+        <div class="frow"><input type="text" id="ap-search" placeholder="Buscar..." oninput="renderAPList()" style="flex:1"></div>
         <div class="card"><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nome</th><th>Grupo</th><th>Obs</th><th>Status</th><th>Ação</th></tr></thead><tbody id="ap-p-tb"></tbody></table></div></div>
       </div>
       <div id="ap-new" class="panel">
         <div class="ptitle">Novo Participante</div>
         <div class="psub">ID gerado automaticamente</div>
         <div class="card" style="max-width:500px"><div style="padding:20px">
-          <div class="fg"><label>Nome Completo</label><input type="text" id="np-name"/></div>
+          <div class="fg"><label>Nome Completo</label><input type="text" id="np-name"></div>
           <div class="form-2">
-            <div class="fg"><label>Idade</label><input type="number" id="np-age" min="1" max="120"/></div>
+            <div class="fg"><label>Idade</label><input type="number" id="np-age" min="1" max="120"></div>
             <div class="fg"><label>Identidade de Gênero</label><select id="np-sex"><option>Mulher cisgênero</option><option>Homem cisgênero</option><option>Homem transgênero</option><option>Mulher transgênero</option><option>Travesti</option><option>Não binário</option><option>Prefiro não informar</option></select></div>
           </div>
           <div class="fg"><label>Grupo</label><select id="np-group"><option>Controle</option><option>Intervenção</option><option>Outro</option></select></div>
-          <div class="fg"><label>Obs. clínicas</label><input type="text" id="np-obs" placeholder="Ex: DM2, HAS..."/></div>
+          <div class="fg"><label>Obs. clínicas</label><input type="text" id="np-obs" placeholder="Ex: DM2, HAS..."></div>
           <button class="btn btn-g" style="width:100%;padding:12px" onclick="createParticipant()">✅ Cadastrar</button>
           <div class="l-err" id="np-err"></div>
         </div></div>
@@ -698,9 +699,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Atualize sua senha de acesso</div>
         <div class="card" style="max-width:440px">
           <div style="padding:20px">
-            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="ap-pass-old" placeholder="Sua senha atual"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-old',this)" tabindex="-1">👁️</button></div></div>
-            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-new',this)" tabindex="-1">👁️</button></div></div>
-            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"/><button type="button" class="pass-eye" onclick="togglePass('ap-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Senha atual</label><div class="pass-wrap"><input type="password" id="ap-pass-old" placeholder="Sua senha atual"><button type="button" class="pass-eye" onclick="togglePass('ap-pass-old',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-new" placeholder="Nova senha (mín. 6 caracteres)"><button type="button" class="pass-eye" onclick="togglePass('ap-pass-new',this)" tabindex="-1">👁️</button></div></div>
+            <div class="fg"><label>Confirmar nova senha</label><div class="pass-wrap"><input type="password" id="ap-pass-confirm" placeholder="Repita a nova senha"><button type="button" class="pass-eye" onclick="togglePass('ap-pass-confirm',this)" tabindex="-1">👁️</button></div></div>
             <button class="btn btn-g" style="width:100%;padding:12px" onclick="changeApPass()">🔑 Atualizar Senha</button>
             <div class="l-err" id="ap-pass-err"></div>
           </div>
@@ -722,17 +723,17 @@ canvas{max-width:100%;display:block;margin:0 auto}
           <div class="card" style="margin-bottom:14px">
             <div class="card-head"><span class="card-title">👤 1. Identificação</span></div>
             <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div class="fg" style="grid-column:1/-1"><label>Local da Coleta</label><input type="text" id="s-local" placeholder="Ex: São Judas Mooca" style="width:100%"/></div>
-              <div class="fg" style="grid-column:1/-1"><label>Nome do(a) Pesquisador(a)</label><input type="text" id="s-pesquisador" placeholder="Nome completo do aplicador" style="width:100%"/></div>
-              <div class="fg"><label>Telefone do Pesquisador(a)</label><input type="text" id="s-tel-pesq" placeholder="(11) 99999-9999" style="width:100%"/></div>
-              <div class="fg"><label>Data de Nascimento</label><input type="date" id="s-nascimento" style="width:100%"/></div>
-              <div class="fg"><label>Telefone do Participante</label><input type="text" id="s-telefone" placeholder="(11) 99999-9999" style="width:100%"/></div>
-              <div class="fg"><label>Idade (anos)</label><input type="number" id="s-idade" min="0" max="120" placeholder="Ex: 65" style="width:100%"/></div>
-              <div class="fg"><label>Bairro onde mora</label><input type="text" id="s-bairro" placeholder="Bairro" style="width:100%"/></div>
-              <div class="fg"><label>Cidade onde mora</label><input type="text" id="s-cidade" placeholder="Cidade" style="width:100%"/></div>
+              <div class="fg" style="grid-column:1/-1"><label>Local da Coleta</label><input type="text" id="s-local" placeholder="Ex: São Judas Mooca" style="width:100%"></div>
+              <div class="fg" style="grid-column:1/-1"><label>Nome do(a) Pesquisador(a)</label><input type="text" id="s-pesquisador" placeholder="Nome completo do aplicador" style="width:100%"></div>
+              <div class="fg"><label>Telefone do Pesquisador(a)</label><input type="text" id="s-tel-pesq" placeholder="(11) 99999-9999" style="width:100%"></div>
+              <div class="fg"><label>Data de Nascimento</label><input type="date" id="s-nascimento" style="width:100%"></div>
+              <div class="fg"><label>Telefone do Participante</label><input type="text" id="s-telefone" placeholder="(11) 99999-9999" style="width:100%"></div>
+              <div class="fg"><label>Idade (anos)</label><input type="number" id="s-idade" min="0" max="120" placeholder="Ex: 65" style="width:100%"></div>
+              <div class="fg"><label>Bairro onde mora</label><input type="text" id="s-bairro" placeholder="Bairro" style="width:100%"></div>
+              <div class="fg"><label>Cidade onde mora</label><input type="text" id="s-cidade" placeholder="Cidade" style="width:100%"></div>
               <div class="fg"><label>Estado</label><select id="s-estado" style="width:100%">
                 <option value="">— Selecione —</option>
-                <option>Acre</option><option>Alagoas</option><option>Amapá</option><option>Amazonas</option><option>Bahia</option><option>Ceará</option><option>Distrito Federal</option><option>Espírito Santo</option><option>Goiás</option><option>Maranhão</option><option>Mato Grosso</option><option>Mato Grosso do Sul</option><option>Minas Gerais</option><option>Pará</option><option>Paraíba</option><option>Paraná</option><option>Pernambuco</option><option>Piauí</option><option>Rio de Janeiro</option><option>Rio Grande do Norte</option><option>Rio Grande do Sul</option><option>Rondônia</option><option>Roraima</option><option>Santa Catarina</option><option selected>São Paulo</option><option>Sergipe</option><option>Tocantins</option>
+                <option>Acre</option><option>Alagoas</option><option>Amapá</option><option>Amazonas</option><option>Bahia</option><option>Ceará</option><option>Distrito Federal</option><option>Espírito Santo</option><option>Goiás</option><option>Maranhão</option><option>Mato Grosso</option><option>Mato Grosso do Sul</option><option>Minas Gerais</option><option>Pará</option><option>Paraíba</option><option>Paraná</option><option>Pernambuco</option><option>Piauí</option><option>Rio de Janeiro</option><option>Rio Grande do Norte</option><option>Rio Grande do Sul</option><option>Rondônia</option><option>Roraima</option><option>Santa Catarina</option><option selected="">São Paulo</option><option>Sergipe</option><option>Tocantins</option>
               </select></div>
             </div>
           </div>
@@ -759,7 +760,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 <option>Separado(a), divorciado(a) ou desquitado(a)</option>
                 <option>Viúvo(a)</option>
               </select></div>
-              <div class="fg"><label>Número de Filhos</label><input type="number" id="s-filhos" min="0" max="20" placeholder="Ex: 2" style="width:100%"/></div>
+              <div class="fg"><label>Número de Filhos</label><input type="number" id="s-filhos" min="0" max="20" placeholder="Ex: 2" style="width:100%"></div>
               <div class="fg"><label>Escolaridade</label><select id="s-escolaridade" style="width:100%">
                 <option value="">— Selecione —</option>
                 <option>Nunca estudou</option><option>Ensino Fundamental incompleto</option>
@@ -767,7 +768,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 <option>Ensino Médio completo</option><option>Ensino Superior</option>
                 <option>Especialização</option><option>Mestrado</option><option>Doutorado</option>
               </select></div>
-              <div class="fg"><label>Anos de Estudo (em números)</label><input type="number" id="s-anos-estudo" min="0" max="30" placeholder="Ex: 22" style="width:100%"/></div>
+              <div class="fg"><label>Anos de Estudo (em números)</label><input type="number" id="s-anos-estudo" min="0" max="30" placeholder="Ex: 22" style="width:100%"></div>
               <div class="fg"><label>Ocupação</label><select id="s-ocupacao" style="width:100%">
                 <option value="">— Selecione —</option>
                 <option>Assalariado (CTPS assinada)</option>
@@ -785,7 +786,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 <option>04 a 05 salários mínimos</option>
                 <option>Acima de 05 salários mínimos</option>
               </select></div>
-              <div class="fg"><label>Dependentes na residência</label><input type="number" id="s-dependentes" min="0" max="20" placeholder="Ex: 1" style="width:100%"/></div>
+              <div class="fg"><label>Dependentes na residência</label><input type="number" id="s-dependentes" min="0" max="20" placeholder="Ex: 1" style="width:100%"></div>
               <div class="fg"><label>Tipo de Moradia</label><select id="s-moradia" style="width:100%">
                 <option value="">— Selecione —</option>
                 <option>Própria</option><option>Alugada</option>
@@ -864,7 +865,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
               <div id="tcle2-cpf-area" style="display:none">
                 <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Etapa 2 — Confirme sua identidade digitando seu CPF</div>
                 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white)"/>
+                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white)">
                   <button onclick="confirmarTCLE()" style="padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer">✅ Confirmar e Iniciar</button>
                 </div>
                 <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
@@ -903,7 +904,7 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Etapa 2 — Confirme sua identidade</div>
                 <div style="font-size:.82rem;color:var(--ink3);margin-bottom:8px">O participante deve digitar o próprio CPF para validar o consentimento:</div>
                 <div style="display:flex;gap:10px;align-items:center">
-                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white);letter-spacing:.05em"/>
+                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white);letter-spacing:.05em">
                   <button onclick="confirmarTCLE()" style="padding:10px 18px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">✅ Confirmar e Iniciar</button>
                 </div>
                 <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
@@ -936,9 +937,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
   <div class="modal">
     <button class="modal-close" onclick="closeM('modal-new-user')">×</button>
     <h2 id="nu-title">Novo Usuário</h2>
-    <div class="fg"><label>Nome completo</label><input type="text" id="nu-name"/></div>
-    <div class="fg"><label>E-mail</label><input type="email" id="nu-email"/></div>
-    <div class="fg"><label>Senha inicial</label><div class="pass-wrap"><input type="password" id="nu-pass"/><button type="button" class="pass-eye" onclick="togglePass('nu-pass',this)" tabindex="-1">👁️</button></div></div>
+    <div class="fg"><label>Nome completo</label><input type="text" id="nu-name"></div>
+    <div class="fg"><label>E-mail</label><input type="email" id="nu-email"></div>
+    <div class="fg"><label>Senha inicial</label><div class="pass-wrap"><input type="password" id="nu-pass"><button type="button" class="pass-eye" onclick="togglePass('nu-pass',this)" tabindex="-1">👁️</button></div></div>
     <button class="btn btn-g" style="width:100%;padding:12px" onclick="createUser()">✅ Criar</button>
     <div class="l-err" id="nu-err"></div>
   </div>
@@ -2192,8 +2193,8 @@ function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
-</body>
-</html>
+
+
 <script>
 function formatCPF(input){
   let v=input.value.replace(/\D/g,'');
@@ -2315,3 +2316,28 @@ function exportSocioCSV(){
   a.download='sociodemografico_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 </script>
+<div id="qb5c9fuv3h" style="display: block;"><template shadowrootmode="closed"><div id="oin013tmt7"><style type="text/css">
+  @import 'chrome-extension://gidejehfgombmkfflghejpncblgfkagj/app.css';
+</style>
+<div id="cuponomia" data-v-app=""><div></div></div>
+</div></template></div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{"mode":"full","isActive":true,"isUserDisabled":false}"></div></template></grammarly-desktop-integration></html>
