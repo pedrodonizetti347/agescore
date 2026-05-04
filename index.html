@@ -821,14 +821,43 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 </div>
               </div>
               <div class="fg" style="grid-column:1/-1"><label>Medicamentos em uso</label><textarea id="s-medicamentos" rows="2" placeholder="Liste os medicamentos utilizados" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+              <div class="fg" style="grid-column:1/-1"><label>Suplementos em uso</label><textarea id="s-suplementos" rows="1" placeholder="Ex: vitamina D, ômega-3, colágeno..." style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
+              <div class="fg"><label>Peso (kg)</label><input type="number" id="s-peso" min="30" max="250" step="0.1" placeholder="Ex: 68.5" style="width:100%"></div>
+              <div class="fg"><label>Altura (cm)</label><input type="number" id="s-altura" min="100" max="220" placeholder="Ex: 165" style="width:100%"></div>
+              <div class="fg"><label>Tabagismo</label><select id="s-tabagismo" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Nunca fumou</option>
+                <option>Ex-fumante (parou há mais de 6 meses)</option>
+                <option>Fumante atual</option>
+              </select></div>
+              <div class="fg"><label>Consumo de álcool</label><select id="s-alcool" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Não consome</option>
+                <option>Raramente (ocasiões especiais)</option>
+                <option>Moderado (1–2x por semana)</option>
+                <option>Frequente (3x ou mais por semana)</option>
+              </select></div>
+              <div class="fg"><label>Nível de Atividade Física</label><select id="s-atividade" style="width:100%">
+                <option value="">— Selecione —</option>
+                <option>Sedentário (sem atividade regular)</option>
+                <option>Levemente ativo (1–2x/semana)</option>
+                <option>Moderadamente ativo (3–4x/semana)</option>
+                <option>Muito ativo (5x ou mais/semana)</option>
+              </select></div>
+              <div class="fg"><label>Tempo de diagnóstico da doença principal (anos)</label><input type="number" id="s-tempo-diag" min="0" max="80" placeholder="Ex: 5" style="width:100%"></div>
               <div class="fg" style="grid-column:1/-1"><label>Comentários adicionais</label><textarea id="s-comentarios" rows="2" placeholder="Observações relevantes" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;resize:vertical"></textarea></div>
             </div>
           </div>
 
           <div id="socio-err" style="color:var(--red);font-size:.82rem;margin-bottom:10px;display:none"></div>
-          <button onclick="salvarSocio()" style="width:100%;padding:14px;background:var(--green);color:#fff;font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit;margin-bottom:20px">
-            💾 Salvar Questionário Sociodemográfico
-          </button>
+          <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+            <button onclick="salvarSocio(false)" style="flex:1;min-width:200px;padding:14px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">
+              💾 Salvar Questionário Sociodemográfico
+            </button>
+            <button onclick="salvarSocio(true)" style="flex:1;min-width:200px;padding:14px;background:#2A5C1B;color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">
+              💾 Salvar e Aplicar AGE Score →
+            </button>
+          </div>
         </div>
       </div>
 
@@ -837,39 +866,6 @@ canvas{max-width:100%;display:block;margin:0 auto}
         <div class="psub">Preencha junto com o participante presencialmente</div>
         <div class="frow" style="margin-bottom:14px">
           <select id="q-part-sel" onchange="loadQuestParticipant()" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.86rem;background:var(--white)"><option value="">— Selecione o participante —</option></select>
-        </div>
-
-        <!-- TCLE step -->
-        <div id="tcle-step" style="display:none;max-width:720px;margin-bottom:16px">
-          <div class="card">
-            <div class="card-head"><span class="card-title">📄 Etapa 1 — Leia e aceite o TCLE</span></div>
-            <div style="padding:16px">
-              <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:300px;overflow-y:auto;font-size:.84rem;line-height:1.8;color:var(--ink);margin-bottom:14px">
-                <p style="margin-bottom:10px">O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Prof.ª Dr.ª Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
-                <p style="margin-bottom:10px">O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
-                <p style="margin-bottom:10px">Sua participação será em um único momento: você responderá um questionário de identificação, um sociodemográfico e o Questionário de Consumo Alimentar de AGE. Duração estimada: ~30 minutos.</p>
-                <p style="margin-bottom:10px">Seus dados serão mantidos em sigilo. Os resultados serão publicados sem qualquer identificação sua. Os questionários serão arquivados por cinco anos à disposição do comitê de ética.</p>
-                <p style="margin-bottom:10px">Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador — não haverá qualquer prejuízo.</p>
-                <p style="margin-bottom:10px">Participação voluntária, sem remuneração. Benefício esperado: conhecimento sobre saúde e autorreflexão.</p>
-                <p style="margin-bottom:10px">Dúvidas éticas: CEP USJT — <strong>(11) 2799-1950</strong> | <a href="mailto:cep@saojudas.br" style="color:var(--green)">cep@saojudas.br</a> — Rua Taquari, 546, Mooca, 2º andar, bloco C, CEP 03166-000, SP.</p>
-                <p style="margin-bottom:0">Dúvidas da pesquisa: Prof.ª Dr.ª Adriana Machado Saldiba de Lima — <strong>(11) 997744587</strong> | <a href="mailto:prof.adrianalima@usjt.br" style="color:var(--green)">prof.adrianalima@usjt.br</a>.</p>
-              </div>
-              <div style="display:flex;align-items:flex-start;gap:12px;background:var(--green-bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:14px">
-                <input type="checkbox" id="tcle2-check" onchange="toggleTCLE2()" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--green);cursor:pointer">
-                <label for="tcle2-check" style="font-size:.86rem;color:var(--ink);line-height:1.6;cursor:pointer">
-                  Após ter sido devidamente esclarecido (a), <strong>concordo em participar do estudo</strong> e declaro ter lido e compreendido este TCLE.
-                </label>
-              </div>
-              <div id="tcle2-cpf-area" style="display:none">
-                <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Etapa 2 — Confirme sua identidade digitando seu CPF</div>
-                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;min-width:180px;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white)">
-                  <button onclick="confirmarTCLE()" style="padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer">✅ Confirmar e Iniciar</button>
-                </div>
-                <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- TCLE step (shown before questionnaire) -->
@@ -1643,12 +1639,12 @@ async function loadSocioParticipant(){
   // Se já tem socio salvo, preenche os campos
   if(p.socio){
     const s=p.socio;
-    ['local','pesquisador','tel-pesq','telefone','bairro','cidade','medicamentos','comentarios'].forEach(f=>{
+    ['local','pesquisador','tel-pesq','telefone','bairro','cidade','medicamentos','suplementos','comentarios'].forEach(f=>{
       const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';
     });
     ['nascimento'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
-    ['idade','filhos','anos-estudo','dependentes'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
-    ['genero','etnia','civil','escolaridade','ocupacao','renda','moradia','estado'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
+    ['idade','filhos','anos-estudo','dependentes','peso','altura','tempo-diag'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
+    ['genero','etnia','civil','escolaridade','ocupacao','renda','moradia','estado','tabagismo','alcool','atividade'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
     // Checkboxes transporte
     document.querySelectorAll('#s-transporte-opts input').forEach(cb=>{cb.checked=(s.transporte||'').includes(cb.value);});
     // Checkboxes doenças
@@ -1661,7 +1657,7 @@ async function loadSocioParticipant(){
   area.style.display='block';
 }
 
-async function salvarSocio(){
+async function salvarSocio(redirecionar=false){
   const id=document.getElementById('socio-part-sel').value;
   const errEl=document.getElementById('socio-err');
   errEl.style.display='none';
@@ -1671,6 +1667,10 @@ async function salvarSocio(){
   const transportes=[...document.querySelectorAll('#s-transporte-opts input:checked')].map(c=>c.value).join(', ');
   // Coleta doenças
   const doencas=[...document.querySelectorAll('#s-doencas-opts input:checked')].map(c=>c.value).join(', ');
+  // Calcula IMC
+  const pesoVal=parseFloat(document.getElementById('s-peso').value)||0;
+  const alturaVal=parseFloat(document.getElementById('s-altura').value)||0;
+  const imcVal=(pesoVal>0&&alturaVal>0)?(pesoVal/Math.pow(alturaVal/100,2)).toFixed(1):'';
 
   const socio={
     local:       document.getElementById('s-local').value.trim(),
@@ -1695,16 +1695,30 @@ async function salvarSocio(){
     transporte:  transportes,
     doencas:     doencas,
     medicamentos:document.getElementById('s-medicamentos').value.trim(),
+    suplementos: document.getElementById('s-suplementos').value.trim(),
+    peso:        pesoVal||'',
+    altura:      alturaVal||'',
+    imc:         imcVal,
+    tabagismo:   document.getElementById('s-tabagismo').value,
+    alcool:      document.getElementById('s-alcool').value,
+    atividade:   document.getElementById('s-atividade').value,
+    tempo_diag:  document.getElementById('s-tempo-diag').value,
     comentarios: document.getElementById('s-comentarios').value.trim(),
     timestamp:   new Date().toISOString(),
   };
 
-  if(!socio.nome && !socio.genero){errEl.textContent='Preencha pelo menos o gênero do participante.';errEl.style.display='block';return;}
+  if(!socio.genero){errEl.textContent='Preencha pelo menos o gênero do participante.';errEl.style.display='block';return;}
 
   try{
     await db.collection('participants').doc(id).update({socio:socio, socio_preenchido:true});
     _pCache=null;
     toast('✅ Questionário sociodemográfico salvo com sucesso!');
+    if(redirecionar){
+      // Redireciona para aba Aplicar Questionário
+      document.getElementById('q-part-sel').value=id;
+      showAP('ap-quest',document.querySelectorAll('#sc-ap .nav')[2]);
+      await loadQuestParticipant(true);
+    }
   }catch(e){
     errEl.textContent='Erro ao salvar: '+e.message;errEl.style.display='block';
   }
@@ -1781,6 +1795,18 @@ async function loadQuestParticipant(skipTcle=false){
     curApPart=p;return;
   }
   if(tcleStep)tcleStep.style.display='none';
+  // ── Bloqueia acesso ao AGE Score se sociodemográfico não preenchido ──
+  if(!p.socio_preenchido){
+    area.innerHTML=`<div class="empty" style="padding:32px 20px;text-align:center">
+      <div class="ei">📋</div>
+      <p style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:8px">Sociodemográfico pendente</p>
+      <p style="font-size:.86rem;color:var(--ink3);margin-bottom:20px">O questionário sociodemográfico deve ser preenchido antes de aplicar o AGE Score.</p>
+      <button onclick="(function(){const s=document.getElementById('socio-part-sel');if(s){s.value='${p.id}';loadSocioParticipant();}showAP('ap-socio',document.querySelectorAll('#sc-ap .nav')[3]);})()" style="padding:10px 22px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit">
+        📋 Preencher Sociodemográfico agora
+      </button>
+    </div>`;
+    bar.style.display='none';curApPart=p;return;
+  }
   curApPart=p;bar.style.display='flex';qState={};
   area.innerHTML=`
     <div class="q-patient-bar"><h3>📋 Participante selecionado</h3>
@@ -2034,9 +2060,9 @@ function showCompletionModal(q1,q2,daily){
       <div style="font-family:'DM Serif Display',serif;font-size:1.5rem;color:#2A5C1B;margin-bottom:8px">Questionários Respondidos!</div>
       <div style="font-size:.85rem;color:#5A7A5A;margin-bottom:20px">Os dados foram salvos com sucesso na plataforma.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">
-        <div style="background:#E6F4E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#2A5C1B;font-weight:700;text-transform:uppercase">AGE Q1</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#2A5C1B">\${q1.toFixed(1).replace('.',',')}</div></div>
-        <div style="background:#FDF3E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#9B6000;font-weight:700;text-transform:uppercase">AGE Q2</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#9B6000">\${q2.toFixed(1).replace('.',',')}</div></div>
-        <div style="background:#2A5C1B;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#C8E6C9;font-weight:700;text-transform:uppercase">Diário</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#fff">\${daily.toFixed(1).replace('.',',')} kU/d</div></div>
+        <div style="background:#E6F4E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#2A5C1B;font-weight:700;text-transform:uppercase">AGE Q1</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#2A5C1B">${q1.toFixed(1).replace('.',',')}</div></div>
+        <div style="background:#FDF3E0;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#9B6000;font-weight:700;text-transform:uppercase">AGE Q2</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#9B6000">${q2.toFixed(1).replace('.',',')}</div></div>
+        <div style="background:#2A5C1B;border-radius:8px;padding:12px"><div style="font-size:.65rem;color:#C8E6C9;font-weight:700;text-transform:uppercase">Diário</div><div style="font-family:'DM Serif Display',serif;font-size:1.2rem;color:#fff">${daily.toFixed(1).replace('.',',')} kU/d</div></div>
       </div>
       <button onclick="document.getElementById('modal-completion').remove()" style="background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border:none;border-radius:8px;padding:12px 28px;font-size:.92rem;font-weight:700;cursor:pointer;width:100%">✓ Fechar</button>
     </div>`;
@@ -2229,7 +2255,21 @@ async function confirmarTCLE(){
     _pCache=null;
   }catch(e){console.warn('tcle save:',e);}
   document.getElementById('tcle-step').style.display='none';
-  await loadQuestParticipant(true);
+  // ── Fluxo corrigido: após TCLE, o próximo passo é o Sociodemográfico ──
+  // Verifica se já preencheu o sociodemográfico
+  const dataCheck=await getData();
+  const pCheck=dataCheck.find(x=>x.id===partId);
+  if(pCheck&&pCheck.socio_preenchido){
+    // Socio já preenchido, vai direto para o questionário AGE
+    await loadQuestParticipant(true);
+  } else {
+    // Redireciona para aba Sociodemográfico com toast informativo
+    toast('✅ TCLE confirmado! Preencha agora o Sociodemográfico antes de aplicar o questionário AGE.');
+    // Carrega o participante no seletor do sociodemográfico e abre a aba
+    const socioSel=document.getElementById('socio-part-sel');
+    if(socioSel){socioSel.value=partId;loadSocioParticipant();}
+    showAP('ap-socio',document.querySelectorAll('#sc-ap .nav')[3]);
+  }
 }
 
 // ══ RELATÓRIO SOCIODEMOGRÁFICO ══
