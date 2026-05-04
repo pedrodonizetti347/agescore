@@ -246,8 +246,9 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <h1>AGE<span>score</span></h1>
       <p>Questionário de Consumo Alimentar de AGE · Escore do Consumo de AGE</p>
     </div>
-    <div class="role-tabs">
+    <div class="role-tabs" style="grid-template-columns:1fr 1fr 1fr 1fr">
       <button class="role-tab on" id="tab-adm" onclick="setRole('admin')">🔬 Admin</button>
+      <button class="role-tab" id="tab-gestor" onclick="setRole('gestor')">🔑 ADM2</button>
       <button class="role-tab" id="tab-coord" onclick="setRole('coord')">📋 Coord.</button>
       <button class="role-tab" id="tab-ap" onclick="setRole('aplicador')">👩‍⚕️ Aplicador</button>
     </div>
@@ -267,8 +268,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
       <div class="topbar-logo">AGE<span>score</span></div>
     </div>
     <div class="topbar-right">
-      <span class="topbar-role">Administrador</span>
-      <span class="topbar-user">Pedro Donizetti</span>
+      <span class="topbar-role" id="adm-role-label">Administrador</span>
+      <span class="topbar-user" id="adm-name-display">Pedro Donizetti</span>
       <button class="btn-xs" onclick="logout()">Sair</button>
     </div>
   </div>
@@ -426,8 +427,16 @@ canvas{max-width:100%;display:block;margin:0 auto}
 
       <div id="p-users" class="panel">
         <div class="ptitle">Gestão de Usuários</div>
-        <div class="psub">Gerencie coordenadores e aplicadores da plataforma</div>
+        <div class="psub">Gerencie ADM2, coordenadores e aplicadores da plataforma</div>
         <div style="display:grid;grid-template-columns:1fr;gap:16px">
+          <!-- Gestores -->
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">🔑 ADM2 <span style="font-size:.75rem;color:var(--ink3);font-weight:400">(acesso completo ao sistema — igual ao administrador)</span></span>
+              <button class="btn btn-b" style="background:#7C3AED;border-color:#7C3AED" onclick="openNewUser('gestor')">＋ Novo ADM2</button>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Status</th><th>Ações</th></tr></thead><tbody id="gestor-tb"></tbody></table></div>
+          </div>
           <!-- Coordenadores -->
           <div class="card">
             <div class="card-head">
@@ -586,6 +595,10 @@ canvas{max-width:100%;display:block;margin:0 auto}
     </div>
   </div>
 </div>
+
+
+<!-- ══ GESTOR ══ -->
+<!-- sc-gestor: reuses sc-admin with gestor-mode class (hides Gestao items) -->
 
 <!-- ══ COORDENADOR ══ -->
 <div id="sc-coord" class="screen">
@@ -997,7 +1010,7 @@ let loginRole='admin', curUser=null, curApPart=null, qState={}, newUserRole='ap'
 
 function setRole(r){
   loginRole=r;
-  ['adm','coord','ap'].forEach((id,i)=>document.getElementById(['tab-adm','tab-coord','tab-ap'][i]).classList.toggle('on',(['admin','coord','aplicador'][i])===r));
+  ['tab-adm','tab-gestor','tab-coord','tab-ap'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('on');});const map={admin:'tab-adm',gestor:'tab-gestor',coord:'tab-coord',aplicador:'tab-ap'};if(map[r])document.getElementById(map[r]).classList.add('on');
 }
 
 async function doLogin(){
@@ -1025,6 +1038,7 @@ async function doLogin(){
     if(adminOk){showScreen('sc-admin');loadDash();return;}
     errEl.style.display='block';return;
   }
+  if(loginRole==='gestor'){const ok=await loginGestor(email,pass);if(!ok)errEl.style.display='block';return;}
   // Check Firestore users
   let userOk=false;
   try{
@@ -1056,7 +1070,7 @@ async function doLogin(){
   if(!userOk) errEl.style.display='block';
 }
 
-function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
+function logout(){curUser=null;curApPart=null;qState={};document.getElementById('sumbar').style.display='none';const scAdmin=document.getElementById('sc-admin');scAdmin.classList.remove('gestor-mode');document.getElementById('adm-role-label').textContent='Administrador';document.getElementById('adm-name-display').textContent='Pedro Donizetti';showScreen('sc-login');document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
 // ══ TCLE ══
 function toggleTCLE2(){
   const cb=document.getElementById('tcle2-check');
@@ -1502,8 +1516,13 @@ async function clearAll(){const data=await getData();for(const p of data){await 
 async function renderUsersPanel(){
   _uCache=null; // always fresh
   const users=await getUsers(),data=await getData();
+  const gestores=users.filter(u=>u.role==='gestor');
   const coords=users.filter(u=>u.role==='coord');
   const aps=users.filter(u=>u.role==='ap'||u.role==='aplicador');
+  const gestorTb=document.getElementById('gestor-tb');
+  if(gestorTb)gestorTb.innerHTML=gestores.length
+    ?gestores.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="badge bp">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u._id||u.id}')">Remover</button></td></tr>`).join('')
+    :'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum ADM2 cadastrado.</td></tr>';
   document.getElementById('coord-tb').innerHTML=coords.length
     ?coords.map(u=>`<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><span class="badge bp">Ativo</span></td><td><button class="btn btn-r" onclick="deleteUser('${u._id||u.id}')">Remover</button></td></tr>`).join('')
     :'<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--ink3)">Nenhum coordenador cadastrado.</td></tr>';
@@ -1514,7 +1533,7 @@ async function renderUsersPanel(){
 
 function openNewUser(role){
   newUserRole=role;
-  document.getElementById('nu-title').textContent=role==='coord'?'Novo Coordenador':'Novo Aplicador';
+  const titles={coord:'Novo Coordenador',ap:'Novo Aplicador',gestor:'Novo ADM2'};document.getElementById('nu-title').textContent=titles[role]||'Novo Usuário';
   document.getElementById('nu-name').value='';document.getElementById('nu-email').value='';document.getElementById('nu-pass').value='';
   document.getElementById('nu-err').style.display='none';
   document.getElementById('modal-new-user').classList.add('open');
@@ -2352,6 +2371,29 @@ function exportSocioCSV(){
   const csv=[headers.join(','),...rows].join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='sociodemografico_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// ══ GESTOR ══
+async function loginGestor(email,pass){
+  try{
+    const snap=await db.collection("users").where("email","==",email).where("role","==","gestor").get();
+    if(!snap.empty){
+      const uData={...snap.docs[0].data(),_id:snap.docs[0].id};
+      if(uData.pass===pass){
+        curUser=uData;
+        // Reuse sc-admin screen with gestor-mode (hides Gestao section)
+        const scAdmin=document.getElementById("sc-admin");
+        scAdmin.classList.add("gestor-mode");
+        document.getElementById("adm-role-label").textContent="ADM2";
+        document.getElementById("adm-name-display").textContent=uData.name;
+        showScreen("sc-admin");
+        showP("dash",document.querySelector("#adm-sb .nav"));
+        loadDash();
+        return true;
+      }
+    }
+  }catch(e){console.error(e);}
+  return false;
 }
 </script>
 <div id="qb5c9fuv3h" style="display: block;"><template shadowrootmode="closed"><div id="oin013tmt7"><style type="text/css">
