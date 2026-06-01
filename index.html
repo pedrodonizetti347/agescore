@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="AGEscore">
 <meta name="application-name" content="AGEscore">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script></script>
@@ -736,8 +737,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
             <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div class="fg" style="grid-column:1/-1"><label>Local da Coleta</label><input type="text" id="s-local" placeholder="Ex: São Judas Mooca" style="width:100%"></div>
               <div class="fg" style="grid-column:1/-1"><label>Nome do(a) Pesquisador(a)</label><input type="text" id="s-pesquisador" placeholder="Nome completo do aplicador" style="width:100%"></div>
-              <div class="fg"><label>Telefone do Pesquisador(a)</label><input type="text" id="s-tel-pesq" placeholder="(11) 99999-9999" style="width:100%"></div>
-              <div class="fg"><label>Data de Nascimento</label><input type="date" id="s-nascimento" style="width:100%"></div>
+              <div class="fg"><label>Telefone do(a) Pesquisador(a)</label><input type="text" id="s-tel-pesq" placeholder="(11) 99999-9999" style="width:100%"></div>
+              <div class="fg"><label>Data de Nascimento do Participante</label><input type="date" id="s-nascimento" style="width:100%"></div>
               <div class="fg"><label>Telefone do Participante</label><input type="text" id="s-telefone" placeholder="(11) 99999-9999" style="width:100%"></div>
               <div class="fg"><label>Idade (anos)</label><input type="number" id="s-idade" min="0" max="120" placeholder="Ex: 65" style="width:100%"></div>
               <div class="fg"><label>Bairro onde mora</label><input type="text" id="s-bairro" placeholder="Bairro" style="width:100%"></div>
@@ -779,7 +780,6 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 <option>Ensino Médio completo</option><option>Ensino Superior</option>
                 <option>Especialização</option><option>Mestrado</option><option>Doutorado</option>
               </select></div>
-              <div class="fg"><label>Anos de Estudo (em números)</label><input type="number" id="s-anos-estudo" min="0" max="30" placeholder="Ex: 22" style="width:100%"></div>
               <div class="fg"><label>Ocupação</label><select id="s-ocupacao" style="width:100%">
                 <option value="">— Selecione —</option>
                 <option>Assalariado (CTPS assinada)</option>
@@ -867,8 +867,8 @@ canvas{max-width:100%;display:block;margin:0 auto}
             <button onclick="salvarSocio(false)" style="flex:1;min-width:200px;padding:14px;background:var(--green);color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">
               💾 Salvar Questionário Sociodemográfico
             </button>
-            <button onclick="salvarSocio(true)" style="flex:1;min-width:200px;padding:14px;background:#2A5C1B;color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:inherit">
-              💾 Salvar e Aplicar AGE Score →
+            <button disabled title="Esta opção é exclusiva do pesquisador" style="flex:1;min-width:200px;padding:14px;background:#aaa;color:#fff;font-size:.95rem;font-weight:700;border:none;border-radius:8px;cursor:not-allowed;font-family:inherit;opacity:0.5">
+              🔒 Aplicar AGE Score (restrito ao pesquisador)
             </button>
           </div>
         </div>
@@ -906,14 +906,15 @@ canvas{max-width:100%;display:block;margin:0 auto}
                 </label>
               </div>
 
-              <!-- CPF -->
+              <!-- Botões impressão TCLE -->
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+                <button onclick="imprimirTCLE()" style="flex:1;min-width:140px;padding:9px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit">🖨 Imprimir TCLE</button>
+                <button onclick="baixarTCLEPDF()" style="flex:1;min-width:140px;padding:9px 14px;background:var(--ink2);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit">📄 Baixar TCLE em PDF</button>
+              </div>
+
+              <!-- Confirmação sem CPF -->
               <div id="tcle2-cpf-area" style="display:none;margin-bottom:14px">
-                <div style="font-size:.78rem;font-weight:600;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em">Etapa 2 — Confirme sua identidade</div>
-                <div style="font-size:.82rem;color:var(--ink3);margin-bottom:8px">O participante deve digitar o próprio CPF para validar o consentimento:</div>
-                <div style="display:flex;gap:10px;align-items:center">
-                  <input type="text" id="tcle2-cpf" maxlength="14" placeholder="000.000.000-00" oninput="formatCPF(this)" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;font-family:inherit;background:var(--white);letter-spacing:.05em">
-                  <button onclick="confirmarTCLE()" style="padding:10px 18px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">✅ Confirmar e Iniciar</button>
-                </div>
+                <button onclick="confirmarTCLE()" style="width:100%;padding:12px 18px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer">✅ Confirmar e Iniciar</button>
                 <div id="tcle2-err" style="color:var(--red);font-size:.78rem;margin-top:6px;display:none"></div>
               </div>
 
@@ -1662,7 +1663,7 @@ async function loadSocioParticipant(){
       const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';
     });
     ['nascimento'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
-    ['idade','filhos','anos-estudo','dependentes','peso','altura','tempo-diag'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
+    ['idade','filhos','dependentes','peso','altura','tempo-diag'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
     ['genero','etnia','civil','escolaridade','ocupacao','renda','moradia','estado','tabagismo','alcool','atividade'].forEach(f=>{const el=document.getElementById('s-'+f);if(el)el.value=s[f]||'';});
     // Checkboxes transporte
     document.querySelectorAll('#s-transporte-opts input').forEach(cb=>{cb.checked=(s.transporte||'').includes(cb.value);});
@@ -1706,7 +1707,6 @@ async function salvarSocio(redirecionar=false){
     civil:       document.getElementById('s-civil').value,
     filhos:      document.getElementById('s-filhos').value,
     escolaridade:document.getElementById('s-escolaridade').value,
-    anos_estudo: document.getElementById('s-anos-estudo').value,
     ocupacao:    document.getElementById('s-ocupacao').value,
     renda:       document.getElementById('s-renda').value,
     dependentes: document.getElementById('s-dependentes').value,
@@ -1731,16 +1731,89 @@ async function salvarSocio(redirecionar=false){
   try{
     await db.collection('participants').doc(id).update({socio:socio, socio_preenchido:true});
     _pCache=null;
-    toast('✅ Questionário sociodemográfico salvo com sucesso!');
-    if(redirecionar){
-      // Redireciona para aba Aplicar Questionário
-      document.getElementById('q-part-sel').value=id;
-      showAP('ap-quest',document.querySelectorAll('#sc-ap .nav')[2]);
-      await loadQuestParticipant(true);
-    }
+
+    // Esconde formulário e exibe tela de agradecimento com contato
+    const formArea=document.getElementById('socio-form-area');
+    if(formArea)formArea.style.display='none';
+    const selRow=document.querySelector('#ap-socio .frow');
+    if(selRow)selRow.style.display='none';
+
+    const existing=document.getElementById('contato-pos-socio');
+    if(existing)existing.remove();
+    const panel=document.getElementById('ap-socio');
+    panel.insertAdjacentHTML('beforeend',`<div id="contato-pos-socio" style="max-width:560px;margin:30px auto;padding:28px;background:#fff;border-radius:12px;border-top:4px solid var(--green);box-shadow:var(--shadow-lg);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:12px">✅</div>
+      <h3 style="font-family:'DM Serif Display',serif;color:var(--green);font-size:1.3rem;margin-bottom:10px">Obrigado pelo preenchimento.</h3>
+      <p style="font-size:.9rem;color:var(--ink3);margin-bottom:20px;line-height:1.7">Favor aguardar que o pesquisador entrará em contato para dar continuidade ao estudo.<br><strong>Deixe abaixo seu telefone e e-mail para contato.</strong></p>
+      <div style="text-align:left;display:grid;gap:12px;margin-bottom:18px">
+        <div class="fg"><label>Telefone para contato *</label><input type="text" id="contato-tel" placeholder="(11) 99999-9999" oninput="formatTelContato(this)" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.92rem;font-family:inherit"></div>
+        <div class="fg"><label>E-mail para contato *</label><input type="email" id="contato-email" placeholder="seuemail@exemplo.com" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.92rem;font-family:inherit"></div>
+      </div>
+      <div id="contato-err" style="color:var(--red);font-size:.8rem;margin-bottom:8px;display:none"></div>
+      <button onclick="salvarContato('${id}')" style="width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit">📩 Enviar dados de contato</button>
+    </div>`);
   }catch(e){
     errEl.textContent='Erro ao salvar: '+e.message;errEl.style.display='block';
   }
+}
+
+function getTCLEHtml(){return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>TCLE — AGEscore Brasil</title><style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:30px;font-size:13px;line-height:1.8;color:#111}h2{font-size:1.1rem;text-align:center;margin-bottom:20px}p{margin-bottom:12px}.assinatura{margin-top:50px;display:flex;gap:40px}.assinatura div{flex:1;border-top:1px solid #000;padding-top:6px;font-size:.85rem;text-align:center}</style></head><body><h2>TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO (TCLE)</h2><p>O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs. Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Professora Doutora Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p><p>O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p><p>Sua participação será por meio de uma avaliação realizada em um único momento: você irá responder um questionário de identificação, um questionário sociodemográfico e o Questionário de Consumo Alimentar dos produtos de glicação avançada (AGE). Duração estimada: aproximadamente 30 minutos.</p><p>Seus dados pessoais serão mantidos em sigilo. Os resultados serão analisados e publicados sem qualquer identificação sua. Os questionários serão arquivados por cinco anos, à disposição apenas do comitê de ética.</p><p>Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador e pare de responder — não haverá qualquer prejuízo.</p><p>Sua participação é voluntária e não há remuneração. O benefício esperado é o conhecimento sobre os resultados, auxiliando na autorreflexão sobre sua saúde.</p><p>Dúvidas/denúncias éticas: CEP USJT — (11) 2799-1950 | cep@saojudas.br</p><p>Dúvidas sobre a pesquisa: Prof.ª Dr.ª Adriana Machado Saldiba de Lima — (11) 997744587 | prof.adrianalima@usjt.br</p><div class="assinatura"><div>Assinatura do Participante<br><br>Data: ___/___/______</div><div>Assinatura do Pesquisador(a)<br><br>Data: ___/___/______</div></div></body></html>`;}
+function imprimirTCLE(){const w=window.open("","_blank","width=800,height=700");if(!w){alert("Pop-up bloqueado.");return;}w.document.write(getTCLEHtml());w.document.close();setTimeout(()=>{w.focus();w.print();},500);}
+function baixarTCLEPDF(){const w=window.open("","_blank","width=800,height=700");if(!w){alert("Pop-up bloqueado.");return;}const h=getTCLEHtml().replace("</title>","</title><script>window.onload=function(){window.print()}</scr"+"ipt>");w.document.write(h);w.document.close();}
+function formatTelContato(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>11)v=v.slice(0,11);
+  if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length>0)v='('+v;
+  el.value=v;
+}
+
+// ── EmailJS config ──────────────────────────────────────────────────────────
+// Preencha após criar conta em emailjs.com:
+const EMAILJS_PUBLIC_KEY  = '4M5PHF7SnTashwagz';
+const EMAILJS_SERVICE_ID  = 'service_gzt9k7h';
+const EMAILJS_TEMPLATE_ID = 'template_kxt899m';
+const PESQUISADOR_EMAIL   = 'adrif.cunha@gmail.com';
+// ────────────────────────────────────────────────────────────────────────────
+
+async function salvarContato(partId){
+  const tel=(document.getElementById('contato-tel')?.value||'').trim();
+  const email=(document.getElementById('contato-email')?.value||'').trim();
+  const errEl=document.getElementById('contato-err');
+  if(!tel||!email){if(errEl){errEl.textContent='Preencha telefone e e-mail.';errEl.style.display='block';}return;}
+  if(!/\S+@\S+\.\S+/.test(email)){if(errEl){errEl.textContent='E-mail inválido.';errEl.style.display='block';}return;}
+
+  // Busca nome do participante para incluir no e-mail
+  let nomePart=partId;
+  try{const snap=await db.collection('participants').doc(partId).get();if(snap.exists)nomePart=snap.data().name||partId;}catch(_){}
+
+  try{
+    const ts=new Date().toISOString();
+    await db.collection('participants').doc(partId).update({contato_tel:tel,contato_email:email,contato_ts:ts});
+
+    // Dispara e-mail para pesquisadora
+    if(EMAILJS_PUBLIC_KEY!=='COLE_SUA_PUBLIC_KEY_AQUI'){
+      try{
+        emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          to_email:   PESQUISADOR_EMAIL,
+          to_name:    'Adriana',
+          part_id:    partId,
+          part_nome:  nomePart,
+          part_tel:   tel,
+          part_email: email,
+          data_hora:  new Date().toLocaleString('pt-BR'),
+        });
+      }catch(emailErr){
+        console.warn('EmailJS erro (não crítico):', emailErr);
+        // falha silenciosa — dados já salvos no Firestore
+      }
+    }
+
+    const box=document.getElementById('contato-pos-socio');
+    if(box)box.innerHTML=`<div style="text-align:center;padding:30px"><div style="font-size:2.5rem;margin-bottom:10px">🙏</div><h3 style="font-family:'DM Serif Display',serif;color:var(--green);font-size:1.3rem">Dados registrados!</h3><p style="color:var(--ink3);font-size:.9rem;margin-top:8px">O pesquisador entrará em contato em breve.</p></div>`;
+  }catch(e){if(errEl){errEl.textContent='Erro ao salvar contato: '+e.message;errEl.style.display='block';}}
 }
 
 // ══ QUESTIONNAIRE ══
@@ -1754,10 +1827,18 @@ const Q1C=[
    foods:[{id:'av-0',n:'Filé de frango (peito, sassami)',d:'110g · 1 bife grande'},{id:'av-1',n:'Frango partes (coxa, sobrecoxa)',d:'110g · 1 unidade grande'},{id:'av-2',n:'Frango nuggets congelado',d:'110g · 5 unidades'},{id:'av-3',n:'Hambúrguer de frango',d:'110g · 1 unidade médio'},{id:'av-4',n:'Linguiça de frango',d:'110g · 2 unidades'},{id:'av-5',n:'Frango filé-peito empanado (crocante)',d:'110g · 1 unidade'}]},
   {id:'suinos',icon:'🥓',name:'Suínos',methods:['Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[4.9,4.3,12,5.2],
    foods:[{id:'su-0',n:'Bife (bisteca suína)',d:'110g · 1 unidade médio'},{id:'su-1',n:'Costela',d:'110g · 3 pedaços médios'},{id:'su-2',n:'Torresmo',d:'110g · 1 escumadeira'},{id:'su-3',n:'Linguiça de porco (toscana)',d:'110g · 2 unidades'}]},
-  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Frito'],scores:[0.6,1.4],
+  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Grelhado','Frito'],scores:[0.6,1.0,1.4],
    foods:[{id:'ov-0',n:'Ovo de galinha (inteiro, mexido, omelete)',d:'50g · 1 unidade médio'},{id:'ov-1',n:'Ovo de codorna',d:'10g · 5 unidades'}]},
   {id:'embutidos',icon:'🌭',name:'Embutidos',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
-   foods:[{id:'em-0',n:'Salsicha',d:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},{id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},{id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',cs:[null,null,null,null,6.6]},{id:'em-3',n:'Mortadela, presunto, salame, copa',d:'60g · 3 fatias',cs:[1.2,null,null,null,null]}]},
+   foods:[
+     {id:'em-0',n:'Salsicha',d:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},
+     {id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},
+     {id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',cs:[null,null,null,null,6.6]},
+     {id:'em-3',n:'Mortadela',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
+     {id:'em-4',n:'Presunto',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
+     {id:'em-5',n:'Salame',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
+     {id:'em-6',n:'Copa',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]}
+   ]},
   {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',
    methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
    mixedScore:true,
@@ -1859,7 +1940,7 @@ async function loadQuestParticipant(skipTcle=false){
             <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Embutidos (salsicha)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">30g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 unidade</td></tr>
             <tr><td style="padding:4px 8px;border:1px solid var(--border)">Embutidos (bacon)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">15g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 fatia/pedaço</td></tr>
             <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Linguiça seca (calabresa)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">2 unidades</td></tr>
-            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Mortadela / presunto / salame</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">60g</td><td style="padding:4px 8px;border:1px solid var(--border)">3 fatias</td></tr>
+            <tr><td style="padding:4px 8px;border:1px solid var(--border)">Mortadela / Presunto / Salame / Copa</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">60g</td><td style="padding:4px 8px;border:1px solid var(--border)">3 fatias — AGE 1 (coz./micro) · AGE 2 (grelhado)</td></tr>
             <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Filé de peixe / posta</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 unidade média</td></tr>
             <tr><td style="padding:4px 8px;border:1px solid var(--border)">Atum / sardinha (lata)</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 lata pequena</td></tr>
             <tr style="background:var(--cream)"><td style="padding:4px 8px;border:1px solid var(--border)">Camarão / frutos do mar</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">110g</td><td style="padding:4px 8px;border:1px solid var(--border)">1 porção média</td></tr>
@@ -2258,17 +2339,13 @@ function validarCPF(cpf){
   return parseInt(cpf[10])===d2;
 }
 async function confirmarTCLE(){
-  const cpfInput=document.getElementById('tcle2-cpf');
   const errEl=document.getElementById('tcle2-err');
-  const cpf=cpfInput?cpfInput.value:'';
-  errEl.style.display='none';
-  if(!validarCPF(cpf)){errEl.textContent='CPF inválido. Verifique e tente novamente.';errEl.style.display='block';return;}
+  if(errEl)errEl.style.display='none';
   const partId=document.getElementById('q-part-sel').value;
   const ts=new Date().toISOString();
   try{
     await db.collection('participants').doc(partId).update({
       tcle_aceito:true,
-      tcle_cpf:cpf.replace(/\D/g,''),
       tcle_timestamp:ts
     });
     _pCache=null;
