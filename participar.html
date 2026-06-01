@@ -422,14 +422,9 @@ async function enviarContato(){
     // Envia e-mail para pesquisadora
     try{
       await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
-        to_email:   PESQUISADOR_EMAIL,
         to_name:    'Adriana',
         name:       'AGEscore Brasil',
-        part_id:    partId||'—',
-        part_nome:  nome,
-        part_tel:   tel,
-        part_email: email,
-        data_hora:  new Date().toLocaleString('pt-BR'),
+        message:    `Novo participante aguarda contato!\n\nID: ${partId||'—'}\nNome: ${nome}\nTelefone: ${tel}\nE-mail: ${email}\nData/hora: ${new Date().toLocaleString('pt-BR')}`,
       });
       console.log('Email enviado com sucesso');
     }catch(emailErr){
