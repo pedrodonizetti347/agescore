@@ -1829,15 +1829,15 @@ const Q1C=[
    foods:[{id:'su-0',n:'Bife (bisteca suína)',d:'110g · 1 unidade médio'},{id:'su-1',n:'Costela',d:'110g · 3 pedaços médios'},{id:'su-2',n:'Torresmo',d:'110g · 1 escumadeira'},{id:'su-3',n:'Linguiça de porco (toscana)',d:'110g · 2 unidades'}]},
   {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Grelhado','Frito'],scores:[0.6,1.0,1.4],
    foods:[{id:'ov-0',n:'Ovo de galinha (inteiro, mexido, omelete)',d:'50g · 1 unidade médio'},{id:'ov-1',n:'Ovo de codorna',d:'10g · 5 unidades'}]},
-  {id:'embutidos',icon:'🌭',name:'Embutidos',methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
+  {id:'embutidos',icon:'🌭',name:'Embutidos',fixedScore:true,
    foods:[
-     {id:'em-0',n:'Salsicha',d:'30g · 1 unidade',cs:[2.2,null,null,null,3.4]},
-     {id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',cs:[9.9,null,null,null,13.7]},
-     {id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',cs:[null,null,null,null,6.6]},
-     {id:'em-3',n:'Mortadela',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
-     {id:'em-4',n:'Presunto',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
-     {id:'em-5',n:'Salame',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]},
-     {id:'em-6',n:'Copa',d:'60g · 3 fatias',cs:[1.2,2.0,null,null,null]}
+     {id:'em-0',n:'Salsicha',d:'30g · 1 unidade',fa:1.2},
+     {id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',fa:1.2},
+     {id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',fa:1.2},
+     {id:'em-3',n:'Mortadela',d:'60g · 3 fatias',fa:1.2},
+     {id:'em-4',n:'Presunto',d:'60g · 3 fatias',fa:1.2},
+     {id:'em-5',n:'Salame',d:'60g · 3 fatias',fa:1.2},
+     {id:'em-6',n:'Copa',d:'60g · 3 fatias',fa:1.2}
    ]},
   {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',
    methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
