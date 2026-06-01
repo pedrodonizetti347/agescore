@@ -268,6 +268,8 @@ const EMAILJS_SERVICE_ID='service_gzt9k7h';
 const EMAILJS_TEMPLATE_ID='template_kxt899m';
 const PESQUISADOR_EMAIL='adryfcunha@gmail.com';
 
+emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+
 let partId=null;
 
 function mostrar(id){
@@ -419,7 +421,6 @@ async function enviarContato(){
 
     // Envia e-mail para pesquisadora
     try{
-      emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
       await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
         to_email:   PESQUISADOR_EMAIL,
         to_name:    'Adriana',
@@ -430,7 +431,11 @@ async function enviarContato(){
         part_email: email,
         data_hora:  new Date().toLocaleString('pt-BR'),
       });
-    }catch(emailErr){console.warn('EmailJS:',emailErr);}
+      console.log('Email enviado com sucesso');
+    }catch(emailErr){
+      console.error('EmailJS erro:', emailErr);
+      alert('Aviso: dados salvos, mas houve erro no e-mail: '+JSON.stringify(emailErr));
+    }
 
     document.getElementById('contato-area').style.display='none';
     document.getElementById('sucesso-final').style.display='block';
