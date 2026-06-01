@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGEscore Brasil — Participar da Pesquisa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#E8F5E0,#F0F7F2);min-height:100vh;padding:20px;color:#1A2E1A;font-size:16px;line-height:1.7}
+.container{max-width:620px;margin:0 auto}
+.logo{text-align:center;padding:30px 0 20px}
+.logo h1{font-family:'DM Serif Display',serif;font-size:2rem;color:#2A5C1B}
+.logo p{color:#5A7A5A;font-size:.9rem;margin-top:6px}
+.card{background:#fff;border-radius:14px;padding:28px;margin-bottom:20px;box-shadow:0 2px 16px rgba(26,46,26,.1)}
+.step-indicator{display:flex;gap:8px;margin-bottom:24px;justify-content:center}
+.step-dot{width:12px;height:12px;border-radius:50%;background:#C8DFC8;transition:background .3s}
+.step-dot.active{background:#2A5C1B}
+.step-dot.done{background:#4A8C35}
+h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#2A5C1B;margin-bottom:16px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-weight:600;font-size:.85rem;color:#5A7A5A;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.fg input,.fg select,.fg textarea{width:100%;padding:12px 14px;border:1.5px solid #C8DFC8;border-radius:10px;font-size:1rem;font-family:inherit;background:#F8FCF8;color:#1A2E1A;transition:border .2s}
+.fg input:focus,.fg select:focus{outline:none;border-color:#2A5C1B;background:#fff}
+.btn{width:100%;padding:15px;background:linear-gradient(135deg,#2A5C1B,#3D7A28);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sec{background:transparent;color:#2A5C1B;border:2px solid #2A5C1B}
+.tcle-box{background:#F0F7F2;border:1px solid #C8DFC8;border-radius:10px;padding:16px;max-height:260px;overflow-y:auto;font-size:.88rem;line-height:1.8;margin-bottom:16px;color:#2A4A2A}
+.tcle-box p{margin-bottom:10px}
+.check-row{display:flex;align-items:flex-start;gap:12px;background:#E6F4E0;border:1px solid #C8DFC8;border-radius:10px;padding:14px;cursor:pointer;margin-bottom:16px}
+.check-row input[type=checkbox]{width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#2A5C1B;cursor:pointer}
+.check-row label{font-size:.9rem;line-height:1.6;cursor:pointer}
+.err{color:#8B2020;font-size:.82rem;margin-top:6px;display:none}
+.success-box{text-align:center;padding:40px 20px}
+.success-box .icon{font-size:3.5rem;margin-bottom:16px}
+.success-box h2{font-size:1.4rem;margin-bottom:10px}
+.success-box p{color:#5A7A5A;font-size:.95rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}}
+.progress{height:6px;background:#C8DFC8;border-radius:3px;margin-bottom:24px}
+.progress-fill{height:6px;background:#2A5C1B;border-radius:3px;transition:width .4s}
+.section-title{font-size:.72rem;font-weight:700;color:#5A7A5A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #E8F5E0}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <h1>AGE<span style="color:#4A8C35">score</span> Brasil</h1>
+    <p>Pesquisa sobre alimentação e saúde — USJT</p>
+  </div>
+
+  <!-- PASSO 1: IDENTIFICAÇÃO -->
+  <div id="passo-1" class="card">
+    <div class="progress"><div class="progress-fill" style="width:25%"></div></div>
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+    <h2>👋 Olá! Vamos começar</h2>
+    <p style="margin-bottom:20px;color:#5A7A5A;font-size:.95rem">Por favor, preencha seus dados para participar da pesquisa.</p>
+    <div class="fg">
+      <label>Seu nome completo *</label>
+      <input type="text" id="p-nome" placeholder="Digite seu nome completo">
+    </div>
+    <div class="grid2">
+      <div class="fg">
+        <label>Idade *</label>
+        <input type="number" id="p-idade" placeholder="Ex: 65" min="18" max="120">
+      </div>
+      <div class="fg">
+        <label>Sexo *</label>
+        <select id="p-sexo">
+          <option value="">— Selecione —</option>
+          <option>Feminino</option>
+          <option>Masculino</option>
+          <option>Prefiro não informar</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Grupo / Local de coleta</label>
+      <input type="text" id="p-grupo" placeholder="Ex: Grupo A, UBS Vila Maria...">
+    </div>
+    <div id="err-1" class="err">Por favor, preencha nome, idade e sexo.</div>
+    <button class="btn" onclick="irPasso2()">Próximo →</button>
+  </div>
+
+  <!-- PASSO 2: TCLE -->
+  <div id="passo-2" class="card" style="display:none">
+    <div class="progress"><div class="progress-fill" style="width:50%"></div></div>
+    <div class="step-indicator">
+      <div class="step-dot done" id="dot-1b"></div>
+      <div class="step-dot active" id="dot-2b"></div>
+      <div class="step-dot" id="dot-3b"></div>
+      <div class="step-dot" id="dot-4b"></div>
+    </div>
+    <h2>📄 Termo de Consentimento</h2>
+    <p style="margin-bottom:14px;color:#5A7A5A;font-size:.9rem">Leia com atenção antes de concordar.</p>
+    <div class="tcle-box">
+      <p>O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs.</p>
+      <p>Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Professora Doutora Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
+      <p>O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
+      <p>Sua participação será por meio de uma avaliação realizada em um único momento: você irá responder um questionário de identificação, um questionário sociodemográfico e o Questionário de Consumo Alimentar dos produtos de glicação avançada (AGE). Duração estimada: aproximadamente 30 minutos.</p>
+      <p>Seus dados pessoais serão mantidos em sigilo. Os resultados serão analisados e publicados sem qualquer identificação sua.</p>
+      <p>Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador e pare de responder — não haverá qualquer prejuízo.</p>
+      <p>Sua participação é voluntária e não há remuneração.</p>
+      <p><strong>Dúvidas:</strong> CEP USJT — (11) 2799-1950 | cep@saojudas.br</p>
+      <p><strong>Pesquisadora:</strong> Prof.ª Dr.ª Adriana Machado Saldiba de Lima — (11) 997744587 | prof.adrianalima@usjt.br</p>
+    </div>
+    <div class="check-row" onclick="toggleAceite()">
+      <input type="checkbox" id="tcle-aceite" onclick="event.stopPropagation();toggleAceite()">
+      <label for="tcle-aceite">Li e compreendi o termo acima. <strong>Concordo em participar voluntariamente desta pesquisa.</strong></label>
+    </div>
+    <div id="err-2" class="err">É necessário aceitar o termo para continuar.</div>
+    <button class="btn" onclick="irPasso3()">Próximo →</button>
+    <button class="btn btn-sec" style="margin-top:10px" onclick="voltarPasso(1)">← Voltar</button>
+  </div>
+
+  <!-- PASSO 3: SOCIODEMOGRÁFICO -->
+  <div id="passo-3" class="card" style="display:none">
+    <div class="progress"><div class="progress-fill" style="width:75%"></div></div>
+    <div class="step-indicator">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+    </div>
+    <h2>📋 Sobre você</h2>
+    <p style="margin-bottom:20px;color:#5A7A5A;font-size:.9rem">Responda as perguntas abaixo. Todas são opcionais, exceto as marcadas com *.</p>
+
+    <div class="section-title">Identidade</div>
+    <div class="grid2">
+      <div class="fg">
+        <label>Identidade de Gênero</label>
+        <select id="s-genero">
+          <option value="">— Selecione —</option>
+          <option>Mulher cisgênero</option><option>Homem cisgênero</option>
+          <option>Mulher transgênero</option><option>Homem transgênero</option>
+          <option>Não-binário</option><option>Prefiro não informar</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Etnia/Raça</label>
+        <select id="s-etnia">
+          <option value="">— Selecione —</option>
+          <option>Branco</option><option>Preto</option><option>Pardo</option>
+          <option>Amarelo</option><option>Indígena</option><option>Prefiro não informar</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="fg">
+        <label>Estado Civil</label>
+        <select id="s-civil">
+          <option value="">— Selecione —</option>
+          <option>Solteiro(a)</option>
+          <option>Casado(a) / com companheiro(a)</option>
+          <option>Separado(a) / divorciado(a)</option>
+          <option>Viúvo(a)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Número de Filhos</label>
+        <input type="number" id="s-filhos" min="0" max="20" placeholder="Ex: 2">
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:8px">Escolaridade e Renda</div>
+    <div class="fg">
+      <label>Escolaridade</label>
+      <select id="s-escolaridade">
+        <option value="">— Selecione —</option>
+        <option>Nunca estudou</option><option>Ensino Fundamental incompleto</option>
+        <option>Ensino Fundamental completo</option><option>Ensino Médio incompleto</option>
+        <option>Ensino Médio completo</option><option>Ensino Superior</option>
+        <option>Especialização</option><option>Mestrado</option><option>Doutorado</option>
+      </select>
+    </div>
+    <div class="grid2">
+      <div class="fg">
+        <label>Ocupação</label>
+        <select id="s-ocupacao">
+          <option value="">— Selecione —</option>
+          <option>Assalariado (CLT)</option><option>Autônomo</option>
+          <option>Aposentado(a)</option><option>Do lar</option>
+          <option>Desempregado(a)</option><option>Estudante</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Renda Familiar</label>
+        <select id="s-renda">
+          <option value="">— Selecione —</option>
+          <option>Até 1 salário mínimo</option>
+          <option>1 a 2 salários mínimos</option>
+          <option>2 a 3 salários mínimos</option>
+          <option>3 a 4 salários mínimos</option>
+          <option>Acima de 4 salários mínimos</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:8px">Saúde</div>
+    <div class="grid2">
+      <div class="fg">
+        <label>Peso (kg)</label>
+        <input type="number" id="s-peso" placeholder="Ex: 70" min="30" max="200">
+      </div>
+      <div class="fg">
+        <label>Altura (cm)</label>
+        <input type="number" id="s-altura" placeholder="Ex: 165" min="100" max="220">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Doenças diagnosticadas</label>
+      <input type="text" id="s-doencas" placeholder="Ex: Diabetes, Hipertensão, Nenhuma">
+    </div>
+    <div class="fg">
+      <label>Medicamentos em uso</label>
+      <input type="text" id="s-medicamentos" placeholder="Ex: Metformina, Losartana...">
+    </div>
+
+    <div id="err-3" class="err">Erro ao salvar. Tente novamente.</div>
+    <button class="btn" id="btn-salvar-socio" onclick="salvarTudo()">Finalizar e Enviar ✓</button>
+    <button class="btn btn-sec" style="margin-top:10px" onclick="voltarPasso(2)">← Voltar</button>
+  </div>
+
+  <!-- PASSO 4: CONTATO + AGRADECIMENTO -->
+  <div id="passo-4" class="card" style="display:none">
+    <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+    <div id="contato-area">
+      <h2>📩 Quase lá!</h2>
+      <p style="margin-bottom:20px;color:#5A7A5A;font-size:.95rem">Obrigado pelo preenchimento. Favor aguardar que o pesquisador entrará em contato para dar continuidade ao estudo.<br><br><strong>Deixe abaixo seu telefone e e-mail para contato.</strong></p>
+      <div class="fg">
+        <label>Telefone *</label>
+        <input type="tel" id="c-tel" placeholder="(11) 99999-9999" oninput="fmtTel(this)">
+      </div>
+      <div class="fg">
+        <label>E-mail *</label>
+        <input type="email" id="c-email" placeholder="seuemail@exemplo.com">
+      </div>
+      <div id="err-4" class="err">Preencha telefone e e-mail válidos.</div>
+      <button class="btn" onclick="enviarContato()">📩 Enviar dados de contato</button>
+    </div>
+    <div id="sucesso-final" class="success-box" style="display:none">
+      <div class="icon">🙏</div>
+      <h2>Muito obrigado!</h2>
+      <p>Seus dados foram registrados com sucesso.<br>O pesquisador entrará em contato em breve para continuar o estudo.</p>
+      <p style="margin-top:20px;font-size:.8rem;color:#9AB89A">AGEscore Brasil — USJT</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyCtT4WmLM67op19qWsItCP2ft2P4XEwC_g",authDomain:"agescorebrasil.firebaseapp.com",projectId:"agescorebrasil",storageBucket:"agescorebrasil.firebasestorage.app",messagingSenderId:"290463576400",appId:"1:290463576400:web:a2468ed1064655fb387c55"};
+if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+const EMAILJS_PUBLIC_KEY='4M5PHF7SnTashwagz';
+const EMAILJS_SERVICE_ID='service_gzt9k7h';
+const EMAILJS_TEMPLATE_ID='template_kxt899m';
+const PESQUISADOR_EMAIL='adrif.cunha@gmail.com';
+
+let partId=null;
+
+function mostrar(id){
+  ['passo-1','passo-2','passo-3','passo-4'].forEach(p=>document.getElementById(p).style.display='none');
+  document.getElementById(id).style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function voltarPasso(n){mostrar('passo-'+n);}
+
+function toggleAceite(){
+  const cb=document.getElementById('tcle-aceite');
+  cb.checked=!cb.checked;
+}
+
+function irPasso2(){
+  const nome=document.getElementById('p-nome').value.trim();
+  const idade=document.getElementById('p-idade').value;
+  const sexo=document.getElementById('p-sexo').value;
+  const err=document.getElementById('err-1');
+  if(!nome||!idade||!sexo){err.style.display='block';return;}
+  err.style.display='none';
+  mostrar('passo-2');
+}
+
+function irPasso3(){
+  const aceite=document.getElementById('tcle-aceite').checked;
+  const err=document.getElementById('err-2');
+  if(!aceite){err.style.display='block';return;}
+  err.style.display='none';
+  mostrar('passo-3');
+}
+
+async function salvarTudo(){
+  const btn=document.getElementById('btn-salvar-socio');
+  btn.disabled=true;btn.textContent='Salvando...';
+  const err=document.getElementById('err-3');
+  err.style.display='none';
+
+  const nome=document.getElementById('p-nome').value.trim();
+  const idade=parseInt(document.getElementById('p-idade').value)||0;
+  const sexo=document.getElementById('p-sexo').value;
+  const grupo=document.getElementById('p-grupo').value.trim()||'Participante Web';
+  const ts=new Date().toISOString();
+
+  // Gera ID sequencial
+  try{
+    const snap=await db.collection('participants').get();
+    const next=snap.size+1;
+    partId='PAR-'+String(next).padStart(4,'0');
+
+    const pesoVal=parseFloat(document.getElementById('s-peso').value)||0;
+    const alturaVal=parseFloat(document.getElementById('s-altura').value)||0;
+    const imc=(pesoVal>0&&alturaVal>0)?(pesoVal/Math.pow(alturaVal/100,2)).toFixed(1):'';
+
+    const socio={
+      genero:   document.getElementById('s-genero').value,
+      etnia:    document.getElementById('s-etnia').value,
+      civil:    document.getElementById('s-civil').value,
+      filhos:   document.getElementById('s-filhos').value,
+      escolaridade: document.getElementById('s-escolaridade').value,
+      ocupacao: document.getElementById('s-ocupacao').value,
+      renda:    document.getElementById('s-renda').value,
+      peso:     pesoVal||'',
+      altura:   alturaVal||'',
+      imc:      imc,
+      doencas:  document.getElementById('s-doencas').value.trim(),
+      medicamentos: document.getElementById('s-medicamentos').value.trim(),
+      origem:   'participar.html',
+      timestamp: ts,
+    };
+
+    await db.collection('participants').doc(partId).set({
+      id: partId,
+      name: nome,
+      age: idade,
+      sex: sexo,
+      group: grupo,
+      status: 'Pendente',
+      q1:0,q2:0,total:0,daily:0,
+      date: new Date().toLocaleDateString('pt-BR'),
+      foods:{q1:[],q2:[]},
+      tcle_aceito: true,
+      tcle_timestamp: ts,
+      socio: socio,
+      socio_preenchido: true,
+      origem_web: true,
+    });
+
+    mostrar('passo-4');
+  }catch(e){
+    err.textContent='Erro ao salvar: '+e.message;
+    err.style.display='block';
+    btn.disabled=false;btn.textContent='Finalizar e Enviar ✓';
+  }
+}
+
+function fmtTel(el){
+  let v=el.value.replace(/\D/g,'').slice(0,11);
+  if(v.length>6)v='('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7);
+  else if(v.length>2)v='('+v.slice(0,2)+') '+v.slice(2);
+  else if(v.length)v='('+v;
+  el.value=v;
+}
+
+async function enviarContato(){
+  const tel=document.getElementById('c-tel').value.trim();
+  const email=document.getElementById('c-email').value.trim();
+  const err=document.getElementById('err-4');
+  if(!tel||!email||!/\S+@\S+\.\S+/.test(email)){err.style.display='block';return;}
+  err.style.display='none';
+
+  const nome=document.getElementById('p-nome').value.trim();
+
+  try{
+    if(partId){
+      await db.collection('participants').doc(partId).update({
+        contato_tel: tel,
+        contato_email: email,
+        contato_ts: new Date().toISOString(),
+      });
+    }
+
+    // Envia e-mail para pesquisadora
+    try{
+      emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+      await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+        to_email:   PESQUISADOR_EMAIL,
+        to_name:    'Adriana',
+        part_id:    partId||'—',
+        part_nome:  nome,
+        part_tel:   tel,
+        part_email: email,
+        data_hora:  new Date().toLocaleString('pt-BR'),
+      });
+    }catch(emailErr){console.warn('EmailJS:',emailErr);}
+
+    document.getElementById('contato-area').style.display='none';
+    document.getElementById('sucesso-final').style.display='block';
+  }catch(e){
+    err.textContent='Erro: '+e.message;err.style.display='block';
+  }
+}
+</script>
+</body>
+</html>
