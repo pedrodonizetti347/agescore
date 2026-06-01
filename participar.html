@@ -265,7 +265,7 @@ const db=firebase.firestore();
 
 const EMAILJS_PUBLIC_KEY='4M5PHF7SnTashwagz';
 const EMAILJS_SERVICE_ID='service_gzt9k7h';
-const EMAILJS_TEMPLATE_ID='template_pogx4if';
+const EMAILJS_TEMPLATE_ID='template_kxt899m';
 const PESQUISADOR_EMAIL='adryfcunha@gmail.com';
 
 emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
@@ -424,7 +424,12 @@ async function enviarContato(){
       await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
         to_name:    'Adriana',
         name:       'AGEscore Brasil',
-        message:    `Novo participante aguarda contato!\n\nID: ${partId||'—'}\nNome: ${nome}\nTelefone: ${tel}\nE-mail: ${email}\nData/hora: ${new Date().toLocaleString('pt-BR')}`,
+        part_id:    partId||'—',
+        part_nome:  nome,
+        part_tel:   tel,
+        part_email: email,
+        data_hora:  new Date().toLocaleString('pt-BR'),
+        message:    `ID: ${partId||'—'} | Nome: ${nome} | Tel: ${tel} | Email: ${email}`,
       });
       console.log('Email enviado com sucesso');
     }catch(emailErr){
