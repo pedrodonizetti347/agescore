@@ -114,9 +114,9 @@ h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#2A5C1B;margin-bo
       <p><strong>Pesquisadora:</strong> Prof.ª Dr.ª Adriana Machado Saldiba de Lima — (11) 997744587 | prof.adrianalima@usjt.br</p>
     </div>
     <button onclick="imprimirTCLE()" style="width:100%;padding:10px;background:#1A4A7A;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px">🖨 Imprimir / Baixar TCLE em PDF</button>
-    <div class="check-row" onclick="document.getElementById('tcle-aceite').click()">
-      <input type="checkbox" id="tcle-aceite" onclick="event.stopPropagation()">
-      <label for="tcle-aceite" onclick="event.stopPropagation()">Li e compreendi o termo acima. <strong>Concordo em participar voluntariamente desta pesquisa.</strong></label>
+    <div class="check-row">
+      <input type="checkbox" id="tcle-aceite" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#2A5C1B;cursor:pointer">
+      <label for="tcle-aceite" style="font-size:.9rem;line-height:1.6;cursor:pointer">Li e compreendi o termo acima. <strong>Concordo em participar voluntariamente desta pesquisa.</strong></label>
     </div>
     <div id="err-2" class="err">É necessário aceitar o termo para continuar.</div>
     <button class="btn" onclick="irPasso3()">Próximo →</button>
