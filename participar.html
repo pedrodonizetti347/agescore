@@ -113,6 +113,7 @@ h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#2A5C1B;margin-bo
       <p><strong>Dúvidas:</strong> CEP USJT — (11) 2799-1950 | cep@saojudas.br</p>
       <p><strong>Pesquisadora:</strong> Prof.ª Dr.ª Adriana Machado Saldiba de Lima — (11) 997744587 | prof.adrianalima@usjt.br</p>
     </div>
+    <button onclick="imprimirTCLE()" style="width:100%;padding:10px;background:#1A4A7A;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:14px">🖨 Imprimir / Baixar TCLE em PDF</button>
     <div class="check-row" onclick="toggleAceite()">
       <input type="checkbox" id="tcle-aceite" onclick="event.stopPropagation();toggleAceite()">
       <label for="tcle-aceite">Li e compreendi o termo acima. <strong>Concordo em participar voluntariamente desta pesquisa.</strong></label>
@@ -280,6 +281,32 @@ function voltarPasso(n){mostrar('passo-'+n);}
 function toggleAceite(){
   const cb=document.getElementById('tcle-aceite');
   cb.checked=!cb.checked;
+  document.getElementById('err-2').style.display='none';
+}
+
+function imprimirTCLE(){
+  const w=window.open('','_blank','width=800,height=700');
+  if(!w){alert('Permita pop-ups para imprimir.');return;}
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>TCLE — AGEscore Brasil</title>
+  <style>body{font-family:Arial,sans-serif;max-width:700px;margin:40px auto;padding:30px;font-size:13px;line-height:1.8;color:#111}
+  h2{font-size:1.1rem;text-align:center;margin-bottom:20px}p{margin-bottom:12px}
+  .assinatura{margin-top:50px;display:flex;gap:40px}.assinatura div{flex:1;border-top:1px solid #000;padding-top:6px;font-size:.85rem;text-align:center}
+  </style><script>window.onload=function(){window.print()}<\/script></head><body>
+  <h2>TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO (TCLE)</h2>
+  <p>O (a) Sr. (a) está sendo convidado (a) a participar, como voluntário (a), da pesquisa intitulada <em>Adaptação transcultural de um Instrumento de Avaliação do Consumo de Produtos de Glicação Avançada</em>, para avaliar o escore de consumo de AGEs.</p>
+  <p>Esta pesquisa está sendo desenvolvida pela pesquisadora Adriana Lemos França Cunha sob a orientação da Professora Doutora Adriana Machado Saldiba de Lima, todos vinculados à Universidade São Judas, unidade Mooca.</p>
+  <p>O objetivo da pesquisa é relacionar os produtos de glicação avançada (AGE) com determinantes sociais da saúde em uma população adulta/idosa.</p>
+  <p>Sua participação será por meio de uma avaliação realizada em um único momento. Duração estimada: aproximadamente 30 minutos.</p>
+  <p>Seus dados pessoais serão mantidos em sigilo. Os resultados serão analisados e publicados sem qualquer identificação sua. Os questionários serão arquivados por cinco anos.</p>
+  <p>Você poderá sentir desconforto emocional ao responder. Se isso ocorrer, avise o pesquisador e pare de responder — não haverá qualquer prejuízo.</p>
+  <p>Sua participação é voluntária e não há remuneração.</p>
+  <p><strong>Dúvidas éticas:</strong> CEP USJT — (11) 2799-1950 | cep@saojudas.br</p>
+  <p><strong>Pesquisadora:</strong> Prof.ª Dr.ª Adriana Machado Saldiba de Lima — (11) 997744587 | prof.adrianalima@usjt.br</p>
+  <div class="assinatura">
+    <div>Assinatura do Participante<br><br>Data: ___/___/______</div>
+    <div>Assinatura do Pesquisador(a)<br><br>Data: ___/___/______</div>
+  </div></body></html>`);
+  w.document.close();
 }
 
 function irPasso2(){
@@ -396,6 +423,7 @@ async function enviarContato(){
       await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
         to_email:   PESQUISADOR_EMAIL,
         to_name:    'Adriana',
+        name:       'AGEscore Brasil',
         part_id:    partId||'—',
         part_nome:  nome,
         part_tel:   tel,
