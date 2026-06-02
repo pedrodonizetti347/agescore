@@ -260,8 +260,11 @@ h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:#2A5C1B;margin-bo
 
 <script>
 const firebaseConfig={apiKey:"AIzaSyCtT4WmLM67op19qWsItCP2ft2P4XEwC_g",authDomain:"agescorebrasil.firebaseapp.com",projectId:"agescorebrasil",storageBucket:"agescorebrasil.firebasestorage.app",messagingSenderId:"290463576400",appId:"1:290463576400:web:a2468ed1064655fb387c55"};
-if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+let db;
+try{
+  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+  db=firebase.firestore();
+}catch(initErr){console.error('Firebase init error:',initErr);}
 
 const EMAILJS_PUBLIC_KEY='4M5PHF7SnTashwagz';
 const EMAILJS_SERVICE_ID='service_gzt9k7h';
@@ -343,6 +346,7 @@ async function salvarTudo(){
 
   // Gera ID sequencial
   try{
+    if(!db){throw new Error('Banco de dados não disponível. Recarregue a página.');}
     const snap=await db.collection('participants').get();
     const next=snap.size+1;
     partId='PAR-'+String(next).padStart(4,'0');
@@ -433,8 +437,7 @@ async function enviarContato(){
       });
       console.log('Email enviado com sucesso');
     }catch(emailErr){
-      console.error('EmailJS erro:', emailErr);
-      alert('Aviso: dados salvos, mas houve erro no e-mail: '+JSON.stringify(emailErr));
+      console.warn('EmailJS erro (dados salvos no Firestore):', emailErr);
     }
 
     document.getElementById('contato-area').style.display='none';
