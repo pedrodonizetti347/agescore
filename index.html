@@ -1827,17 +1827,15 @@ const Q1C=[
    foods:[{id:'av-0',n:'Filé de frango (peito, sassami)',d:'110g · 1 bife grande'},{id:'av-1',n:'Frango partes (coxa, sobrecoxa)',d:'110g · 1 unidade grande'},{id:'av-2',n:'Frango nuggets congelado',d:'110g · 5 unidades'},{id:'av-3',n:'Hambúrguer de frango',d:'110g · 1 unidade médio'},{id:'av-4',n:'Linguiça de frango',d:'110g · 2 unidades'},{id:'av-5',n:'Frango filé-peito empanado (crocante)',d:'110g · 1 unidade'}]},
   {id:'suinos',icon:'🥓',name:'Suínos',methods:['Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:[4.9,4.3,12,5.2],
    foods:[{id:'su-0',n:'Bife (bisteca suína)',d:'110g · 1 unidade médio'},{id:'su-1',n:'Costela',d:'110g · 3 pedaços médios'},{id:'su-2',n:'Torresmo',d:'110g · 1 escumadeira'},{id:'su-3',n:'Linguiça de porco (toscana)',d:'110g · 2 unidades'}]},
-  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Grelhado','Frito'],scores:[0.6,1.0,1.4],
+  {id:'ovos',icon:'🥚',name:'Ovos',methods:['Coz./Micro','Grelhado (mexido e omelete)','Frito'],scores:[0.6,1.0,1.4],
    foods:[{id:'ov-0',n:'Ovo de galinha (inteiro, mexido, omelete)',d:'50g · 1 unidade médio'},{id:'ov-1',n:'Ovo de codorna',d:'10g · 5 unidades'}]},
-  {id:'embutidos',icon:'🌭',name:'Embutidos',fixedScore:true,
+  {id:'embutidos',icon:'🌭',name:'Embutidos',
+   methods:['Coz./Micro','Frito em óleo'],scores:null,mixedScore:true,
    foods:[
-     {id:'em-0',n:'Salsicha',d:'30g · 1 unidade',fa:1.2},
-     {id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',fa:1.2},
-     {id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',fa:1.2},
-     {id:'em-3',n:'Mortadela',d:'60g · 3 fatias',fa:1.2},
-     {id:'em-4',n:'Presunto',d:'60g · 3 fatias',fa:1.2},
-     {id:'em-5',n:'Salame',d:'60g · 3 fatias',fa:1.2},
-     {id:'em-6',n:'Copa',d:'60g · 3 fatias',fa:1.2}
+     {id:'em-0',n:'Salsicha',d:'30g · 1 unidade',fa:null,cs:[2.2,3.4]},
+     {id:'em-1',n:'Bacon',d:'15g · 1 fatia/pedaço',fa:null,cs:[9.9,13.7]},
+     {id:'em-2',n:'Linguiça seca (calabresa, paio, defumada)',d:'110g · 2 unidades',fa:null,cs:[null,6.6]},
+     {id:'em-3',n:'Mortadela, presunto, salame, copa',d:'60g · 3 fatias',fa:1.2,cs:null}
    ]},
   {id:'peixes',icon:'🐟',name:'Peixes / Frutos do Mar',
    methods:['Coz./Micro','Grelhado','Assado/Air Fryer','Churrasco','Frito'],scores:null,
@@ -1854,8 +1852,8 @@ const Q1C=[
 const Q2C=[
   {id:'laticinios',icon:'🧀',name:'Leite e derivados',items:[{id:'q2-0',n:'Queijo minas, muçarela',d:'50g · 1 fatia grossa ou 3 finas',s:1.4},{id:'q2-1',n:'Queijo parmesão, provolone',d:'30g · 1 col. sopa ou 2 fatias',s:5.1},{id:'q2-2',n:'Queijo gorgonzola',d:'30g · 1 col. sopa ou 2 fatias',s:2.5},{id:'q2-3',n:'Queijo brie, cheddar',d:'50g · 1 fatia grossa ou 3 finas',s:2.8},{id:'q2-4',n:'Queijo cremoso, ricota, cottage, minas light',d:'30g · 1 col. sopa',s:0.4},{id:'q2-5',n:'Requeijão tradicional',d:'30g · 1 col. sopa',s:2.6},{id:'q2-6',n:'Requeijão light',d:'30g · 1 col. sopa',s:1.2},{id:'q2-7',n:'Manteiga',d:'8g · 1 col. de chá',s:1.9}]},
   {id:'oleos',icon:'🫒',name:'Óleos, gorduras e oleaginosas',items:[{id:'q2-8',n:'Oleaginosas (amêndoas, nozes, castanhas, pistache)',d:'30g · 1 col. sopa',s:2.0},{id:'q2-9',n:'Sementes (girassol, chia, linhaça, gergelim)',d:'30g · 1 col. sopa',s:0.5},{id:'q2-10',n:'Pasta de amendoim ou creme de avelã',d:'20g · 1 col. sopa',s:2.0},{id:'q2-11',n:'Azeite de oliva, óleo de canola/composto',d:'13ml · 1 col. sopa',s:1.0},{id:'q2-12',n:'Óleo de girassol e óleo de milho',d:'13ml · 1 col. sopa',s:0.5},{id:'q2-13',n:'Óleo de gergelim',d:'13ml · 1 col. sopa',s:2.8},{id:'q2-14',n:'Óleo de coco e banha de porco',d:'13ml · 1 col. sopa',s:3.0},{id:'q2-15',n:'Margarina',d:'8g · 1 col. de chá',s:0.8},{id:'q2-16',n:'Margarina light',d:'8g · 1 col. de chá',s:0.3},{id:'q2-17',n:'Maionese',d:'30g · 1 col. sopa',s:2.8},{id:'q2-18',n:'Maionese light',d:'30g · 1 col. sopa',s:0.7}]},
-  {id:'fastfood',icon:'🍔',name:'Fast food',items:[{id:'q2-19',n:'Salgados (pastel, coxinha, risole, empada)',d:'50g · 1 unidade médio',s:2.5},{id:'q2-20',n:'Batata chips em saquinho',d:'45g · 1 pacote pequeno',s:1.0},{id:'q2-21',n:'Tapioca / crepioca recheada / suflê',d:'80g · 1 unidade',s:1.5},{id:'q2-22',n:'Croassant, folhados',d:'40g · 1 unidade',s:0.5},{id:'q2-23',n:'Pizza, misto quente ou bauru',d:'90g · 1 fatia ou 1 unidade',s:5.0},{id:'q2-24',n:'Cachorro quente',d:'190g · 1 unidade',s:10.0},{id:'q2-25',n:'Mini Cheesebúrguer',d:'100g · 1 unidade',s:3.9},{id:'q2-26',n:'Cheesebúrguer salada completo (fast food)',d:'240g · 1 unidade',s:18.2},{id:'q2-27',n:'Cheesebúrguer ou Cheeseburguerbacon',d:'200g · 1 unidade',s:12.6},{id:'q2-28',n:'Cheese filé de frango',d:'170g · 1 unidade',s:8.8}]},
-  {id:'preparacoes',icon:'🍲',name:'Preparações',items:[{id:'q2-29',n:'Lasanha, fricassê, escondidinho de carne/frango',d:'110g · 1 escumadeira',s:6.0},{id:'q2-30',n:'Feijoada, feijão tropeiro, estrogonofe',d:'110g · 1 concha',s:2.0},{id:'q2-31',n:'Yakissoba, massa c/ molho bolonhesa, nhoque',d:'90g · 1 escumadeira',s:1.0},{id:'q2-32',n:'Tapioca/crepioca recheada (frango, queijo, presunto)',d:'80g · 1 unidade',s:1.5}]},
+  {id:'fastfood',icon:'🍔',name:'Fast food',items:[{id:'q2-19',n:'Salgados (pastel, coxinha, risole, empada)',d:'50g · 1 unidade médio',s:2.5},{id:'q2-20',n:'Batata chips em saquinho',d:'45g · 1 pacote pequeno',s:1.0},{id:'q2-22',n:'Croassant, folhados',d:'40g · 1 unidade',s:0.5},{id:'q2-23',n:'Pizza, misto quente ou bauru',d:'90g · 1 fatia ou 1 unidade',s:5.0},{id:'q2-24',n:'Cachorro quente',d:'190g · 1 unidade',s:10.0},{id:'q2-25',n:'Mini Cheesebúrguer',d:'100g · 1 unidade',s:3.9},{id:'q2-26',n:'Cheesebúrguer salada completo (fast food)',d:'240g · 1 unidade',s:18.2},{id:'q2-27',n:'Cheesebúrguer ou Cheeseburguerbacon',d:'200g · 1 unidade',s:12.6},{id:'q2-28',n:'Cheese filé de frango',d:'170g · 1 unidade',s:8.8}]},
+  {id:'preparacoes',icon:'🍲',name:'Preparações',items:[{id:'q2-29',n:'Lasanha, fricassê, escondidinho de carne/frango',d:'110g · 1 escumadeira',s:6.0},{id:'q2-30',n:'Feijoada, feijão tropeiro, estrogonofe',d:'110g · 1 concha',s:2.0},{id:'q2-31',n:'Yakissoba, massa c/ molho bolonhesa, nhoque',d:'90g · 1 escumadeira',s:1.0}]},
   {id:'diversos',icon:'🍪',name:'Diversos',items:[{id:'q2-33',n:'Chocolate barra (ao leite, branco, amargo)',d:'30g · 1 unidade',s:1.0},{id:'q2-34',n:'Biscoito recheado, cookies (doces)',d:'60g · 2 unidades',s:1.5},{id:'q2-35',n:'Bolos, tortas, muffin (doces)',d:'60g · 1 unidade/fatia',s:2.0},{id:'q2-36',n:'Pão de queijo',d:'50g · 1 unidade',s:1.3},{id:'q2-37',n:'Pão com queijo derretido',d:'50g · 1 unidade',s:2.8},{id:'q2-38',n:'Pão com manteiga na chapa',d:'50g · 1 unidade',s:1.3},{id:'q2-39',n:'Batata congelada frita em óleo',d:'100g · 1 porção média',s:1.5},{id:'q2-40',n:'Batata/mandioca/polenta (frita em óleo)',d:'100g · 1 porção média',s:0.6},{id:'q2-41',n:'Batata/mandioca/polenta (assado/air fryer)',d:'100g · 1 porção média',s:0.3}]},
 ];
 const DS=['S','T','Q','Q','S','S','D'];
@@ -2014,8 +2012,8 @@ function updateResumoTab(){
   const q1=calcQ1(),q2=calcQ2(),tot=q1+q2;
   setEl('res-q1',fmt(q1));
   setEl('res-q2',fmt(q2));
-  setEl('res-total',fmt(tot));
-  setEl('res-daily',fmt(tot/7));
+  setEl('res-tot',fmt(tot));
+  setEl('res-day',fmt(tot/7));
   if(curApPart) setEl('res-pname',curApPart.id+' — '+curApPart.name+' ('+curApPart.group+')');
 }
 
@@ -2498,3 +2496,4 @@ async function loginGestor(email,pass){
         content: attr(data-content);
       }
     </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{"mode":"full","isActive":true,"isUserDisabled":false}"></div></template></grammarly-desktop-integration></html>
+                                                                                                   
