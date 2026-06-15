@@ -969,6 +969,15 @@ async function getData(){
   catch(e){return JSON.parse(localStorage.getItem('age_p_bk')||'[]');}
 }
 async function setData(list){_pCache=list;localStorage.setItem('age_p_bk',JSON.stringify(list));}
+async function gerarProximoId(){
+  const data=await getData();
+  let max=0;
+  data.forEach(p=>{
+    const m=/^PAR-(\d+)$/.exec(p.id||'');
+    if(m){const n=parseInt(m[1],10);if(n>max)max=n;}
+  });
+  return 'PAR-'+String(max+1).padStart(4,'0');
+}
 async function saveP(p){
   try{const {_id,...data}=p;
     if(_id){await db.collection('participants').doc(_id).set(data);}
@@ -1590,7 +1599,7 @@ async function createParticipantCoord(){
   const errEl=document.getElementById('cnp-err');
   if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
   errEl.style.display='none';
-  const data=await getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  const newId=await gerarProximoId();
   const newPCoord={id:newId,name,age:parseInt(age),sex:document.getElementById('cnp-sex').value,group:document.getElementById('cnp-group').value,obs:document.getElementById('cnp-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}};
   await saveP(newPCoord);
   document.getElementById('cnp-name').value='';document.getElementById('cnp-age').value='';document.getElementById('cnp-obs').value='';
@@ -1622,7 +1631,7 @@ async function createParticipant(){
   const errEl=document.getElementById('np-err');
   if(!name||!age){errEl.textContent='Preencha nome e idade.';errEl.style.display='block';return;}
   errEl.style.display='none';
-  const data=await getData(),next=data.length+1,newId='PAR-'+String(next).padStart(4,'0');
+  const newId=await gerarProximoId();
   const newPAP={id:newId,name,age:parseInt(age),sex:document.getElementById('np-sex').value,group:document.getElementById('np-group').value,obs:document.getElementById('np-obs').value.trim(),applicator:curUser?.name||'',status:'Pendente',q1:0,q2:0,total:0,daily:0,date:'—',foods:{q1:[],q2:[]}};
   await saveP(newPAP);
   document.getElementById('np-name').value='';document.getElementById('np-age').value='';document.getElementById('np-obs').value='';
@@ -1640,7 +1649,7 @@ async function populateQuestSel(){
 async function populateSocioSel(){
   const sel=document.getElementById('socio-part-sel');if(!sel)return;
   const cur=sel.value;const all=await getData();
-  sel.innerHTML='<option value="">— Selecione o participante —</option>'+all.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name}</option>`).join('');
+  sel.innerHTML='<option value="">— Selecione o participante —</option>'+all.map(p=>`<option value="${p._id}"${p._id===cur?' selected':''}>${p.id} — ${p.name}</option>`).join('');
 }
 
 async function loadSocioParticipant(){
@@ -1648,7 +1657,7 @@ async function loadSocioParticipant(){
   const area=document.getElementById('socio-form-area');
   const pbar=document.getElementById('socio-pbar');
   if(!id){area.style.display='none';return;}
-  const data=await getData();const p=data.find(x=>x.id===id);
+  const data=await getData();const p=data.find(x=>x._id===id);
   if(!p){return;}
   pbar.innerHTML=`<h3>📋 Participante selecionado</h3><div class="pinfo-grid">
     <div class="pii"><div class="l">ID</div><div class="v">${p.id}</div></div>

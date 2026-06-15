@@ -348,8 +348,12 @@ async function salvarTudo(){
   try{
     if(!db){throw new Error('Banco de dados não disponível. Recarregue a página.');}
     const snap=await db.collection('participants').get();
-    const next=snap.size+1;
-    partId='PAR-'+String(next).padStart(4,'0');
+    let max=0;
+    snap.docs.forEach(d=>{
+      const m=/^PAR-(\d+)$/.exec(d.data().id||'');
+      if(m){const n=parseInt(m[1],10);if(n>max)max=n;}
+    });
+    partId='PAR-'+String(max+1).padStart(4,'0');
 
     const pesoVal=parseFloat(document.getElementById('s-peso').value)||0;
     const alturaVal=parseFloat(document.getElementById('s-altura').value)||0;
@@ -372,7 +376,7 @@ async function salvarTudo(){
       timestamp: ts,
     };
 
-    await db.collection('participants').doc(partId).set({
+    const novoDoc=await db.collection('participants').add({
       id: partId,
       name: nome,
       age: idade,
@@ -388,6 +392,7 @@ async function salvarTudo(){
       socio_preenchido: true,
       origem_web: true,
     });
+    partId=novoDoc.id;
 
     mostrar('passo-4');
   }catch(e){
