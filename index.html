@@ -1621,7 +1621,7 @@ async function renderAPList(){
   const q=(document.getElementById('ap-search')?.value||'').toLowerCase();
   const _apAll=await getData();const list=_apAll.filter(p=>!q||(p.name.toLowerCase().includes(q)||p.id.toLowerCase().includes(q)));
   document.getElementById('ap-p-tb').innerHTML=list.length
-    ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td><button class="btn btn-g" onclick="goApplyFor('${p.id}')">📝 Aplicar</button></td></tr>`).join('')
+    ?list.map(p=>`<tr><td><span class="badge bb">${p.id}</span></td><td>${p.name}</td><td>${p.group}</td><td style="font-size:.74rem;color:var(--ink3)">${p.obs||'—'}</td><td><span class="badge ${p.status==='Respondido'?'bg':'bo'}">${p.status}</span></td><td><button class="btn btn-g" onclick="goApplyFor('${p._id}')">📝 Aplicar</button></td></tr>`).join('')
     :'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--ink3)">Nenhum participante cadastrado.</td></tr>';
 }
 
@@ -1643,7 +1643,7 @@ function goApplyFor(id){document.getElementById('q-part-sel').value=id;showAP('a
 async function populateQuestSel(){
   const sel=document.getElementById('q-part-sel'),cur=sel.value;
   const _qAll=await getData();
-  sel.innerHTML='<option value="">— Selecione o participante —</option>'+_qAll.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
+  sel.innerHTML='<option value="">— Selecione o participante —</option>'+_qAll.map(p=>`<option value="${p._id}"${p._id===cur?' selected':''}>${p.id} — ${p.name} (${p.status})</option>`).join('');
 }
 
 async function populateSocioSel(){
@@ -1892,7 +1892,7 @@ async function loadQuestParticipant(skipTcle=false){
     area.innerHTML='<div class="empty"><div class="ei">📝</div><p>Selecione um participante.</p></div>';
     bar.style.display='none';return;
   }
-  const data=await getData();const p=data.find(x=>x.id===id);
+  const data=await getData();const p=data.find(x=>x._id===id);
   if(!p){area.innerHTML='<div class="empty"><div class="ei">⚠️</div><p>Participante não encontrado.</p></div>';return;}
   if(!skipTcle&&!p.tcle_aceito){
     if(tcleStep){tcleStep.style.display='block';area.innerHTML='<div class="empty"><div class="ei">📄</div><p>Complete o TCLE acima para iniciar.</p></div>';bar.style.display='none';}
@@ -2148,7 +2148,7 @@ async function saveQuestionnaire(){
   const q1foods=Q1C.flatMap(cat=>cat.foods.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;let prep='';if(!cat.fixedScore&&cat.methods)cat.methods.forEach((m,i)=>{if((qState[f.id]?.prep[i]||0)>0)prep=m;});return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,prep,age:getAge(f.id)};}).filter(Boolean));
   const q2foods=Q2C.flatMap(cat=>cat.items.map(f=>{const dias=getDias(f.id),qty=qState[f.id]?.qty||0;if(!qty||!dias)return null;return{name:f.n,days:dias,qtd:qty,nday:qState[f.id]?.nday||1,age:getAge(f.id)};}).filter(Boolean));
   const q1=calcQ1(),q2=calcQ2(),tot=q1+q2,today=new Date().toLocaleDateString('pt-BR');
-  const data=await getData(),idx=data.findIndex(x=>x.id===curApPart.id);
+  const data=await getData(),idx=data.findIndex(x=>x._id===curApPart._id);
   if(idx>=0){Object.assign(data[idx],{status:'Respondido',q1:+q1.toFixed(2),q2:+q2.toFixed(2),total:+tot.toFixed(2),daily:+(tot/7).toFixed(2),date:today,foods:{q1:q1foods,q2:q2foods},applicator:curUser?.name||''});await saveP(data[idx]);_pCache=null;curApPart=data[idx];}
   // Show completion modal
   showCompletionModal(+q1.toFixed(2),+q2.toFixed(2),+(tot/7).toFixed(2));
@@ -2361,7 +2361,7 @@ async function confirmarTCLE(){
   // ── Fluxo corrigido: após TCLE, o próximo passo é o Sociodemográfico ──
   // Verifica se já preencheu o sociodemográfico
   const dataCheck=await getData();
-  const pCheck=dataCheck.find(x=>x.id===partId);
+  const pCheck=dataCheck.find(x=>x._id===partId);
   if(pCheck&&pCheck.socio_preenchido){
     // Socio já preenchido, vai direto para o questionário AGE
     await loadQuestParticipant(true);
